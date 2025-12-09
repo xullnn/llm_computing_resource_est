@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Resource Sizer</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Offline · Serverless</p>
+      <h1 data-i18n="title">LLM Resource Sizer</h1>
+      <p class="lede" data-i18n="lead">Estimate compute, memory, and bandwidth to hit a target tokens/sec and TTFT for an open-source LLM.</p>
+    </div>
+    <div class="cta">
+      <label class="field compact">
+        <span data-i18n="langLabel">Language</span>
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2 data-i18n="sectionModel">Model</h2>
+      <div class="grid two">
+        <label class="field">
+          <span data-i18n="modelPreset">Preset</span>
+          <select id="modelPreset"></select>
+          <small data-i18n="modelPresetHelp">You can edit any value after prefilling.</small>
+          <div class="preset-meta">
+            <a id="hfLink" class="hf-link" href="#" target="_blank" rel="noreferrer noopener">
+              <svg class="hf-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <circle cx="16" cy="16" r="14" fill="currentColor" />
+                <path d="M11 14h2M19 14h2" stroke="#0b1423" stroke-width="2" stroke-linecap="round" />
+                <path d="M12 20c1.2 1.8 3 2.7 4 2.7s2.8-.6 4-2.7" fill="none" stroke="#0b1423" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span class="hf-link-text" data-i18n="hfLinkLabel">Hugging Face</span>
+            </a>
+          </div>
+        </label>
+        <label class="field">
+          <span data-i18n="modelParams">Model params (B)</span>
+          <input id="paramsB" type="number" min="0" step="0.1" value="80">
+        </label>
+        <label class="field">
+          <span data-i18n="activeParams">Active params for MoE (B, optional)</span>
+          <input id="activeParamsB" type="number" min="0" step="0.1" placeholder="defaults to params">
+          <small data-i18n="activeParamsHelp">If MoE, set the activated parameters per token.</small>
+        </label>
+        <label class="field">
+          <span data-i18n="weightPrecision">Weight precision</span>
+          <select id="weightPrecision">
+            <option value="bf16">BF16</option>
+            <option value="fp16">FP16</option>
+            <option value="fp8">FP8</option>
+            <option value="int8">INT8</option>
+            <option value="int4">INT4</option>
+          </select>
+        </label>
+        <label class="field">
+          <span data-i18n="kvPrecision">KV precision</span>
+          <select id="kvPrecision">
+            <option value="bf16">BF16</option>
+            <option value="fp16">FP16</option>
+            <option value="fp8">FP8</option>
+          </select>
+        </label>
+        <label class="field">
+          <span data-i18n="hiddenSize">Hidden size (override, optional)</span>
+          <input id="hiddenSize" type="number" min="0" step="1" placeholder="auto">
+        </label>
+        <label class="field">
+          <span data-i18n="layers">Layers (override, optional)</span>
+          <input id="numLayers" type="number" min="0" step="1" placeholder="auto">
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 data-i18n="sectionWorkload">Workload</h2>
+      <div class="grid three">
+        <label class="field">
+          <span data-i18n="promptTokens">Prompt tokens</span>
+          <input id="promptTokens" type="number" min="1" step="50" value="10000">
+        </label>
+        <label class="field">
+          <span data-i18n="newTokens">Max new tokens</span>
+          <input id="newTokens" type="number" min="1" step="10" value="200">
+        </label>
+        <label class="field">
+          <span data-i18n="batchSize">Batch size / concurrency</span>
+          <input id="batchSize" type="number" min="1" step="1" value="1">
+        </label>
+        <label class="field">
+          <span data-i18n="targetTps">Target throughput (tokens/sec per stream)</span>
+          <input id="targetTps" type="number" min="0.1" step="0.5" value="10">
+        </label>
+        <label class="field">
+          <span data-i18n="ttftMs">Target TTFT (ms)</span>
+          <input id="ttftMs" type="number" min="1" step="10" value="1500">
+        </label>
+        <label class="field">
+          <span data-i18n="utilCompute">Utilization (compute)</span>
+          <input id="utilCompute" type="number" min="0.05" max="1" step="0.05" value="0.45">
+          <small data-i18n="utilComputeHelp">Effective fraction of peak TFLOPS/TOPS.</small>
+        </label>
+        <label class="field">
+          <span data-i18n="utilBw">Utilization (bandwidth)</span>
+          <input id="utilBandwidth" type="number" min="0.05" max="1" step="0.05" value="0.6">
+          <small data-i18n="utilBwHelp">Effective fraction of peak memory bandwidth.</small>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel results">
+      <div class="results-header">
+        <h2 data-i18n="sectionResults">Results</h2>
+        <label class="field compact">
+          <span data-i18n="computeUnit">Compute unit</span>
+          <select id="computeUnit">
+            <option value="tflops">TFLOPS</option>
+            <option value="gflops">GFLOPS</option>
+            <option value="pflops">PFLOPS</option>
+            <option value="tops_int8">TOPS (INT8)</option>
+            <option value="tops_int4">TOPS (INT4)</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid two">
+        <div class="card" id="vramCard"></div>
+        <div class="card" id="computeCard"></div>
+        <div class="card" id="bandwidthCard"></div>
+        <div class="card" id="ttftCard"></div>
+      </div>
+      <div class="assumptions" id="assumptions"></div>
+    </section>
+  </main>
+
+  <script src="js/models.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>
