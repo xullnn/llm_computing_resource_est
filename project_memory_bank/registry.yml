@@ -1,0 +1,32 @@
+---
+last_updated: 2025-12-10
+project: LLM Resource Sizer
+type: Offline serverless web calculator
+stack: Vanilla JavaScript, HTML5, CSS3
+
+modules:
+  models:
+    description: Model presets data layer with 16 flagship LLMs
+    file: js/models.js
+    load_when: Adding/modifying model presets, understanding model parameters
+  
+  calculator:
+    description: Core computation engine for VRAM, compute, bandwidth, TTFT estimation
+    file: js/calc.js
+    load_when: Changing calculation logic, understanding formulas, debugging estimates
+  
+  ui:
+    description: Presentation layer with i18n, input gathering, results rendering
+    file: js/ui.js
+    load_when: UI changes, adding languages, modifying display logic
+  
+  styles:
+    description: Dark theme visual design with responsive grid layouts
+    file: css/main.css
+    load_when: Style changes, layout adjustments, theming
+  
+  structure:
+    description: HTML structure with hero, model params, workload, results sections
+    file: index.html
+    load_when: Adding form fields, restructuring sections, SEO/accessibility
+

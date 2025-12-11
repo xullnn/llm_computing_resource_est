@@ -1,0 +1,175 @@
+---
+alwaysApply: true
+---
+
+You are a coding assistant whose **ephemeral chat memory resets between sessions**.  
+To work effectively you **must reconstruct context from the on‑disk Project Memory Bank** before taking any action. 
+
+Follow this **progressive disclosure** loading strategy and file‑update discipline.
+
+---
+
+## 1 · Progressive Disclosure Layers
+
+> Located under `project_memory_bank/`.  
+> Load layers **incrementally** — only what the current task needs.
+> Start with the lightest layer, go deeper only when necessary.
+
+| Layer | When to Load | Contents | Target Size |
+|-------|--------------|----------|-------------|
+| **L0: Registry** | *Always first* | `registry.yml` - module names + one-liner descriptions | <80 lines |
+| **L1: Core Summaries** | *Most tasks* | `core/vision.md`, `core/glossary.md` | <100 lines each |
+| **L2: Module Summaries** | Task touches a module | `modules/*/summary.md` | <50 lines each |
+| **L3: Interfaces** | Need API details | `modules/*/interface.md` | <200 lines each |
+| **L4: Implementation** | Actively editing/debugging | `modules/*/implementation.md` | As needed |
+| **L5: Integration** | Cross-module work | `integration/*.md` | <300 lines each |
+| **L6: Insights** | Need patterns/lessons | `insights/index.md` → specific category | Index <50 lines |
+
+**Key Principle**: Each layer provides just enough info to decide whether to load deeper.
+
+---
+
+## 2 · File Structure (Progressive)
+
+```
+project_memory_bank/
+├─ registry.yml              # L0: Always loaded, module index
+├─ core/
+│  ├─ vision.md              # L1: Project goals (brief)
+│  ├─ glossary.md            # L1: Key terms
+│  └─ system_overview.md     # L1: Architecture summary (with "Go Deeper" markers)
+├─ modules/
+│  └─ <module_name>/
+│     ├─ summary.md          # L2: What + When to load more (<50 lines)
+│     ├─ interface.md        # L3: Public API details
+│     └─ implementation.md   # L4: Internal details (on-demand)
+├─ integration/
+│  └─ <topic>.md             # L5: Cross-module patterns
+├─ insights/
+│  ├─ index.md               # L6: Category index
+│  ├─ patterns.md            # Established reusable patterns
+│  ├─ architecture.md        # Key architectural decisions
+│  ├─ testing.md             # Testing infrastructure insights
+│  └─ lessons.md             # Debugging lessons, anti-patterns
+└─ README.md                 # Navigation guide
+```
+
+---
+
+## 3 · Session Workflow (Progressive Loading)
+
+```mermaid
+flowchart TD
+    S([Start Session]) --> R[Load Registry L0]
+    R --> A[Analyze Task]
+    A -->|identify modules| D{Need Details?}
+    D -->|quick task| L2[Load Module Summaries L2]
+    D -->|API work| L3[Load Interfaces L3]
+    D -->|debugging| L4[Load Implementation L4]
+    D -->|cross-module| L5[Load Integration L5]
+    A -->|need lessons| L6[Load Insights Index → Category]
+    L2 & L3 & L4 & L5 & L6 --> E[Execute Task]
+    
+    style R fill:#90EE90
+    style L2 fill:#87CEEB
+    style L4 fill:#FFE4B5
+```
+
+*Start light, go deep only when needed. Each layer should provide clear signals for when to load the next.*
+
+---
+
+## 4 · File Conventions
+
+### 4.1 YAML Frontmatter (Optional but Recommended)
+
+Add metadata at the top of each file for quick scanning:
+
+```yaml
+---
+name: LLM Service
+description: Centralized LLM orchestration with AsyncOpenAI
+load_when: LLM integration, prompting, JSON processing
+go_deeper:
+  - interface.md: API details and schemas
+  - implementation.md: Internal architecture
+last_updated: 2025-01-15
+---
+```
+
+### 4.2 "Go Deeper" Markers
+
+Include explicit navigation at the end of summary files:
+
+```markdown
+## 📚 Go Deeper
+- **API Details**: See `interface.md` for schemas and endpoints
+- **Internals**: See `implementation.md` for architecture diagrams
+- **Testing**: See `../test_patterns/llm-testing-modes.md`
+```
+
+### 4.3 Size Limits
+
+| File Type | Target | Max |
+|-----------|--------|-----|
+| `registry.yml` | 50 lines | 80 lines |
+| `summary.md` | 30 lines | 50 lines |
+| `interface.md` | 150 lines | 200 lines |
+| `implementation.md` | As needed | Split if >400 lines |
+| `insights/*.md` | 100 lines each | Split by category |
+
+---
+
+## 5 · Dynamic Updates
+
+1. **After code or design changes**
+   - Update the touched module's `summary.md`, `interface.md`, or `implementation.md`
+   - Update `registry.yml` if module purpose changed
+
+2. **When integration points change**
+   - Patch corresponding docs in `integration/`
+
+3. **Record patterns & lessons**
+   - Add to appropriate `insights/*.md` category file
+   - Update `insights/index.md` if new category needed
+
+4. **If file exceeds size limit**
+   - Split into summary + details
+   - Add "Go Deeper" markers
+
+5. **If a new rule emerges**
+   - Create/patch file in `.cursor/rules/`
+
+---
+
+## 6 · Memory‑Management Best Practices
+
+- **Start with Registry**: Always load `registry.yml` first to make informed decisions
+- **Verify coverage**: Confirm loaded context covers the task before writing code
+- **Load lean**: Each layer adds tokens; stay at the shallowest sufficient layer
+- **Prefer references over code**: Use file paths with line numbers instead of embedding code
+- **Use diagrams**: Flowcharts compress information better than prose
+- **Prune regularly**: Archive or delete obsolete content during periodic cleanups
+- **Split when dense**: If a file grows past limits, split it with clear navigation
+
+---
+
+## 7 · Task‑Type Examples
+
+| Task | Layers to Load |
+|------|----------------|
+| **Quick fix** – "Typo in error message" | L0 (registry) + L2 (module summary) |
+| **Feature** – "Add export button" | L0 + L2 + L3 (interface) |
+| **Bug fix** – "WebSocket drops" | L0 + L2 + L3 + L4 (implementation) + L5 (integration) |
+| **Research** – "Evaluate caching" | L0 + L2 + L6 (insights/architecture) |
+| **Cross-module** – "Auth flow debug" | L0 + L5 (integration) + relevant L3/L4 |
+
+---
+
+## 8 · Remember
+
+After every reset you start blank; **the Project Memory Bank is your only durable knowledge base**.
+
+**Progressive disclosure principle**: Load just enough to decide what to load next. The registry tells you what exists; summaries tell you whether to go deeper; interfaces/implementation provide the details.
+
+Read it, keep it lean, and update it as you work.

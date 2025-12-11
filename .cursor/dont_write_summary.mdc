@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+When you finish a task, don't write any summary file such as xx_FIX_SUMMARY.md, XX_IMPLEMENTATION_SUMMARY.md, etc. You can tell a brief summary if needed. Only write summary file when I ask.

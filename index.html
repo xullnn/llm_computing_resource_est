@@ -3,24 +3,168 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Serverless LLM resource calculator to estimate VRAM, compute, bandwidth, and TTFT for models like Llama, DeepSeek, Qwen, and more. Runs fully offline with English/Chinese support.">
+  <meta name="keywords" content="LLM resource calculator, VRAM estimator, GPU requirements, transformer inference calculator, TTFT, bandwidth, FLOPs">
+  <meta property="og:title" content="LLM Resource Sizer — Offline LLM hardware calculator">
+  <meta property="og:description" content="Estimate VRAM, compute, bandwidth, and TTFT for open LLMs in your browser. Offline, private, bilingual.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://llmrunnable.com/">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://llmrunnable.com/">
   <title>LLM Resource Sizer</title>
   <link rel="stylesheet" href="css/main.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LLM Resource Sizer",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "url": "https://llmrunnable.com/",
+      "description": "Serverless calculator that estimates VRAM, compute, bandwidth, and TTFT for running open LLMs. Works fully offline with English and Chinese UI.",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+  </script>
 </head>
 <body>
-  <header class="hero">
+  <header class="hero-landing" id="top">
+    <div class="hero-landing__copy">
+      <p class="pill" data-i18n="landingEyebrow">Offline · Private · Open</p>
+      <h1 data-i18n="landingTitle">Estimate LLM hardware in seconds</h1>
+      <p class="lede" data-i18n="landingSubhead">Plan VRAM, FLOPs, bandwidth, and TTFT before you buy or deploy. Serverless, privacy-safe, tuned for Qwen, DeepSeek, Llama, and more.</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="#calculator" data-i18n="landingCtaPrimary">Launch calculator</a>
+        <a class="btn ghost" href="#how-it-works" data-i18n="landingCtaSecondary">See how it works</a>
+      </div>
+      <div class="stat-row">
+        <span class="stat-chip" data-i18n="landingStatOffline">100% offline. No telemetry.</span>
+        <span class="stat-chip" data-i18n="landingStatPresets">16 presets incl. DeepSeek, Qwen, Llama.</span>
+        <span class="stat-chip" data-i18n="landingStatBilingual">English / 中文 in one click.</span>
+      </div>
+    </div>
+    <div class="hero-landing__panel">
+      <div class="mini-card">
+        <p class="eyebrow" data-i18n="landingCallout">Serverless physics-based calculator</p>
+        <ul class="checklist">
+          <li data-i18n="landingCalloutOffline">Runs entirely in your browser.</li>
+          <li data-i18n="landingCalloutAccuracy">Prefill + decode math for VRAM, FLOPs, bandwidth.</li>
+          <li data-i18n="landingCalloutUseCases">Benchmark Llama, Qwen, DeepSeek, Phi and more.</li>
+        </ul>
+        <label class="field compact language-switch">
+          <span data-i18n="langLabel">Language</span>
+          <select id="langSelect">
+            <option value="en">English</option>
+            <option value="zh">中文</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <section class="landing-section" id="features">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionLandingWhy">Why this calculator</p>
+      <h2 class="section-title" data-i18n="sectionLandingFeatures">Built for accuracy and privacy</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <div class="icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3 3 7v4c0 5 3.5 9.4 9 10 5.5-.6 9-5 9-10V7l-9-4Z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3 data-i18n="featureOfflineTitle">Offline & private</h3>
+        <p data-i18n="featureOfflineDesc">No sign-in, no telemetry, no servers. Your workload stays on your device.</p>
+      </article>
+      <article class="card-landing">
+        <div class="icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 12h10M12 7v10" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3 data-i18n="featurePhysicsTitle">Physics-backed</h3>
+        <p data-i18n="featurePhysicsDesc">Transformer math for prefill and decode, including KV cache and bandwidth limits.</p>
+      </article>
+      <article class="card-landing">
+        <div class="icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 17V7l8-3 8 3v10l-8 3-8-3Z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M4 12h16" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3 data-i18n="featurePresetsTitle">Model presets</h3>
+        <p data-i18n="featurePresetsDesc">16 curated presets (Qwen, DeepSeek, Llama, Phi, Gemma) with editable overrides.</p>
+      </article>
+      <article class="card-landing">
+        <div class="icon-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 6h14v12H5z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 9h6M9 12h6M9 15h6" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3 data-i18n="featureBilingualTitle">Bilingual UI</h3>
+        <p data-i18n="featureBilingualDesc">English / 中文 translations for teams across regions.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section" id="how-it-works">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionHowEyebrow">How it works</p>
+      <h2 class="section-title" data-i18n="sectionHowTitle">From inputs to hardware sizing</h2>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <span class="step-number">1</span>
+        <div>
+          <h3 data-i18n="howStepInputTitle">Set workload</h3>
+          <p data-i18n="howStepInputDesc">Pick a preset or enter params, prompt length, new tokens, batch size, and targets.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">2</span>
+        <div>
+          <h3 data-i18n="howStepCalcTitle">Apply transformer math</h3>
+          <p data-i18n="howStepCalcDesc">Prefill (O(seq²)) + decode FLOPs, KV cache, and bandwidth are combined with utilization.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">3</span>
+        <div>
+          <h3 data-i18n="howStepResultTitle">Read requirements</h3>
+          <p data-i18n="howStepResultDesc">See VRAM, compute, bandwidth, and TTFT targets to match your hardware budget.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionUseCasesEyebrow">Where it helps</p>
+      <h2 class="section-title" data-i18n="sectionUseCasesTitle">Use cases we see most</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3 data-i18n="useCaseHobbyistTitle">Builders & hobbyists</h3>
+        <p data-i18n="useCaseHobbyistDesc">Check if a single consumer GPU can host a chosen model at your target speed.</p>
+      </article>
+      <article class="card-landing">
+        <h3 data-i18n="useCaseResearchTitle">Research & benchmarking</h3>
+        <p data-i18n="useCaseResearchDesc">Estimate FLOPs and KV cache pressure before running large sweeps.</p>
+      </article>
+      <article class="card-landing">
+        <h3 data-i18n="useCaseTeamsTitle">Infra & product teams</h3>
+        <p data-i18n="useCaseTeamsDesc">Size hardware budgets for pilots and RFPs without exposing data to third parties.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionModelsEyebrow">Model coverage</p>
+      <h2 class="section-title" data-i18n="sectionModelsTitle">Preset roster you can edit</h2>
+      <p class="section-subhead" data-i18n="sectionModelsDesc">Qwen, DeepSeek, Llama, Phi, Gemma, Yi, GLM, Mistral, Mixtral, StableLM, Command R, DBRX, OLMo, InternLM, Llama Guard, and Code models.</p>
+    </div>
+  </section>
+
+  <header class="hero" id="calculator">
     <div>
-      <p class="eyebrow" data-i18n="eyebrow">Offline · Serverless</p>
-      <h1 data-i18n="title">LLM Resource Sizer</h1>
+      <p class="eyebrow" data-i18n="calculatorEyebrow">Calculator</p>
+      <h2 class="hero-title" data-i18n="title">LLM Resource Sizer</h2>
       <p class="lede" data-i18n="lead">Estimate compute, memory, and bandwidth to hit a target tokens/sec and TTFT for an open-source LLM.</p>
     </div>
     <div class="cta">
-      <label class="field compact">
-        <span data-i18n="langLabel">Language</span>
-        <select id="langSelect">
-          <option value="en">English</option>
-          <option value="zh">中文</option>
-        </select>
-      </label>
+      <a class="btn ghost" href="#top" data-i18n="backToTop">Back to overview</a>
     </div>
   </header>
 
