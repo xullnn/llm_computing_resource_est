@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Size your LLM deployment before buying GPUs or committing to cloud. Estimate VRAM, compute, bandwidth for pilots, RFPs, and production planning.">
+  <meta name="keywords" content="LLM deployment sizing, GPU budget, cloud cost estimation, A100, H100, infrastructure planning">
+  <meta property="og:title" content="Size Your LLM Deployment | LLM Resource Sizer">
+  <meta property="og:description" content="Plan hardware budgets for LLM deployments without exposing data to third parties. Physics-based calculator for teams.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://llmrunnable.com/for/teams">
+  <title>Size Your LLM Deployment | LLM Resource Sizer</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <header class="hero-landing">
+    <div class="hero-landing__copy">
+      <p class="pill">☁️ For Teams & Infrastructure</p>
+      <h1>Size before you buy</h1>
+      <p class="lede">Estimate GPU requirements and cloud costs for LLM deployments. Perfect for pilots, RFPs, and capacity planning—all calculated privately in your browser.</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="/?mode=cloud#calculator">Estimate deployment →</a>
+        <a class="btn ghost" href="/">Full calculator</a>
+      </div>
+    </div>
+  </header>
+  
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Common deployment scenarios</h2>
+      <p class="section-subhead">Pre-configured for typical enterprise use cases</p>
+    </div>
+    <div class="landing-grid">
+      <a href="/?preset=llama-3-70b&mode=cloud&prompt=4000&new=500&batch=4&tps=20#calculator" class="card-landing">
+        <h3>Production API (Llama 70B)</h3>
+        <p>Multi-user chatbot with 4 concurrent streams, 20 tok/s per user.</p>
+      </a>
+      <a href="/?preset=qwen-2.5-72b&mode=cloud&prompt=8000&new=1000&batch=8&tps=15#calculator" class="card-landing">
+        <h3>High-throughput RAG (Qwen 72B)</h3>
+        <p>8 concurrent long-context queries for document Q&A.</p>
+      </a>
+      <a href="/?preset=deepseek-v3&mode=cloud&prompt=6000&new=2000&batch=2#calculator" class="card-landing">
+        <h3>Code generation (DeepSeek-V3)</h3>
+        <p>671B MoE for coding assistants with long completions.</p>
+      </a>
+      <a href="/?preset=mixtral-8x7b&mode=cloud&prompt=3000&new=500&batch=16&tps=25#calculator" class="card-landing">
+        <h3>Real-time chat (Mixtral 8x7B)</h3>
+        <p>High concurrency with fast response times.</p>
+      </a>
+      <a href="/?preset=llama-3-8b&mode=cloud&prompt=2000&new=200&batch=32&tps=30#calculator" class="card-landing">
+        <h3>Batch processing (Llama 8B)</h3>
+        <p>Cost-effective for high-volume classification/tagging.</p>
+      </a>
+      <a href="/?preset=qwen-2.5-32b&mode=cloud&prompt=16000&new=1000&batch=2#calculator" class="card-landing">
+        <h3>Enterprise RAG (Qwen 32B)</h3>
+        <p>Long-context document analysis with balanced cost.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Why teams choose this calculator</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3>🔒 Keep data private</h3>
+        <p>No sign-up, no backend, no data sharing. Your deployment specs stay local.</p>
+      </article>
+      <article class="card-landing">
+        <h3>💰 Budget accurately</h3>
+        <p>Estimate costs before committing to cloud providers or on-prem hardware.</p>
+      </article>
+      <article class="card-landing">
+        <h3>📊 Physics-backed</h3>
+        <p>Real transformer math—not guesswork. Accounts for prefill, decode, KV cache.</p>
+      </article>
+      <article class="card-landing">
+        <h3>⚡ Fast iteration</h3>
+        <p>Try different models, quantization, and batch sizes in seconds.</p>
+      </article>
+      <article class="card-landing">
+        <h3>🌐 Bilingual support</h3>
+        <p>English / 中文 for global teams.</p>
+      </article>
+      <article class="card-landing">
+        <h3>🎯 RFP-ready</h3>
+        <p>Export clear requirements for vendor proposals and procurement.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Typical workflow</h2>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <span class="step-number">1</span>
+        <div>
+          <h3>Define workload</h3>
+          <p>Set expected prompt length, generation length, concurrency, and latency targets.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">2</span>
+        <div>
+          <h3>Pick model & precision</h3>
+          <p>Choose model size and quantization strategy (BF16, INT8, INT4).</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">3</span>
+        <div>
+          <h3>Get requirements</h3>
+          <p>See VRAM, compute, bandwidth needs—plus GPU recommendations and costs.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">4</span>
+        <div>
+          <h3>Share with team</h3>
+          <p>Use shareable URLs to align engineering, product, and finance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Hardware options covered</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3>NVIDIA Datacenter</h3>
+        <p>H100, A100, L40S, L4—with pricing for AWS, GCP, Azure.</p>
+      </article>
+      <article class="card-landing">
+        <h3>AMD Instinct</h3>
+        <p>MI300X with industry-leading 192GB HBM for massive contexts.</p>
+      </article>
+      <article class="card-landing">
+        <h3>Multi-GPU setups</h3>
+        <p>Calculate requirements for tensor parallelism across 2-8 GPUs.</p>
+      </article>
+      <article class="card-landing">
+        <h3>On-prem vs cloud</h3>
+        <p>Compare CapEx (buying GPUs) vs OpEx (renting from cloud).</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Use cases we support</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3>Pilot sizing</h3>
+        <p>Size a proof-of-concept before scaling to production.</p>
+      </article>
+      <article class="card-landing">
+        <h3>RFP preparation</h3>
+        <p>Generate clear GPU/TPU specs for vendor proposals.</p>
+      </article>
+      <article class="card-landing">
+        <h3>Cloud cost forecasting</h3>
+        <p>Estimate monthly OpEx for different workload profiles.</p>
+      </article>
+      <article class="card-landing">
+        <h3>Capacity planning</h3>
+        <p>Model growth scenarios: 2x users, 10x traffic, longer contexts.</p>
+      </article>
+      <article class="card-landing">
+        <h3>Quantization trade-offs</h3>
+        <p>Compare BF16 vs INT4 for accuracy/cost balance.</p>
+      </article>
+      <article class="card-landing">
+        <h3>Migration planning</h3>
+        <p>Moving from proprietary API to self-hosted? Size your infrastructure.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section" style="text-align: center; padding: 32px 20px;">
+    <h2 class="section-title">Ready to size your deployment?</h2>
+    <p class="section-subhead" style="margin-bottom: 20px;">Private. Accurate. Instant. No sign-up required.</p>
+    <a class="btn primary" href="/?mode=cloud#calculator" style="font-size: 16px; padding: 14px 24px;">Estimate deployment →</a>
+  </section>
+
+  <footer style="max-width: 1240px; margin: 0 auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
+    <p>
+      <a href="/" style="color: var(--accent); text-decoration: none;">← Back to main calculator</a>
+      · Trusted by infrastructure teams worldwide
+      · <a href="https://github.com" style="color: var(--muted); text-decoration: none;">Open source</a>
+    </p>
+  </footer>
+</body>
+</html>
+

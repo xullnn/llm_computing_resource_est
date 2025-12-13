@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Serverless LLM resource calculator to estimate VRAM, compute, bandwidth, and TTFT for models like Llama, DeepSeek, Qwen, and more. Runs fully offline with English/Chinese support.">
+  <meta name="keywords" content="LLM resource calculator, VRAM estimator, GPU requirements, transformer inference calculator, TTFT, bandwidth, FLOPs">
+  <meta property="og:title" content="LLM Resource Sizer — Offline LLM hardware calculator">
+  <meta property="og:description" content="Estimate VRAM, compute, bandwidth, and TTFT for open LLMs in your browser. Offline, private, bilingual.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://llmrunnable.com/">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://llmrunnable.com/">
+  <title>LLM Resource Sizer</title>
+  <link rel="stylesheet" href="css/main.css">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "LLM Resource Sizer",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web",
+      "url": "https://llmrunnable.com/",
+      "description": "Serverless calculator that estimates VRAM, compute, bandwidth, and TTFT for running open LLMs. Works fully offline with English and Chinese UI.",
+      "offers": { "@type": "Offer", "price": "0" }
+    }
+  </script>
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="brand" data-i18n="navTitle">LLM Resource Sizer</div>
+    <div class="nav-links">
+      <a href="#why" data-i18n="navWhy">Why</a>
+      <a href="#calculator" data-i18n="navCalculator">Calculator</a>
+    </div>
+    <label class="field compact nav-lang">
+      <span data-i18n="langLabel">Language</span>
+      <select id="langSelect">
+        <option value="en">English</option>
+        <option value="zh">中文</option>
+      </select>
+    </label>
+  </nav>
+
+  <header class="hero-landing" id="top">
+    <div class="hero-landing__copy">
+      <p class="pill" data-i18n="landingEyebrow">Offline · Private · Open</p>
+      <h1 data-i18n="landingTitle">Estimate LLM hardware quickly</h1>
+      <p class="lede" data-i18n="landingSubhead">Get VRAM, compute, bandwidth, and TTFT from model and workload inputs. Runs fully offline.</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="#calculator" data-i18n="landingCtaPrimary">Launch calculator</a>
+        <a class="btn ghost" href="#how-it-works" data-i18n="landingCtaSecondary">See how it works</a>
+      </div>
+      <ul class="bullet-list">
+        <li data-i18n="heroBulletOffline">No setup—browser only.</li>
+        <li data-i18n="heroBulletPresets">16 presets, all fields editable.</li>
+        <li data-i18n="heroBulletBilingual">English / 中文.</li>
+      </ul>
+    </div>
+  </header>
+
+  <section class="intro-strip" id="why">
+    <div class="intro-text">
+      <h2 data-i18n="introHeading">Plan in minutes</h2>
+      <p data-i18n="introBody">Pick a preset or your own model, enter workload, see hardware needs.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar">
+        <strong data-i18n="pillarSimpleTitle">No setup</strong>
+        <p data-i18n="pillarSimpleDesc">Opens in browser; works offline.</p>
+      </div>
+      <div class="pillar">
+        <strong data-i18n="pillarAccurateTitle">Calculation model</strong>
+        <p data-i18n="pillarAccurateDesc">Prefill + decode physics with utilization and KV sizing.</p>
+      </div>
+      <div class="pillar">
+        <strong data-i18n="pillarPresetsTitle">Model presets</strong>
+        <p data-i18n="pillarPresetsDesc">Curated models; override any value.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="explore-row">
+    <div class="explore-card">
+      <h3 data-i18n="exploreStartTitle">Open calculator</h3>
+      <p data-i18n="exploreStartDesc">Uses defaults you can overwrite.</p>
+      <a class="btn" href="#calculator" data-i18n="landingCtaPrimary">Launch calculator</a>
+    </div>
+    <div class="explore-card">
+      <h3 data-i18n="exploreMethodTitle">See formulas</h3>
+      <p data-i18n="exploreMethodDesc">Advanced details are optional.</p>
+      <details class="drawer">
+        <summary data-i18n="exploreMethodToggle">Show formulas</summary>
+        <ul class="mini-list">
+          <li data-i18n="methodLine1">Prefill FLOPs = 2 × active params × prompt tokens + attention ~ 4 × layers × prompt² × hidden size.</li>
+          <li data-i18n="methodLine2">Decode FLOPs/token ≈ 2 × active params + 4 × layers × avg seq × hidden size (avg seq ≈ prompt + new/2).</li>
+          <li data-i18n="methodLine3">Bandwidth: weights/batch + KV reads/writes per token; optimistic assumes weights stay resident.</li>
+          <li data-i18n="methodLine4">KV cache = batch × seq × layers × hidden × 2 × bytes (K+V); workspace ≈ 12% of weights.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <section class="landing-section" id="how-it-works">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionHowEyebrow">How it works</p>
+      <h2 class="section-title" data-i18n="sectionHowTitle">From inputs to hardware sizing</h2>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <span class="step-number">1</span>
+        <div>
+          <h3 data-i18n="howStepInputTitle">Set workload</h3>
+          <p data-i18n="howStepInputDesc">Pick a preset or enter params, prompt, tokens, and targets.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">2</span>
+        <div>
+          <h3 data-i18n="howStepCalcTitle">We apply transformer math</h3>
+          <p data-i18n="howStepCalcDesc">Prefill + decode FLOPs, KV cache, and bandwidth with utilization.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">3</span>
+        <div>
+          <h3 data-i18n="howStepResultTitle">Read results</h3>
+          <p data-i18n="howStepResultDesc">VRAM, compute, bandwidth, and TTFT at a glance.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionUseCasesEyebrow">Where it helps</p>
+      <h2 class="section-title" data-i18n="sectionUseCasesTitle">Use cases we see most</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3 data-i18n="useCaseHobbyistTitle">Builders & hobbyists</h3>
+        <p data-i18n="useCaseHobbyistDesc">Check if a single consumer GPU can host a chosen model at your target speed.</p>
+      </article>
+      <article class="card-landing">
+        <h3 data-i18n="useCaseResearchTitle">Research & benchmarking</h3>
+        <p data-i18n="useCaseResearchDesc">Estimate FLOPs and KV cache pressure before running large sweeps.</p>
+      </article>
+      <article class="card-landing">
+        <h3 data-i18n="useCaseTeamsTitle">Infra & product teams</h3>
+        <p data-i18n="useCaseTeamsDesc">Size hardware budgets for pilots and RFPs without exposing data to third parties.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <p class="section-eyebrow" data-i18n="sectionModelsEyebrow">Model coverage</p>
+      <h2 class="section-title" data-i18n="sectionModelsTitle">Preset roster you can edit</h2>
+      <p class="section-subhead" data-i18n="sectionModelsDesc">Qwen, DeepSeek, Llama, Phi, Gemma, Yi, GLM, Mistral, Mixtral, StableLM, Command R, DBRX, OLMo, InternLM, Llama Guard, and Code models.</p>
+    </div>
+  </section>
+
+  <header class="hero" id="calculator">
+    <div>
+      <p class="eyebrow" data-i18n="calculatorEyebrow">Calculator</p>
+      <h2 class="hero-title" data-i18n="title">LLM Resource Sizer</h2>
+      <p class="lede" data-i18n="lead">Estimate compute, memory, and bandwidth to hit a target tokens/sec and TTFT for an open-source LLM.</p>
+    </div>
+    <div class="cta">
+      <a class="btn ghost" href="#top" data-i18n="backToTop">Back to overview</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2 data-i18n="sectionModel">Model</h2>
+      <div class="grid two">
+        <label class="field">
+          <span data-i18n="modelPreset">Preset</span>
+          <select id="modelPreset"></select>
+          <small data-i18n="modelPresetHelp">You can edit any value after prefilling.</small>
+          <div class="preset-meta">
+            <a id="hfLink" class="hf-link" href="#" target="_blank" rel="noreferrer noopener">
+              <svg class="hf-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <circle cx="16" cy="16" r="14" fill="currentColor" />
+                <path d="M11 14h2M19 14h2" stroke="#0b1423" stroke-width="2" stroke-linecap="round" />
+                <path d="M12 20c1.2 1.8 3 2.7 4 2.7s2.8-.6 4-2.7" fill="none" stroke="#0b1423" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span class="hf-link-text" data-i18n="hfLinkLabel">Hugging Face</span>
+            </a>
+          </div>
+        </label>
+        <label class="field">
+          <span data-i18n="modelParams">Model params (B)</span>
+          <input id="paramsB" type="number" min="0" step="0.1" value="80">
+        </label>
+        <label class="field">
+          <span data-i18n="activeParams">Active params for MoE (B, optional)</span>
+          <input id="activeParamsB" type="number" min="0" step="0.1" placeholder="defaults to params">
+          <small data-i18n="activeParamsHelp">If MoE, set the activated parameters per token.</small>
+        </label>
+        <label class="field">
+          <span data-i18n="weightPrecision">Weight precision</span>
+          <select id="weightPrecision">
+            <option value="bf16">BF16</option>
+            <option value="fp16">FP16</option>
+            <option value="fp8">FP8</option>
+            <option value="int8">INT8</option>
+            <option value="int4">INT4</option>
+          </select>
+        </label>
+        <label class="field">
+          <span data-i18n="kvPrecision">KV precision</span>
+          <select id="kvPrecision">
+            <option value="bf16">BF16</option>
+            <option value="fp16">FP16</option>
+            <option value="fp8">FP8</option>
+          </select>
+        </label>
+        <label class="field">
+          <span data-i18n="hiddenSize">Hidden size (override, optional)</span>
+          <input id="hiddenSize" type="number" min="0" step="1" placeholder="auto">
+        </label>
+        <label class="field">
+          <span data-i18n="layers">Layers (override, optional)</span>
+          <input id="numLayers" type="number" min="0" step="1" placeholder="auto">
+        </label>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 data-i18n="sectionWorkload">Workload</h2>
+      <div class="grid three">
+        <label class="field">
+          <span data-i18n="promptTokens">Prompt tokens</span>
+          <input id="promptTokens" type="number" min="1" step="50" value="10000">
+        </label>
+        <label class="field">
+          <span data-i18n="newTokens">Max new tokens</span>
+          <input id="newTokens" type="number" min="1" step="10" value="200">
+        </label>
+        <label class="field">
+          <span data-i18n="batchSize">Batch size / concurrency</span>
+          <input id="batchSize" type="number" min="1" step="1" value="1">
+        </label>
+        <label class="field">
+          <span data-i18n="targetTps">Target throughput (tokens/sec per stream)</span>
+          <input id="targetTps" type="number" min="0.1" step="0.5" value="10">
+        </label>
+        <label class="field">
+          <span data-i18n="ttftMs">Target TTFT (ms)</span>
+          <input id="ttftMs" type="number" min="1" step="10" value="1500">
+        </label>
+        <label class="field">
+          <span data-i18n="utilCompute">Utilization (compute)</span>
+          <input id="utilCompute" type="number" min="0.05" max="1" step="0.05" value="0.45">
+          <small data-i18n="utilComputeHelp">Effective fraction of peak TFLOPS/TOPS.</small>
+        </label>
+        <label class="field">
+          <span data-i18n="utilBw">Utilization (bandwidth)</span>
+          <input id="utilBandwidth" type="number" min="0.05" max="1" step="0.05" value="0.6">
+          <small data-i18n="utilBwHelp">Effective fraction of peak memory bandwidth.</small>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel results">
+      <div class="results-header">
+        <h2 data-i18n="sectionResults">Results</h2>
+        <label class="field compact">
+          <span data-i18n="computeUnit">Compute unit</span>
+          <select id="computeUnit">
+            <option value="tflops">TFLOPS</option>
+            <option value="gflops">GFLOPS</option>
+            <option value="pflops">PFLOPS</option>
+            <option value="tops_int8">TOPS (INT8)</option>
+            <option value="tops_int4">TOPS (INT4)</option>
+          </select>
+        </label>
+      </div>
+      <div class="grid two">
+        <div class="card" id="vramCard"></div>
+        <div class="card" id="computeCard"></div>
+        <div class="card" id="bandwidthCard"></div>
+        <div class="card" id="ttftCard"></div>
+      </div>
+      <div class="assumptions" id="assumptions"></div>
+    </section>
+  </main>
+
+  <script src="js/models.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

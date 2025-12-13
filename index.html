@@ -134,18 +134,21 @@
       <h2 class="section-title" data-i18n="sectionUseCasesTitle">Use cases we see most</h2>
     </div>
     <div class="landing-grid">
-      <article class="card-landing">
+      <a href="/for/hobbyists.html" class="card-landing" style="text-decoration: none; color: inherit;">
         <h3 data-i18n="useCaseHobbyistTitle">Builders & hobbyists</h3>
         <p data-i18n="useCaseHobbyistDesc">Check if a single consumer GPU can host a chosen model at your target speed.</p>
-      </article>
-      <article class="card-landing">
+        <small style="color: var(--accent); font-weight: 600; margin-top: 8px; display: block;">Learn more →</small>
+      </a>
+      <a href="/for/researchers.html" class="card-landing" style="text-decoration: none; color: inherit;">
         <h3 data-i18n="useCaseResearchTitle">Research & benchmarking</h3>
         <p data-i18n="useCaseResearchDesc">Estimate FLOPs and KV cache pressure before running large sweeps.</p>
-      </article>
-      <article class="card-landing">
+        <small style="color: var(--accent); font-weight: 600; margin-top: 8px; display: block;">Learn more →</small>
+      </a>
+      <a href="/for/teams.html" class="card-landing" style="text-decoration: none; color: inherit;">
         <h3 data-i18n="useCaseTeamsTitle">Infra & product teams</h3>
         <p data-i18n="useCaseTeamsDesc">Size hardware budgets for pilots and RFPs without exposing data to third parties.</p>
-      </article>
+        <small style="color: var(--accent); font-weight: 600; margin-top: 8px; display: block;">Learn more →</small>
+      </a>
     </div>
   </section>
 
@@ -225,6 +228,27 @@
       </div>
     </section>
 
+    <section class="panel hardware-section">
+      <h2>
+        <span data-i18n="sectionHardware">Hardware (optional)</span>
+        <button type="button" class="toggle-hardware btn ghost" id="toggleHardware" aria-expanded="false">
+          <span data-i18n="showHardware">+ Select GPU to test fit</span>
+        </button>
+      </h2>
+      <div class="hardware-picker" id="hardwarePicker" style="display: none;">
+        <div class="grid two">
+          <label class="field">
+            <span data-i18n="selectGPU">Select GPU</span>
+            <select id="gpuSelect">
+              <option value="">None (manual entry)</option>
+            </select>
+            <small data-i18n="gpuHelp">Auto-fills specs to check if requirements fit.</small>
+          </label>
+          <div class="gpu-info" id="gpuInfo"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="panel">
       <h2 data-i18n="sectionWorkload">Workload</h2>
       <div class="grid three">
@@ -281,12 +305,14 @@
         <div class="card" id="bandwidthCard"></div>
         <div class="card" id="ttftCard"></div>
       </div>
+      <div class="hardware-recommendations" id="hardwareRecommendations"></div>
       <div class="assumptions" id="assumptions"></div>
     </section>
   </main>
 
   <script src="js/models.js"></script>
   <script src="js/calc.js"></script>
+  <script src="js/gpus.js"></script>
   <script src="js/ui.js"></script>
 </body>
 </html>

@@ -491,6 +491,160 @@ button.ghost {
   color: var(--muted);
 }
 
+/* Hardware picker styles */
+.hardware-section h2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.toggle-hardware {
+  font-size: 13px;
+  padding: 6px 12px;
+  margin: 0;
+}
+
+.hardware-picker {
+  margin-top: 14px;
+}
+
+.gpu-specs {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.gpu-specs strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.specs-grid span:nth-child(odd) {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.gpu-fitness {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.gpu-fitness.fit {
+  background: rgba(16,185,129,0.08);
+  border-color: rgba(16,185,129,0.2);
+}
+
+.gpu-fitness.no-fit {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.2);
+}
+
+.fitness-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.fitness-details {
+  font-size: 13px;
+  display: grid;
+  gap: 4px;
+}
+
+.fitness-details .ok {
+  color: var(--success);
+}
+
+.fitness-details .warn {
+  color: var(--warn);
+}
+
+/* Hardware recommendations */
+.hardware-recommendations {
+  margin-top: 18px;
+}
+
+.recommendation-section h3 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.no-recommendations {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.rec-category {
+  margin-bottom: 16px;
+}
+
+.rec-category h4 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.gpu-card {
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
+  transition: border-color 0.2s ease, transform 0.1s ease;
+}
+
+.gpu-card:hover {
+  border-color: rgba(124,58,237,0.3);
+  transform: translateY(-1px);
+}
+
+.gpu-card-header strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.gpu-card-specs {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: grid;
+  gap: 3px;
+}
+
+.gpu-card .price,
+.gpu-card .cloud-cost {
+  font-size: 12px;
+  color: var(--success);
+  margin-top: 6px;
+}
+
+.gpu-card .headroom {
+  color: var(--success);
+  font-size: 11px;
+  margin-left: 4px;
+}
+
 @media (max-width: 720px) {
   header.hero {
     flex-direction: column;

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compute Die Component</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <section class="component-card">
+      <h3>Compute Die / Tensor Cores</h3>
+      <div class="die-wrapper">
+        <div class="die-package">
+          <div class="die">
+            <div class="die-grid">
+              <div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div>
+              <div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div>
+              <div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div><div class="die-cell"></div>
+            </div>
+            <span class="chip die-badge">Peak <span class="value" data-bind="peakCompute">325</span> TFLOPS</span>
+          </div>
+          <div class="die-pin-row top">
+            <div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div>
+          </div>
+          <div class="die-pin-row bottom">
+            <div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div><div class="die-pin"></div>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="flex">
+        <span class="chip">Utilization <span class="value" data-bind="utilization">0.45</span></span>
+        <span class="chip muted">Toggle ready (TFLOPS/TOPS)</span>
+      </div>
+      <p class="muted" style="margin:8px 0 0;">Gridded reticle with pad rails inspired by the GPU die photo.</p>
+    </section>
+  </div>
+</body>
+</html>

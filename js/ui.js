@@ -73,6 +73,11 @@ const I18N = {
     langLabel: "Language",
     reset: "Reset to defaults",
     sectionModel: "Model",
+    sectionHardware: "Hardware (optional)",
+    showHardware: "+ Select GPU to test fit",
+    hideHardware: "− Hide hardware picker",
+    selectGPU: "Select GPU",
+    gpuHelp: "Auto-fills specs to check if requirements fit.",
     sectionWorkload: "Workload",
     sectionResults: "Results",
     modelPreset: "Preset",
@@ -173,6 +178,11 @@ const I18N = {
     langLabel: "语言",
     reset: "恢复默认",
     sectionModel: "模型",
+    sectionHardware: "硬件（可选）",
+    showHardware: "+ 选择 GPU 测试是否适配",
+    hideHardware: "− 隐藏硬件选择",
+    selectGPU: "选择 GPU",
+    gpuHelp: "自动填充规格以检查需求是否满足。",
     sectionWorkload: "负载",
     sectionResults: "结果",
     modelPreset: "预设",
@@ -226,10 +236,90 @@ const I18N = {
 };
 
 let currentLang = "en";
+let currentMode = null; // 'local', 'cloud', 'compare', or null
 
 function t(key) {
   const dict = I18N[currentLang] || I18N.en;
   return dict[key] || I18N.en[key] || key;
+}
+
+// URL Parameter handling for deep linking and persona pages
+function getURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    mode: params.get('mode'),           // 'local', 'cloud', 'compare'
+    preset: params.get('preset'),       // model preset ID
+    gpu: params.get('gpu'),             // GPU ID
+    lang: params.get('lang'),           // 'en' or 'zh'
+    promptTokens: params.get('prompt'),
+    newTokens: params.get('new'),
+    batchSize: params.get('batch'),
+    targetTps: params.get('tps'),
+    ttftMs: params.get('ttft'),
+  };
+}
+
+function applyURLParams(params) {
+  // Apply language
+  if (params.lang && ['en', 'zh'].includes(params.lang)) {
+    currentLang = params.lang;
+    const langSelect = byId('langSelect');
+    if (langSelect) langSelect.value = currentLang;
+  }
+  
+  // Apply mode (for future use with persona-specific UI adjustments)
+  if (params.mode) {
+    currentMode = params.mode;
+    document.body.setAttribute('data-mode', currentMode);
+  }
+  
+  // Apply preset
+  if (params.preset) {
+    const presetSelect = byId('modelPreset');
+    const presetExists = MODEL_PRESETS.find(m => m.id === params.preset);
+    if (presetSelect && presetExists) {
+      presetSelect.value = params.preset;
+      const preset = getSelectedPreset();
+      applyPreset(preset);
+      updatePresetLink(preset);
+    }
+  }
+  
+  // Apply workload parameters
+  if (params.promptTokens) byId('promptTokens').value = params.promptTokens;
+  if (params.newTokens) byId('newTokens').value = params.newTokens;
+  if (params.batchSize) byId('batchSize').value = params.batchSize;
+  if (params.targetTps) byId('targetTps').value = params.targetTps;
+  if (params.ttftMs) byId('ttftMs').value = params.ttftMs;
+  
+  // Apply GPU if provided (will be used with hardware picker)
+  if (params.gpu) {
+    // Store for later use when hardware picker is initialized
+    document.body.setAttribute('data-preset-gpu', params.gpu);
+  }
+}
+
+function generateShareableURL(includeResults = false) {
+  const params = new URLSearchParams();
+  
+  const preset = byId('modelPreset').value;
+  if (preset) params.set('preset', preset);
+  
+  if (currentMode) params.set('mode', currentMode);
+  if (currentLang !== 'en') params.set('lang', currentLang);
+  
+  if (includeResults) {
+    params.set('prompt', byId('promptTokens').value);
+    params.set('new', byId('newTokens').value);
+    params.set('batch', byId('batchSize').value);
+    params.set('tps', byId('targetTps').value);
+    params.set('ttft', byId('ttftMs').value);
+  }
+  
+  const url = new URL(window.location);
+  url.search = params.toString();
+  url.hash = '#calculator';
+  return url.toString();
 }
 
 function applyStaticTranslations() {
@@ -383,18 +473,262 @@ function render(results) {
 
   const assumptionLines = I18N[currentLang]?.assumptions || I18N.en.assumptions;
   byId("assumptions").textContent = assumptionLines.join(" ");
+  
+  // Render hardware recommendations
+  renderHardwareRecommendations(results);
+}
+
+async function renderHardwareRecommendations(results) {
+  const container = byId('hardwareRecommendations');
+  if (!container) return;
+  
+  // Wait for GPU database to load
+  if (!gpuDatabase) {
+    await loadGPUDatabase();
+  }
+  
+  if (!gpuDatabase || gpuDatabase.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  
+  const recommendations = getHardwareRecommendations({
+    totalVramGb: results.totalVramGb,
+    requiredTflops: results.requiredTflops,
+    requiredBwGbps: results.requiredBwGbps,
+    weightPrecision: results.weightBytes === 2 ? 'bf16' : 
+                     results.weightBytes === 1 ? 'int8' : 
+                     results.weightBytes === 0.5 ? 'int4' : 'bf16'
+  });
+  
+  if (!recommendations || 
+      (recommendations.consumer.length === 0 && 
+       recommendations.professional.length === 0 && 
+       recommendations.datacenter.length === 0)) {
+    container.innerHTML = `
+      <div class="recommendation-section">
+        <h3>💡 Hardware Recommendations</h3>
+        <p class="no-recommendations">No single GPU in our database meets all requirements. Consider multi-GPU setup or cloud providers with custom configurations.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = '<div class="recommendation-section"><h3>💡 Recommended GPUs</h3>';
+  
+  // Consumer GPUs
+  if (recommendations.consumer.length > 0) {
+    html += '<div class="rec-category"><h4>🏠 Consumer / Gaming</h4><div class="rec-grid">';
+    recommendations.consumer.forEach(gpu => {
+      html += renderGPUCard(gpu);
+    });
+    html += '</div></div>';
+  }
+  
+  // Professional GPUs
+  if (recommendations.professional.length > 0) {
+    html += '<div class="rec-category"><h4>💼 Professional / Workstation</h4><div class="rec-grid">';
+    recommendations.professional.forEach(gpu => {
+      html += renderGPUCard(gpu);
+    });
+    html += '</div></div>';
+  }
+  
+  // Datacenter GPUs
+  if (recommendations.datacenter.length > 0) {
+    html += '<div class="rec-category"><h4>☁️ Datacenter / Cloud</h4><div class="rec-grid">';
+    recommendations.datacenter.forEach(gpu => {
+      html += renderGPUCard(gpu);
+    });
+    html += '</div></div>';
+  }
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function renderGPUCard(gpu) {
+  const count = gpu.count > 1 ? `${gpu.count}×` : '';
+  const cloudCost = gpu.cloud_hourly ? 
+    `<div class="cloud-cost">☁️ ~$${fmt(gpu.cloud_hourly * (gpu.count || 1), 2)}/hr</div>` : '';
+  const price = gpu.price_usd ? 
+    `<div class="price">💰 ~$${(gpu.price_usd * (gpu.count || 1)).toLocaleString()}</div>` : '';
+  const vramHeadroom = gpu.vram_headroom ? 
+    `<span class="headroom">+${fmt(gpu.vram_headroom, 0)}GB headroom</span>` : '';
+  
+  return `
+    <div class="gpu-card">
+      <div class="gpu-card-header">
+        <strong>${count} ${gpu.name}</strong>
+      </div>
+      <div class="gpu-card-specs">
+        <div>VRAM: ${gpu.count > 1 ? fmt(gpu.total_vram, 0) : gpu.vram_gb} GB ${vramHeadroom}</div>
+        <div>Compute: ${fmt(gpu.effective_tflops || gpu.tflops_bf16 || gpu.tflops_fp16, 1)} TFLOPS</div>
+        <div>Bandwidth: ${gpu.bandwidth_gbps} GB/s</div>
+      </div>
+      ${price}
+      ${cloudCost}
+    </div>
+  `;
 }
 
 function computeAndRender() {
   const inputs = gatherInputs();
   const results = calcRequirements(inputs);
   render(results);
+  updateGPUFitness(results);
+}
+
+// Hardware picker functions
+async function initHardwarePicker() {
+  await loadGPUDatabase();
+  populateGPUSelect();
+  
+  const toggleBtn = byId('toggleHardware');
+  const picker = byId('hardwarePicker');
+  const gpuSelect = byId('gpuSelect');
+  
+  if (toggleBtn && picker) {
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = picker.style.display === 'none';
+      picker.style.display = isHidden ? 'block' : 'none';
+      toggleBtn.setAttribute('aria-expanded', isHidden);
+      toggleBtn.querySelector('[data-i18n]').setAttribute('data-i18n', 
+        isHidden ? 'hideHardware' : 'showHardware');
+      toggleBtn.querySelector('[data-i18n]').textContent = 
+        t(isHidden ? 'hideHardware' : 'showHardware');
+    });
+  }
+  
+  if (gpuSelect) {
+    gpuSelect.addEventListener('change', handleGPUSelection);
+    
+    // Check if GPU was preset via URL
+    const presetGPU = document.body.getAttribute('data-preset-gpu');
+    if (presetGPU) {
+      gpuSelect.value = presetGPU;
+      handleGPUSelection();
+      // Show picker if GPU was preset
+      if (picker) picker.style.display = 'block';
+      if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+  }
+}
+
+function populateGPUSelect() {
+  const sel = byId('gpuSelect');
+  if (!sel || !gpuDatabase) return;
+  
+  // Clear existing options except first (None)
+  while (sel.options.length > 1) {
+    sel.remove(1);
+  }
+  
+  // Group by category
+  const categories = {
+    consumer: 'Consumer GPUs',
+    professional: 'Professional / Workstation',
+    apple: 'Apple Silicon',
+    datacenter: 'Datacenter GPUs'
+  };
+  
+  Object.entries(categories).forEach(([category, label]) => {
+    const gpus = getGPUsByCategory(category);
+    if (gpus.length > 0) {
+      const optgroup = document.createElement('optgroup');
+      optgroup.label = label;
+      gpus.forEach(gpu => {
+        const opt = document.createElement('option');
+        opt.value = gpu.id;
+        opt.textContent = gpu.name;
+        optgroup.appendChild(opt);
+      });
+      sel.appendChild(optgroup);
+    }
+  });
+}
+
+function handleGPUSelection() {
+  const gpuId = byId('gpuSelect').value;
+  const infoDiv = byId('gpuInfo');
+  
+  if (!gpuId || !infoDiv) {
+    if (infoDiv) infoDiv.innerHTML = '';
+    return;
+  }
+  
+  const gpu = getGPUById(gpuId);
+  if (!gpu) return;
+  
+  // Display GPU info
+  infoDiv.innerHTML = `
+    <div class="gpu-specs">
+      <strong>${gpu.name}</strong>
+      <div class="specs-grid">
+        <span>VRAM:</span><span>${gpu.vram_gb} GB</span>
+        <span>BF16:</span><span>${gpu.tflops_bf16 || gpu.tflops_fp16} TFLOPS</span>
+        <span>Bandwidth:</span><span>${gpu.bandwidth_gbps} GB/s</span>
+      </div>
+      ${gpu.price_usd ? `<small>~$${gpu.price_usd.toLocaleString()}</small>` : ''}
+    </div>
+  `;
+  
+  // Will be used in render to show fit
+  computeAndRender();
+}
+
+function updateGPUFitness(results) {
+  const gpuId = byId('gpuSelect')?.value;
+  if (!gpuId) return;
+  
+  const gpu = getGPUById(gpuId);
+  if (!gpu) return;
+  
+  const infoDiv = byId('gpuInfo');
+  if (!infoDiv) return;
+  
+  // Check if requirements fit
+  const vramFits = gpu.vram_gb >= results.totalVramGb;
+  const tflops = gpu.tflops_bf16 || gpu.tflops_fp16;
+  const computeFits = tflops >= results.requiredTflops;
+  const bwFits = gpu.bandwidth_gbps >= results.requiredBwGbps;
+  
+  const allFit = vramFits && computeFits && bwFits;
+  
+  const fitnessHtml = `
+    <div class="gpu-fitness ${allFit ? 'fit' : 'no-fit'}">
+      <div class="fitness-title">${allFit ? '✅ This GPU fits!' : '⚠️ May not meet requirements'}</div>
+      <div class="fitness-details">
+        <div class="${vramFits ? 'ok' : 'warn'}">VRAM: ${fmt(gpu.vram_gb, 0)}GB ${vramFits ? '≥' : '<'} ${fmt(results.totalVramGb, 0)}GB needed</div>
+        <div class="${computeFits ? 'ok' : 'warn'}">Compute: ${fmt(tflops, 0)} ${computeFits ? '≥' : '<'} ${fmt(results.requiredTflops, 0)} TFLOPS</div>
+        <div class="${bwFits ? 'ok' : 'warn'}">Bandwidth: ${fmt(gpu.bandwidth_gbps, 0)} ${bwFits ? '≥' : '<'} ${fmt(results.requiredBwGbps, 0)} GB/s</div>
+      </div>
+    </div>
+  `;
+  
+  // Find existing fitness div or append
+  const existingFitness = infoDiv.querySelector('.gpu-fitness');
+  if (existingFitness) {
+    existingFitness.outerHTML = fitnessHtml;
+  } else {
+    infoDiv.innerHTML += fitnessHtml;
+  }
 }
 
 function init() {
+  // Check for URL parameters first
+  const urlParams = getURLParams();
+  
   populatePresetSelect();
-  applyPreset(MODEL_PRESETS[0]);
-  updatePresetLink(MODEL_PRESETS[0]);
+  
+  // Apply URL params before setting defaults
+  if (Object.values(urlParams).some(v => v !== null)) {
+    applyURLParams(urlParams);
+  } else {
+    applyPreset(MODEL_PRESETS[0]);
+    updatePresetLink(MODEL_PRESETS[0]);
+  }
+  
   applyStaticTranslations();
 
   const handlePresetSelect = () => {
@@ -417,6 +751,9 @@ function init() {
     updatePresetLink(getSelectedPreset());
     computeAndRender();
   });
+
+  // Initialize hardware picker
+  initHardwarePicker();
 
   computeAndRender();
 }

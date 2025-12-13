@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HBM Stack Component</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <section class="component-card">
+      <h3>HBM / VRAM Stack</h3>
+      <div class="hbm-stack">
+        <div class="vias">
+          <div class="via-dot"></div>
+          <div class="via-dot"></div>
+          <div class="via-dot"></div>
+        </div>
+        <div class="hbm-assembly">
+          <div class="hbm-cap">HBM3</div>
+          <div class="hbm-package">
+            <div class="hbm-chip"></div>
+            <div class="hbm-chip"></div>
+            <div class="hbm-chip"></div>
+            <div class="hbm-chip"></div>
+          </div>
+          <div class="hbm-substrate">
+            <div class="interposer-lines"></div>
+            <div class="bga-grid"></div>
+          </div>
+        </div>
+        <div class="vias alt">
+          <div class="via-dot"></div>
+          <div class="via-dot"></div>
+          <div class="via-dot"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="flex">
+        <span class="chip">Weights <span class="value" data-bind="weightsVram">48 GB</span></span>
+        <span class="chip muted">Workspace <span class="value" data-bind="workspaceOverhead">+12%</span></span>
+      </div>
+      <p class="muted" style="margin:8px 0 0;">Stacked dies on package; TSV vias into a BGA substrate like the reference HBM package.</p>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bandwidth Bus Component</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page">
+    <section class="component-card">
+      <h3>Memory Bandwidth Bus</h3>
+      <div class="bus-assembly">
+        <div class="bus-node hbm">HBM</div>
+        <div class="bus">
+          <div class="bus-vias">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="bus-node die">Die</div>
+      </div>
+      <div class="bus-labels">
+        <span class="chip">Conservative <span class="value" data-bind="bwConservative">142 GB/s</span></span>
+        <span class="chip">Optimistic <span class="value" data-bind="bwOptimistic">68 GB/s</span></span>
+      </div>
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <span class="toggle">Weights resident</span>
+        <span class="toggle">Weights streamed</span>
+      </div>
+      <p class="muted" style="margin:8px 0 0;">Interposer-style traces and vias between HBM and die from the bus reference.</p>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Check if your RTX 4090, 3090, or Mac can run Llama, Mistral, Qwen, or other open LLMs locally. Free offline calculator for gamers and hobbyists.">
+  <meta name="keywords" content="run LLM locally, GPU requirements, RTX 4090 LLM, Mac LLM, gaming GPU AI">
+  <meta property="og:title" content="Can Your GPU Run This LLM? | LLM Resource Sizer">
+  <meta property="og:description" content="Find out if your gaming GPU or Mac can run the latest open-source LLMs—before you download.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://llmrunnable.com/for/hobbyists">
+  <title>Can Your GPU Run This LLM? | LLM Resource Sizer</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+  <header class="hero-landing">
+    <div class="hero-landing__copy">
+      <p class="pill">🏠 Run AI Locally</p>
+      <h1>Can your GPU handle it?</h1>
+      <p class="lede">Find out if your gaming GPU or Mac can run the latest open-source LLMs like Llama, Qwen, DeepSeek, or Mistral—before you spend hours downloading.</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="/?mode=local#calculator">Check my GPU →</a>
+        <a class="btn ghost" href="/">Full calculator</a>
+      </div>
+    </div>
+  </header>
+  
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Popular checks</h2>
+      <p class="section-subhead">Quick links to check common model + GPU combinations</p>
+    </div>
+    <div class="landing-grid">
+      <a href="/?preset=llama-3-8b&mode=local&prompt=8000&new=1000#calculator" class="card-landing">
+        <h3>Llama 3.1 8B on RTX 4090</h3>
+        <p>Can a single 4090 run Meta's 8B model with long context?</p>
+      </a>
+      <a href="/?preset=qwen-2.5-32b&mode=local&prompt=10000#calculator" class="card-landing">
+        <h3>Qwen 2.5 32B on Mac Studio</h3>
+        <p>Does the M2 Ultra have enough unified memory for Qwen?</p>
+      </a>
+      <a href="/?preset=deepseek-v3&mode=local&prompt=5000#calculator" class="card-landing">
+        <h3>DeepSeek-V3 on RTX 3090</h3>
+        <p>Can last-gen consumer hardware handle a 671B MoE?</p>
+      </a>
+      <a href="/?preset=llama-3-70b&mode=local&prompt=4000#calculator" class="card-landing">
+        <h3>Llama 3 70B quantized</h3>
+        <p>How much VRAM for 70B with INT4 quantization?</p>
+      </a>
+      <a href="/?preset=mistral-7b&mode=local&prompt=16000#calculator" class="card-landing">
+        <h3>Mistral 7B with 16K context</h3>
+        <p>Check long-context support on mid-range GPUs.</p>
+      </a>
+      <a href="/?preset=phi-3.5-mini&mode=local&prompt=3000#calculator" class="card-landing">
+        <h3>Phi-3.5 Mini on RTX 3080</h3>
+        <p>Can a 10GB card handle Microsoft's efficient model?</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Why check before you run?</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3>⏱️ Save time</h3>
+        <p>Don't waste hours downloading 50GB+ models that won't fit your GPU.</p>
+      </article>
+      <article class="card-landing">
+        <h3>💰 Avoid upgrades</h3>
+        <p>Know exactly what hardware you need before buying.</p>
+      </article>
+      <article class="card-landing">
+        <h3>🎯 Optimize settings</h3>
+        <p>Adjust quantization, context length, and batch size to fit your setup.</p>
+      </article>
+      <article class="card-landing">
+        <h3>🔒 Keep it private</h3>
+        <p>All calculations run locally. No sign-up, no tracking, no data sent anywhere.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">How it works</h2>
+    </div>
+    <div class="steps">
+      <div class="step-card">
+        <span class="step-number">1</span>
+        <div>
+          <h3>Pick your model</h3>
+          <p>Choose from 16+ presets or enter custom parameters.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">2</span>
+        <div>
+          <h3>Select your GPU</h3>
+          <p>Optional: pick your hardware to auto-check compatibility.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <span class="step-number">3</span>
+        <div>
+          <h3>Get instant answer</h3>
+          <p>See VRAM, compute, and bandwidth requirements—plus GPU recommendations.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing-section">
+    <div class="section-header">
+      <h2 class="section-title">Supported hardware</h2>
+    </div>
+    <div class="landing-grid">
+      <article class="card-landing">
+        <h3>NVIDIA GeForce</h3>
+        <p>RTX 4090, 4080, 3090, 3080, and more consumer GPUs.</p>
+      </article>
+      <article class="card-landing">
+        <h3>Apple Silicon</h3>
+        <p>Mac Studio M2/M3 Ultra, MacBook Pro M3 Max with unified memory.</p>
+      </article>
+      <article class="card-landing">
+        <h3>NVIDIA Professional</h3>
+        <p>RTX A6000, A5000, and other workstation cards.</p>
+      </article>
+      <article class="card-landing">
+        <h3>AMD Radeon</h3>
+        <p>RX 7900 XTX and other compatible AMD GPUs.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="landing-section" style="text-align: center; padding: 32px 20px;">
+    <h2 class="section-title">Ready to check your GPU?</h2>
+    <p class="section-subhead" style="margin-bottom: 20px;">Takes 10 seconds. Works 100% offline.</p>
+    <a class="btn primary" href="/?mode=local#calculator" style="font-size: 16px; padding: 14px 24px;">Check my GPU →</a>
+  </section>
+
+  <footer style="max-width: 1240px; margin: 0 auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
+    <p>
+      <a href="/" style="color: var(--accent); text-decoration: none;">← Back to main calculator</a>
+      · Made with ❤️ for the AI community
+      · <a href="https://github.com" style="color: var(--muted); text-decoration: none;">Open source</a>
+    </p>
+  </footer>
+</body>
+</html>
+
