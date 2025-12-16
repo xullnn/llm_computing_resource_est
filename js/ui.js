@@ -69,13 +69,18 @@ const I18N = {
     sectionModelsTitle: "Preset roster you can edit",
     sectionModelsDesc: "Qwen, DeepSeek, Llama, Phi, Gemma, Yi, GLM, Mistral, Mixtral, StableLM, Command R, DBRX, OLMo, InternLM, Llama Guard, and Code models.",
     title: "LLM Resource Sizer",
-    lead: "Estimate compute, memory, and bandwidth to hit a target tokens/sec and TTFT for an open-source LLM.",
+    lead: "Find out if your GPU can run AI models like Llama, Qwen, or DeepSeek — and how fast.",
+    quickLlama: "Try Llama 3 8B",
+    quickQwen: "Try Qwen 32B",
+    quickDeepseek: "Try DeepSeek-V3",
     langLabel: "Language",
     reset: "Reset to defaults",
     sectionModel: "Model",
     sectionHardware: "Hardware (optional)",
     showHardware: "+ Select GPU to test fit",
     hideHardware: "− Hide hardware picker",
+    showAdvanced: "Advanced options",
+    hideAdvanced: "Advanced options",
     selectGPU: "Select GPU",
     gpuHelp: "Auto-fills specs to check if requirements fit.",
     sectionWorkload: "Workload",
@@ -90,11 +95,18 @@ const I18N = {
     kvPrecision: "KV precision",
     hiddenSize: "Hidden size (override, optional)",
     layers: "Layers (override, optional)",
-    promptTokens: "Prompt tokens",
-    newTokens: "Max new tokens",
-    batchSize: "Batch size / concurrency",
-    targetTps: "Target throughput (tokens/sec per stream)",
-    ttftMs: "Target TTFT (ms)",
+    weightPrecisionHelp: "Lower = smaller & faster, but less accurate",
+    kvPrecisionHelp: "Usually matches weight precision",
+    promptTokens: "Input length (tokens)",
+    promptTokensHelp: "Short: 500 · Document: 8K · Long: 32K",
+    newTokens: "Output length (tokens)",
+    newTokensHelp: "Typical: 100-500 · Long: 1K-2K",
+    batchSize: "Simultaneous users",
+    batchSizeHelp: "Personal: 1 · Team: 4-8 · Production: 16+",
+    targetTps: "Speed (tokens/sec)",
+    targetTpsHelp: "Slow: 5 · Good: 15 · Fast: 30+",
+    ttftMs: "First response time (ms)",
+    ttftMsHelp: "Fast: 500 · Acceptable: 2000",
     utilCompute: "Utilization (compute)",
     utilComputeHelp: "Effective fraction of peak TFLOPS/TOPS.",
     utilBw: "Utilization (bandwidth)",
@@ -174,13 +186,18 @@ const I18N = {
     sectionModelsTitle: "可编辑的预设清单",
     sectionModelsDesc: "Qwen、DeepSeek、Llama、Phi、Gemma、Yi、GLM、Mistral、Mixtral、StableLM、Command R、DBRX、OLMo、InternLM、Llama Guard 与多款 Code 模型。",
     title: "LLM 资源估算",
-    lead: "估算达到目标输出速率与 TTFT 所需的算力、显存与带宽。",
+    lead: "查看你的 GPU 能否运行 Llama、Qwen、DeepSeek 等 AI 模型 — 以及速度如何。",
+    quickLlama: "试试 Llama 3 8B",
+    quickQwen: "试试 Qwen 32B",
+    quickDeepseek: "试试 DeepSeek-V3",
     langLabel: "语言",
     reset: "恢复默认",
     sectionModel: "模型",
     sectionHardware: "硬件（可选）",
     showHardware: "+ 选择 GPU 测试是否适配",
     hideHardware: "− 隐藏硬件选择",
+    showAdvanced: "高级选项",
+    hideAdvanced: "高级选项",
     selectGPU: "选择 GPU",
     gpuHelp: "自动填充规格以检查需求是否满足。",
     sectionWorkload: "负载",
@@ -195,11 +212,18 @@ const I18N = {
     kvPrecision: "KV 精度",
     hiddenSize: "隐藏维度 (可选覆盖)",
     layers: "层数 (可选覆盖)",
-    promptTokens: "提示词长度",
-    newTokens: "生成上限",
-    batchSize: "并发/批量",
-    targetTps: "单流输出速率 (token/s)",
-    ttftMs: "目标 TTFT (ms)",
+    weightPrecisionHelp: "数值越小 = 体积更小、速度更快，但精度较低",
+    kvPrecisionHelp: "通常与权重精度保持一致",
+    promptTokens: "输入长度 (tokens)",
+    promptTokensHelp: "短文本：500 · 文档：8K · 长文本：32K",
+    newTokens: "输出长度 (tokens)",
+    newTokensHelp: "典型：100-500 · 长回复：1K-2K",
+    batchSize: "同时用户数",
+    batchSizeHelp: "个人：1 · 团队：4-8 · 生产：16+",
+    targetTps: "速度 (tokens/秒)",
+    targetTpsHelp: "慢：5 · 良好：15 · 快：30+",
+    ttftMs: "首次响应时间 (ms)",
+    ttftMsHelp: "快速：500 · 可接受：2000",
     utilCompute: "算力利用率",
     utilComputeHelp: "占峰值 TFLOPS/TOPS 的有效比例。",
     utilBw: "带宽利用率",
@@ -421,6 +445,114 @@ function convertCompute(valueTflops, unit) {
   }
 }
 
+function getGPUFitStatus(required, available) {
+  if (!available || !Number.isFinite(available)) return null;
+  const ratio = required / available;
+  if (ratio <= 0.85) return 'fit';
+  if (ratio <= 1.0) return 'warn';
+  return 'danger';
+}
+
+function renderProgressBar(required, available, label) {
+  if (!available || !Number.isFinite(available)) return '';
+  
+  const ratio = Math.min(required / available, 1.5);
+  const percentage = Math.min(ratio * 100, 100);
+  const status = getGPUFitStatus(required, available);
+  
+  const statusText = status === 'fit' ? '✓ Fits' : 
+                     status === 'warn' ? '~ Close' : 
+                     '✗ Insufficient';
+  
+  return `
+    <div class="result-bar">
+      <div class="result-bar-fill ${status}" style="width: ${percentage}%"></div>
+    </div>
+    <div class="sub" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>${label}</span>
+      <span class="result-status ${status}">${statusText}</span>
+    </div>
+  `;
+}
+
+function getVramSummary(vramGb) {
+  if (vramGb <= 8) return 'Fits on entry-level gaming GPUs';
+  if (vramGb <= 12) return 'Works on mid-range GPUs';
+  if (vramGb <= 16) return 'Needs high-end consumer GPU';
+  if (vramGb <= 24) return 'Requires enthusiast or pro GPU';
+  if (vramGb <= 48) return 'Needs professional workstation card';
+  if (vramGb <= 80) return 'Requires datacenter GPU';
+  return 'Needs multi-GPU setup';
+}
+
+function getComputeSummary(tflops) {
+  if (tflops <= 30) return 'Light compute requirements';
+  if (tflops <= 60) return 'Moderate compute needs';
+  if (tflops <= 100) return 'High compute requirements';
+  if (tflops <= 200) return 'Very demanding workload';
+  return 'Extreme compute needed';
+}
+
+function getBandwidthSummary(gbps) {
+  if (gbps <= 400) return 'Light bandwidth usage';
+  if (gbps <= 900) return 'Moderate bandwidth needs';
+  if (gbps <= 2000) return 'High bandwidth required';
+  if (gbps <= 3000) return 'Very high bandwidth demand';
+  return 'Extreme bandwidth required';
+}
+
+function renderVerdictCard(results) {
+  const verdictCard = byId('verdictCard');
+  if (!verdictCard) return;
+  
+  const vram = results.totalVramGb;
+  
+  // Determine GPU tier based on VRAM requirements
+  let emoji, title, message, status, gpuExamples;
+  
+  if (vram <= 12) {
+    emoji = '🎮';
+    title = 'Consumer GPU friendly';
+    message = 'This model fits on mid-range gaming GPUs';
+    status = 'fit';
+    gpuExamples = 'RTX 4070, 3060 (12GB), AMD RX 7800 XT';
+  } else if (vram <= 24) {
+    emoji = '💪';
+    title = 'High-end GPU recommended';
+    message = 'You\'ll need a powerful consumer or professional GPU';
+    status = 'fit';
+    gpuExamples = 'RTX 4090, 3090, A5000, Mac Studio Ultra';
+  } else if (vram <= 48) {
+    emoji = '🏢';
+    title = 'Professional / Workstation GPU needed';
+    message = 'Requires enterprise-grade hardware';
+    status = 'warn';
+    gpuExamples = 'RTX A6000, dual RTX 3090, 2× A5000';
+  } else if (vram <= 80) {
+    emoji = '☁️';
+    title = 'Datacenter GPU required';
+    message = 'Best suited for cloud or on-prem datacenter deployment';
+    status = 'warn';
+    gpuExamples = 'A100 (80GB), H100 (80GB), dual A6000';
+  } else {
+    emoji = '🚀';
+    title = 'Multi-GPU setup required';
+    message = 'Needs multiple datacenter GPUs or specialized hardware';
+    status = 'danger';
+    gpuExamples = 'MI300X (192GB), 2× H100, multi-GPU cluster';
+  }
+  
+  verdictCard.className = `verdict-card ${status}`;
+  verdictCard.innerHTML = `
+    <div class="verdict-emoji">${emoji}</div>
+    <h3 class="verdict-title">${title}</h3>
+    <p class="verdict-message">${message}</p>
+    <div class="verdict-gpus">
+      <strong>Examples:</strong> ${gpuExamples}
+    </div>
+  `;
+}
+
 function render(results) {
   const unit = byId("computeUnit").value || "tflops";
   const unitLabel = (I18N[currentLang]?.computeUnitOptions || I18N.en.computeUnitOptions)[unit] || unit;
@@ -432,22 +564,40 @@ function render(results) {
   const bwCon = fmt(results.requiredBwGbpsConservative ?? results.requiredBwGbps, 2);
   const bwOpt = fmt(results.requiredBwGbpsOptimistic ?? results.requiredBwGbps, 2);
 
+  // Get selected GPU for comparison
+  const gpuId = byId('gpuSelect')?.value;
+  const gpu = gpuId ? getGPUById(gpuId) : null;
+  
+  const vramBar = gpu ? renderProgressBar(results.totalVramGb, gpu.vram_gb, `vs ${gpu.vram_gb}GB available`) : '';
+  const computeBar = gpu ? renderProgressBar(results.requiredTflops, gpu.tflops_bf16 || gpu.tflops_fp16, `vs ${fmt(gpu.tflops_bf16 || gpu.tflops_fp16, 1)} TFLOPS available`) : '';
+  const bwBar = gpu ? renderProgressBar(results.requiredBwGbps, gpu.bandwidth_gbps, `vs ${gpu.bandwidth_gbps} GB/s available`) : '';
+
+  const vramSummary = getVramSummary(results.totalVramGb);
+  const computeSummary = getComputeSummary(results.requiredTflops);
+  const bwSummary = getBandwidthSummary(results.requiredBwGbps);
+
   byId("vramCard").innerHTML = `
-    <strong>${t("requiredVram")}</strong>
+    <strong>💾 Memory Needed</strong>
     <div class="metric">${fmt(results.totalVramGb, 2)} GB</div>
+    ${vramBar}
+    <div class="sub" style="color: var(--accent); font-weight: 600; margin: 8px 0 4px;">${vramSummary}</div>
     <div class="sub">${t("weightsLabel") ?? "Weights"}: ${fmt(results.weightBytesTotal / 1e9, 2)} GB · KV: ${fmt(results.kvCacheBytes / 1e9, 2)} GB</div>
   `;
 
   byId("computeCard").innerHTML = `
-    <strong>${t("requiredCompute")}</strong>
+    <strong>⚡ Processing Power</strong>
     <div class="metric">${fmtCompute(computeValue)} ${unitLabel}</div>
+    ${computeBar}
+    <div class="sub" style="color: var(--accent); font-weight: 600; margin: 8px 0 4px;">${computeSummary}</div>
     <div class="sub">${t("activeParamsLabel")}: ${fmt(results.activeParamsB, 1)}B · ${t("totalParamsLabel")}: ${fmt(results.paramsB, 1)}B</div>
     <div class="sub">${speedNote}</div>
   `;
 
   byId("bandwidthCard").innerHTML = `
-    <strong>${t("requiredBandwidth")}</strong>
+    <strong>🔄 Memory Bandwidth</strong>
     <div class="metric">${bwCon} GB/s</div>
+    ${bwBar}
+    <div class="sub" style="color: var(--accent); font-weight: 600; margin: 8px 0 4px;">${bwSummary}</div>
     <div class="sub-row">
       <span>${t("bandwidthConservative") || "Conservative"}</span>
       <span>${bwCon} GB/s</span>
@@ -459,20 +609,33 @@ function render(results) {
   `;
 
   const ttftKnown = Number.isFinite(results.ttftMs);
+  let ttftSummary = '';
+  if (ttftKnown) {
+    if (results.ttftMs <= 500) ttftSummary = 'Very responsive';
+    else if (results.ttftMs <= 1000) ttftSummary = 'Fast response';
+    else if (results.ttftMs <= 2000) ttftSummary = 'Acceptable latency';
+    else if (results.ttftMs <= 5000) ttftSummary = 'Slow response';
+    else ttftSummary = 'Very slow response';
+  }
+  
   byId("ttftCard").innerHTML = ttftKnown
     ? `
-      <strong>${t("ttftLabel")}</strong>
+      <strong>⏱️ First Response Time</strong>
       <div class="metric">${fmt(results.ttftMs, 0)} ms</div>
+      <div class="sub" style="color: var(--accent); font-weight: 600; margin: 8px 0 4px;">${ttftSummary}</div>
       <div class="sub">${t("budgetLabel") ?? "Budget"}: ${fmt(results.ttftBudgetMs, 0)} ms · ${t("promptLabel") ?? "Prompt"}: ${results.totalSeq - results.newTokens || "?"}</div>
     `
     : `
-      <strong>${t("ttftLabel")}</strong>
+      <strong>⏱️ First Response Time</strong>
       <div class="metric">${t("ttftNeedHardware")}</div>
       <div class="sub">${t("ttftPrefillNote")}</div>
     `;
 
   const assumptionLines = I18N[currentLang]?.assumptions || I18N.en.assumptions;
   byId("assumptions").textContent = assumptionLines.join(" ");
+  
+  // Render verdict card
+  renderVerdictCard(results);
   
   // Render hardware recommendations
   renderHardwareRecommendations(results);
@@ -603,14 +766,21 @@ async function initHardwarePicker() {
   if (gpuSelect) {
     gpuSelect.addEventListener('change', handleGPUSelection);
     
-    // Check if GPU was preset via URL
+    // Check if GPU was preset via URL or mode=local
     const presetGPU = document.body.getAttribute('data-preset-gpu');
+    const shouldAutoExpand = currentMode === 'local' || presetGPU;
+    
     if (presetGPU) {
       gpuSelect.value = presetGPU;
       handleGPUSelection();
-      // Show picker if GPU was preset
-      if (picker) picker.style.display = 'block';
-      if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+    }
+    
+    // Auto-expand picker if mode=local (hobbyist scenario)
+    if (shouldAutoExpand && picker && toggleBtn) {
+      picker.style.display = 'block';
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.querySelector('[data-i18n]').setAttribute('data-i18n', 'hideHardware');
+      toggleBtn.querySelector('[data-i18n]').textContent = t('hideHardware');
     }
   }
 }
@@ -715,6 +885,50 @@ function updateGPUFitness(results) {
   }
 }
 
+function initQuickStartButtons() {
+  document.querySelectorAll('.quick-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const presetId = btn.getAttribute('data-preset');
+      const presetSelect = byId('modelPreset');
+      if (presetSelect && presetId) {
+        presetSelect.value = presetId;
+        const preset = getSelectedPreset();
+        applyPreset(preset);
+        updatePresetLink(preset);
+        computeAndRender();
+        // Scroll to results
+        setTimeout(() => {
+          document.querySelector('.results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    });
+  });
+}
+
+function initAdvancedToggles() {
+  // Model advanced options
+  const toggleAdvanced = byId('toggleAdvanced');
+  const advancedOptions = byId('advancedOptions');
+  if (toggleAdvanced && advancedOptions) {
+    toggleAdvanced.addEventListener('click', () => {
+      const isHidden = advancedOptions.style.display === 'none';
+      advancedOptions.style.display = isHidden ? 'block' : 'none';
+      toggleAdvanced.setAttribute('aria-expanded', isHidden);
+    });
+  }
+  
+  // Workload advanced options
+  const toggleAdvancedWorkload = byId('toggleAdvancedWorkload');
+  const advancedWorkloadOptions = byId('advancedWorkloadOptions');
+  if (toggleAdvancedWorkload && advancedWorkloadOptions) {
+    toggleAdvancedWorkload.addEventListener('click', () => {
+      const isHidden = advancedWorkloadOptions.style.display === 'none';
+      advancedWorkloadOptions.style.display = isHidden ? 'block' : 'none';
+      toggleAdvancedWorkload.setAttribute('aria-expanded', isHidden);
+    });
+  }
+}
+
 function init() {
   // Check for URL parameters first
   const urlParams = getURLParams();
@@ -752,6 +966,12 @@ function init() {
     computeAndRender();
   });
 
+  // Initialize quick-start buttons
+  initQuickStartButtons();
+  
+  // Initialize advanced toggles
+  initAdvancedToggles();
+  
   // Initialize hardware picker
   initHardwarePicker();
 

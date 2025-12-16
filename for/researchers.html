@@ -13,23 +13,14 @@
   <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-  <header class="hero-landing">
-    <div class="hero-landing__copy">
-      <p class="pill">🔬 For Researchers & Engineers</p>
-      <h1>Compare models efficiently</h1>
-      <p class="lede">Estimate FLOPs, KV cache, and bandwidth before running experiments. Compare dense vs MoE, quantization trade-offs, and scaling behavior—all with transparent transformer math.</p>
-      <div class="cta-buttons">
-        <a class="btn primary" href="/?mode=compare#calculator">Compare models →</a>
-        <a class="btn ghost" href="/">Full calculator</a>
-      </div>
+  <header class="hero" style="border-bottom: none;">
+    <div class="header-content">
+      <h1 class="hero-title">Research comparisons</h1>
+      <p class="lede">Pre-configured scenarios for ML research</p>
     </div>
   </header>
   
   <section class="landing-section">
-    <div class="section-header">
-      <h2 class="section-title">Research-focused comparisons</h2>
-      <p class="section-subhead">Pre-configured scenarios for ML research</p>
-    </div>
     <div class="landing-grid">
       <a href="/?preset=llama-3-70b&mode=compare&prompt=8000&new=2000#calculator" class="card-landing">
         <h3>Long-context inference</h3>
@@ -58,146 +49,8 @@
     </div>
   </section>
 
-  <section class="landing-section">
-    <div class="section-header">
-      <h2 class="section-title">Why researchers use this tool</h2>
-    </div>
-    <div class="landing-grid">
-      <article class="card-landing">
-        <h3>📐 Transparent math</h3>
-        <p>See the transformer equations: prefill O(seq²), decode, KV cache formulas.</p>
-      </article>
-      <article class="card-landing">
-        <h3>⚖️ Compare architectures</h3>
-        <p>Dense vs MoE, different layer counts, hidden sizes, and heads.</p>
-      </article>
-      <article class="card-landing">
-        <h3>🧮 FLOPs breakdown</h3>
-        <p>Separate prefill (attention-heavy) from decode (memory-bound) phases.</p>
-      </article>
-      <article class="card-landing">
-        <h3>💾 KV cache analysis</h3>
-        <p>See how cache size scales with layers, heads, and sequence length.</p>
-      </article>
-      <article class="card-landing">
-        <h3>🔬 Plan experiments</h3>
-        <p>Estimate compute hours before burning GPU budget on sweeps.</p>
-      </article>
-      <article class="card-landing">
-        <h3>📊 Quantization study</h3>
-        <p>Model INT8 and INT4 speedups with utilization assumptions.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-section">
-    <div class="section-header">
-      <h2 class="section-title">Technical features</h2>
-    </div>
-    <div class="landing-grid">
-      <article class="card-landing">
-        <h3>MoE support</h3>
-        <p>Separate total params from active params per token.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Custom overrides</h3>
-        <p>Manually set layers, hidden size, heads for custom architectures.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Utilization factors</h3>
-        <p>Account for real-world compute (0.4-0.5×) and bandwidth (0.6×) efficiency.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Precision options</h3>
-        <p>BF16, FP16, FP8, INT8, INT4 for weights and KV cache independently.</p>
-      </article>
-      <article class="card-landing">
-        <h3>TTFT estimation</h3>
-        <p>Time-to-first-token based on prefill FLOPs and hardware throughput.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Bandwidth modeling</h3>
-        <p>Conservative (weights streamed) vs optimistic (weights resident) modes.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-section">
-    <div class="section-header">
-      <h2 class="section-title">Research use cases</h2>
-    </div>
-    <div class="landing-grid">
-      <article class="card-landing">
-        <h3>Model selection</h3>
-        <p>Which architecture fits your compute budget and latency targets?</p>
-      </article>
-      <article class="card-landing">
-        <h3>Scaling laws</h3>
-        <p>Explore how doubling params or context affects FLOPs and memory.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Inference benchmarking</h3>
-        <p>Predict TTFT and throughput before running real benchmarks.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Hardware planning</h3>
-        <p>Size clusters for large-scale evaluation or fine-tuning inference.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Efficiency analysis</h3>
-        <p>Compare FLOPs/param across dense, MoE, and distilled models.</p>
-      </article>
-      <article class="card-landing">
-        <h3>Paper validation</h3>
-        <p>Check if reported specs match theoretical requirements.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="landing-section">
-    <div class="section-header">
-      <h2 class="section-title">Model presets included</h2>
-      <p class="section-subhead">16+ architectures with accurate parameters</p>
-    </div>
-    <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px; color: var(--muted); font-size: 14px;">
-      <strong style="color: var(--text); display: block; margin-bottom: 8px;">Covered models:</strong>
-      Llama 3, 3.1, 3.2 (1B-405B) · Qwen 2.5 (0.5B-72B) · DeepSeek V2, V3 · Mixtral 8x7B, 8x22B · 
-      Phi-3, 3.5 (mini, medium) · Gemma 2 (2B-27B) · Mistral 7B, Nemo 12B · 
-      Yi 1.5 (6B-34B) · GLM-4 9B · StableLM 2 · Command R+ · DBRX · OLMo · InternLM 2.5 · Llama Guard 3
-      <br><br>
-      <strong style="color: var(--text);">Plus:</strong> Custom architecture support for research models.
-    </div>
-  </section>
-
-  <section class="landing-section">
-    <div class="section-header">
-      <h2 class="section-title">Assumptions & methodology</h2>
-    </div>
-    <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 18px; color: var(--muted); font-size: 14px; line-height: 1.7;">
-      <ul style="margin: 0; padding-left: 20px;">
-        <li><strong>Prefill FLOPs:</strong> 2 × active_params × prompt_tokens + 4 × layers × prompt² × hidden_size (attention)</li>
-        <li><strong>Decode FLOPs/token:</strong> 2 × active_params + 4 × layers × avg_seq × hidden_size</li>
-        <li><strong>KV cache:</strong> batch × seq × layers × hidden × 2 × bytes (K+V per layer)</li>
-        <li><strong>Bandwidth:</strong> Conservative: weights/batch + KV per token; Optimistic: assumes weight reuse</li>
-        <li><strong>Utilization:</strong> Compute ~0.4-0.5 (kernel efficiency), Bandwidth ~0.6 (real-world achievable)</li>
-      </ul>
-      <p style="margin: 12px 0 0; font-size: 13px;">All formulas are exposed in results. Adjust utilization based on your profiling data.</p>
-    </div>
-  </section>
-
-  <section class="landing-section" style="text-align: center; padding: 32px 20px;">
-    <h2 class="section-title">Ready to compare models?</h2>
-    <p class="section-subhead" style="margin-bottom: 20px;">Physics-based. Transparent. Citation-ready.</p>
-    <a class="btn primary" href="/?mode=compare#calculator" style="font-size: 16px; padding: 14px 24px;">Compare models →</a>
-  </section>
-
-  <footer style="max-width: 1240px; margin: 0 auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
-    <p>
-      <a href="/" style="color: var(--accent); text-decoration: none;">← Back to main calculator</a>
-      · Built for the research community
-      · <a href="https://github.com" style="color: var(--muted); text-decoration: none;">Open source & contributions welcome</a>
-    </p>
+  <footer style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
+    <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to calculator</a>
   </footer>
 </body>
 </html>
-

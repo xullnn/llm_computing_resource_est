@@ -64,10 +64,13 @@ project_memory_bank/
 │  ├─ data-flow.md              # End-to-end data flow
 │  └─ i18n-system.md            # Translation system
 │
-└─ insights/                    # L6: Patterns & lessons
-   ├─ index.md                  # Category navigation
-   ├─ architecture.md           # Design decisions & rationale
-   └─ physics.md                # LLM inference math & validation
+├─ insights/                    # L6: Patterns & lessons
+│  ├─ index.md                  # Category navigation
+│  ├─ architecture.md           # Design decisions & rationale
+│  └─ physics.md                # LLM inference math & validation
+│
+└─ planning/                    # L7: Future requirements & roadmap
+   └─ enterprise-pm-requirements.md  # Enterprise PM persona & data needs
 ```
 
 ---
@@ -85,6 +88,7 @@ Load layers **incrementally** - start light, go deeper only when needed.
 | **L4: Implementation** | Debugging/editing | `modules/*/implementation.md` | As needed |
 | **L5: Integration** | Cross-module work | `integration/*.md` | <300 lines each |
 | **L6: Insights** | Need patterns/lessons | `insights/*.md` | <100 lines each |
+| **L7: Planning** | Future features/roadmap | `planning/*.md` | As needed |
 
 **Key principle**: Each layer provides signals for whether to load deeper.
 
@@ -257,6 +261,9 @@ flowchart TD
 - `insights/architecture.md` - Design decisions
 - `insights/physics.md` - LLM inference math
 
+### Planning (L7)
+- `planning/enterprise-pm-requirements.md` - Enterprise PM persona, pain points, data requirements
+
 ---
 
 ## 🎓 Philosophy
@@ -287,10 +294,11 @@ This Memory Bank follows **progressive disclosure**:
 | Data flow | `integration/data-flow.md` |
 | Design rationale | `insights/architecture.md` |
 | Math validation | `insights/physics.md` |
+| Enterprise PM requirements | `planning/enterprise-pm-requirements.md` |
 
 ---
 
-**Last updated**: 2025-12-10  
+**Last updated**: 2025-12-14  
 **Maintained by**: Project contributors  
 **Status**: ✅ Complete initial setup
 

@@ -1,5 +1,5 @@
 ---
-last_updated: 2025-12-10
+last_updated: 2025-12-14
 project: LLM Resource Sizer
 type: Offline serverless web calculator
 stack: Vanilla JavaScript, HTML5, CSS3
@@ -29,4 +29,10 @@ modules:
     description: HTML structure with hero, model params, workload, results sections
     file: index.html
     load_when: Adding form fields, restructuring sections, SEO/accessibility
+
+planning:
+  enterprise-pm:
+    description: Requirements for Enterprise PM persona (selling server+AI app bundles)
+    file: project_memory_bank/planning/enterprise-pm-requirements.md
+    load_when: Working on enterprise features, understanding PM pain points, data requirements
 
