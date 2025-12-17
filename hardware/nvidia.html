@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NVIDIA Data Center GPU specifications for LLM inference: H100, H200, A100, B100, B200, and GB200. Complete specs for multi-GPU configurations.">
+  <meta name="keywords" content="NVIDIA H100, H200, A100, B100, GPU specs, VRAM, memory bandwidth, multi-GPU, LLM inference">
+  <title>NVIDIA Data Center GPUs | LLM Resource Sizer</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .hardware-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .hardware-card {
+      background: var(--card-bg, #1e1e1e);
+      border: 1px solid var(--border, #333);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hardware-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    .hardware-card.announced {
+      border-color: var(--warning, #f59e0b);
+      opacity: 0.9;
+    }
+    .hardware-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.5rem;
+      color: var(--accent, #10b981);
+    }
+    .hardware-card .generation {
+      display: inline-block;
+      background: var(--accent-dim, #064e3b);
+      color: var(--accent, #10b981);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    .hardware-card .status-badge {
+      display: inline-block;
+      background: var(--success-dim, #1e3a28);
+      color: var(--success, #4ade80);
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+    }
+    .hardware-card .status-badge.announced {
+      background: var(--warning-dim, #422006);
+      color: var(--warning, #f59e0b);
+    }
+    .spec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .spec-label {
+      color: var(--text-muted, #9ca3af);
+      font-size: 0.8rem;
+      margin-bottom: 0.25rem;
+    }
+    .spec-value {
+      color: var(--text, #e5e7eb);
+      font-weight: 600;
+    }
+    .use-btn {
+      width: 100%;
+      margin-top: 1rem;
+      padding: 0.75rem;
+      background: var(--accent, #10b981);
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .use-btn:hover {
+      background: var(--accent-hover, #059669);
+    }
+    .filter-controls {
+      display: flex;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+    .filter-controls input,
+    .filter-controls select {
+      padding: 0.5rem;
+      background: var(--input-bg, #2d2d2d);
+      border: 1px solid var(--border, #444);
+      border-radius: 4px;
+      color: var(--text, #e5e7eb);
+    }
+    .stats-summary {
+      display: flex;
+      gap: 2rem;
+      margin: 1rem 0 2rem;
+      padding: 1rem;
+      background: var(--card-bg, #1e1e1e);
+      border-radius: 8px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent, #10b981);
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted, #9ca3af);
+    }
+  </style>
+</head>
+<body>
+  <nav class="global-nav">
+    <a href="../" class="nav-brand">
+      <span class="nav-icon">🧮</span>
+      <span class="nav-logo">LLM Sizer</span>
+    </a>
+    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="../" class="nav-item">Calculator</a>
+      <a href="../models/" class="nav-item">Models</a>
+      <a href="../hardware/" class="nav-item active">Hardware</a>
+      <a href="../for/enterprise.html" class="nav-item">Guides</a>
+    </div>
+    <div class="nav-actions">
+      <label class="field compact language-switch" style="margin-bottom: 0;">
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="header-content">
+      <h1 class="hero-title">NVIDIA Data Center GPUs</h1>
+      <p class="lede">Complete specifications for multi-GPU LLM inference configurations</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="stats-summary" id="statsSummary">
+      <div class="stat-item">
+        <span class="stat-value" id="totalGPUs">-</span>
+        <span class="stat-label">GPU Models</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="generationCount">-</span>
+        <span class="stat-label">Generations</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="lastUpdated">-</span>
+        <span class="stat-label">Last Updated</span>
+      </div>
+    </div>
+
+    <div class="filter-controls">
+      <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="Search by name or generation..."
+        style="flex: 1; min-width: 200px;"
+      >
+      <select id="generationFilter">
+        <option value="all">All Generations</option>
+        <option value="Blackwell">Blackwell</option>
+        <option value="Hopper">Hopper</option>
+        <option value="Ampere">Ampere</option>
+      </select>
+      <select id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="available">Available</option>
+        <option value="announced">Announced</option>
+      </select>
+    </div>
+
+    <div class="hardware-grid" id="hardwareGrid">
+      <!-- GPU cards will be dynamically loaded here -->
+    </div>
+  </main>
+
+  <script src="../js/nav.js"></script>
+  <script>
+    let hardwareData = [];
+    let currentLang = 'en';
+
+    const i18n = {
+      en: {
+        vram: 'VRAM',
+        bandwidth: 'Bandwidth',
+        compute: 'Compute (FP16)',
+        tdp: 'TDP',
+        interconnect: 'Interconnect',
+        formFactor: 'Form Factor',
+        maxCards: 'Max Cards/Node',
+        useInCalc: '⚡ Test with Model',
+        available: 'Available',
+        announced: 'Announced',
+        generation: 'Generation'
+      },
+      zh: {
+        vram: '显存',
+        bandwidth: '带宽',
+        compute: '算力 (FP16)',
+        tdp: '功耗',
+        interconnect: '互连',
+        formFactor: '接口类型',
+        maxCards: '最大卡数/节点',
+        useInCalc: '⚡ 测试模型',
+        available: '可用',
+        announced: '已公布',
+        generation: '代次'
+      }
+    };
+
+    // Load hardware data
+    async function loadHardware() {
+      try {
+        const response = await fetch('../data/hardware/nvidia.json');
+        const data = await response.json();
+        hardwareData = data.hardware;
+        
+        // Update stats
+        document.getElementById('totalGPUs').textContent = hardwareData.length;
+        document.getElementById('lastUpdated').textContent = data.metadata.updated_at;
+        
+        const generations = new Set(hardwareData.map(h => h.generation));
+        document.getElementById('generationCount').textContent = generations.size;
+        
+        renderHardware();
+      } catch (error) {
+        console.error('Failed to load hardware data:', error);
+        document.getElementById('hardwareGrid').innerHTML = 
+          '<p style="color: var(--error);">Failed to load GPU data. Please check console for details.</p>';
+      }
+    }
+
+    function renderHardware() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const genFilter = document.getElementById('generationFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+
+      const filtered = hardwareData.filter(gpu => {
+        const matchesSearch = gpu.name.toLowerCase().includes(searchTerm) || 
+                              gpu.generation.toLowerCase().includes(searchTerm);
+        const matchesGen = genFilter === 'all' || gpu.generation === genFilter;
+        const matchesStatus = statusFilter === 'all' || gpu.status === statusFilter;
+        return matchesSearch && matchesGen && matchesStatus;
+      });
+
+      const grid = document.getElementById('hardwareGrid');
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">No GPUs match your filters.</p>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(gpu => createGPUCard(gpu)).join('');
+    }
+
+    function createGPUCard(gpu) {
+      const t = i18n[currentLang];
+      const statusClass = gpu.status === 'announced' ? 'announced' : '';
+      const statusBadge = gpu.status === 'announced' ? 
+        `<span class="status-badge announced">${t.announced}</span>` :
+        `<span class="status-badge">${t.available}</span>`;
+
+      return `
+        <div class="hardware-card ${statusClass}">
+          <h3>${gpu.name}${statusBadge}</h3>
+          <span class="generation">${gpu.generation}</span>
+          
+          <div class="spec-grid">
+            <div class="spec-item">
+              <span class="spec-label">${t.vram}</span>
+              <span class="spec-value">${gpu.vram_gb} GB</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">${t.bandwidth}</span>
+              <span class="spec-value">${gpu.bandwidth_gbps} GB/s</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">${t.compute}</span>
+              <span class="spec-value">${gpu.fp16_tflops} TFLOPS</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">${t.tdp}</span>
+              <span class="spec-value">${gpu.tdp_watts}W</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">${t.interconnect}</span>
+              <span class="spec-value">${gpu.interconnect}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">${t.maxCards}</span>
+              <span class="spec-value">${gpu.max_cards_per_node}</span>
+            </div>
+          </div>
+
+          <button class="use-btn" onclick="useInCalculator('${gpu.id}')">
+            ${t.useInCalc}
+          </button>
+        </div>
+      `;
+    }
+
+    function useInCalculator(gpuId) {
+      // Navigate to calculator with GPU pre-selected
+      window.location.href = `../index.html?gpu=${gpuId}`;
+    }
+
+    // Event listeners
+    document.getElementById('searchInput').addEventListener('input', renderHardware);
+    document.getElementById('generationFilter').addEventListener('change', renderHardware);
+    document.getElementById('statusFilter').addEventListener('change', renderHardware);
+    
+    document.getElementById('langSelect').addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      renderHardware();
+    });
+
+    // Load data on page load
+    loadHardware();
+  </script>
+</body>
+</html>
+

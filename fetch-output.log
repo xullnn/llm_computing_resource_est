@@ -1,0 +1,24 @@
+🔍 Fetching open-source models from Hugging Face...
+
+📡 Querying: top downloads...
+📡 Querying: most liked...
+📡 Querying: recently updated...
+📡 Querying: recently created...
+✓ Found 1953 unique text-generation models
+
+✓ nvidia/Llama-3_3-Nemotron-Super-49B-v1_5: 87.0B params (other) [2025-07-25]
+✓ AI-MO/Kimina-Prover-72B: 80.9B params (mit) [2025-07-09]
+✓ nvidia/Llama-3_1-Nemotron-Ultra-253B-v1: 697.9B params (other) [2025-04-07]
+✓ moonshotai/Kimi-Dev-72B: 80.9B params (mit) [2025-06-16]
+✓ nvidia/Llama-3_3-Nemotron-Super-49B-v1: 87.0B params (other) [2025-03-16]
+
+📊 Summary:
+   - Skipped (older than 1 year): 517
+   - Skipped (no open-source license): 813
+   - Skipped (< 80B params): 524
+   - Skipped (no/invalid config): 94
+   - Matched: 5
+
+📋 Open-source licenses found: apache-2.0, mit, gemma, llama3.2, llama3, other, llama3.1, cc-by-nc-4.0, apple-amlr, cc-by-nc-nd-4.0, llama2, llama3.3, cc-by-sa-4.0
+
+✅ Saved 5 open-source models to data/models.json

@@ -13,6 +13,27 @@
   <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
+  <nav class="global-nav">
+    <a href="../" class="nav-brand">
+      <span class="nav-icon">🧮</span>
+      <span class="nav-logo">LLM Sizer</span>
+    </a>
+    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="../" class="nav-item">Calculator</a>
+      <a href="../models/" class="nav-item">Models</a>
+      <a href="../hardware/" class="nav-item">Hardware</a>
+      <a href="../for/enterprise.html" class="nav-item active">Guides</a>
+    </div>
+    <div class="nav-actions">
+      <label class="field compact language-switch" style="margin-bottom: 0;">
+        <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+          <option value="en">English</option>
+        </select>
+      </label>
+    </div>
+  </nav>
+
   <header class="hero" style="border-bottom: none;">
     <div class="header-content">
       <h1 class="hero-title">Research comparisons</h1>
@@ -52,5 +73,7 @@
   <footer style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
     <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to calculator</a>
   </footer>
+
+  <script src="../js/nav.js"></script>
 </body>
 </html>

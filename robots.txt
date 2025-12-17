@@ -1,4 +1,18 @@
+# LLM Resource Sizer — Decision Hub for AI Infrastructure
+# All pages are public and indexed
+
 User-agent: *
 Allow: /
+
+# Data files (JSON) — Allow indexing for structured data
+Allow: /data/
+
+# Exclude development/testing files
+Disallow: *.backup.html
+Disallow: /check-*.js
+Disallow: /test-*.js
+Disallow: /fetch-output.log
+Disallow: /TRACK_*.md
+Disallow: /PHASE*.md
 
 Sitemap: https://llmrunnable.com/sitemap.xml

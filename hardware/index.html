@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare data center GPU and NPU specifications for LLM deployment. NVIDIA H100, Huawei Ascend, and more.">
+  <title>Hardware Hub — LLM Resource Sizer</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .hardware-hub {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .hub-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .hub-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .hub-header p {
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+    
+    .vendor-sections {
+      display: grid;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .vendor-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+    }
+    
+    .vendor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .vendor-header h2 {
+      font-size: 1.8rem;
+      margin: 0;
+    }
+    
+    .vendor-count {
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+    
+    .hardware-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    
+    .hw-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .hw-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .hw-card-header {
+      margin-bottom: 1rem;
+    }
+    
+    .hw-card-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0 0 0.25rem 0;
+    }
+    
+    .hw-card-gen {
+      font-size: 0.85rem;
+      opacity: 0.6;
+    }
+    
+    .hw-card-specs {
+      display: grid;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .hw-spec {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+    
+    .hw-spec-label {
+      opacity: 0.7;
+    }
+    
+    .hw-spec-value {
+      font-weight: 600;
+    }
+    
+    .hw-card-actions {
+      display: grid;
+      gap: 0.5rem;
+    }
+    
+    .btn-calc {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+    
+    .btn-calc:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-details {
+      background: transparent;
+      border: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    
+    .btn-details:hover {
+      background: var(--bg-secondary);
+    }
+    
+    .comparison-table {
+      overflow-x: auto;
+      margin-top: 3rem;
+    }
+    
+    .comparison-table h2 {
+      margin-bottom: 1rem;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    th {
+      background: var(--bg-secondary);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    
+    tr:hover {
+      background: var(--bg-secondary);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-available {
+      background: #10b98144;
+      color: #10b981;
+    }
+    
+    .status-announced {
+      background: #f59e0b44;
+      color: #f59e0b;
+    }
+    
+    .status-draft {
+      background: #ef444444;
+      color: #ef4444;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <nav class="global-nav">
+    <a href="../" class="nav-brand">
+      <span class="nav-icon">🧮</span>
+      <span class="nav-logo">LLM Sizer</span>
+    </a>
+    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="../" class="nav-item">Calculator</a>
+      <a href="../models/" class="nav-item">Models</a>
+      <a href="../hardware/" class="nav-item active">Hardware</a>
+      <a href="../for/enterprise.html" class="nav-item">Guides</a>
+    </div>
+    <div class="nav-actions">
+      <label class="field compact language-switch" style="margin-bottom: 0;">
+        <span id="langLabel" style="display: none;">Language</span>
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+    </div>
+  </nav>
+  
+  <div class="hardware-hub">
+    <div class="hub-header">
+      <h1 id="pageTitle">Hardware Hub</h1>
+      <p id="pageDesc">Compare data center GPUs and NPUs for LLM deployment</p>
+    </div>
+    
+    <div id="content" class="loading">Loading hardware data...</div>
+  </div>
+  
+  <script src="../js/nav.js"></script>
+  <script>
+    let currentLang = 'en';
+    let hardwareData = { nvidia: [], huawei: [] };
+    
+    const I18N = {
+      en: {
+        langLabel: 'Language',
+        backLink: 'Back to Calculator',
+        pageTitle: 'Hardware Hub',
+        pageDesc: 'Compare data center GPUs and NPUs for LLM deployment',
+        nvidiaTitle: 'NVIDIA Data Center GPUs',
+        huaweiTitle: 'Huawei Ascend NPUs',
+        testWithModel: 'Test with Model',
+        viewDetails: 'View Details',
+        vram: 'VRAM',
+        bandwidth: 'Bandwidth',
+        compute: 'Compute (BF16)',
+        tdp: 'TDP',
+        interconnect: 'Interconnect',
+        maxCards: 'Max Cards',
+        comparisonTitle: 'Side-by-Side Comparison',
+        colVendor: 'Vendor',
+        colName: 'Name',
+        colVRAM: 'VRAM (GB)',
+        colBandwidth: 'Bandwidth (GB/s)',
+        colComputeBF16: 'BF16 (TFLOPS)',
+        colComputeFP8: 'FP8 (TFLOPS)',
+        colTDP: 'TDP (W)',
+        colInterconnect: 'Interconnect',
+        colMaxCards: 'Max Cards/Node',
+        colStatus: 'Status',
+        statusAvailable: 'Available',
+        statusAnnounced: 'Announced',
+        statusDraft: '⚠️ Draft',
+      },
+      zh: {
+        langLabel: '语言',
+        backLink: '返回计算器',
+        pageTitle: '硬件中心',
+        pageDesc: '对比用于LLM部署的数据中心GPU和NPU',
+        nvidiaTitle: 'NVIDIA 数据中心 GPU',
+        huaweiTitle: '华为昇腾 NPU',
+        testWithModel: '测试模型',
+        viewDetails: '查看详情',
+        vram: '显存',
+        bandwidth: '带宽',
+        compute: '算力 (BF16)',
+        tdp: '功耗',
+        interconnect: '互联',
+        maxCards: '最大卡数',
+        comparisonTitle: '并排对比',
+        colVendor: '厂商',
+        colName: '型号',
+        colVRAM: '显存 (GB)',
+        colBandwidth: '带宽 (GB/s)',
+        colComputeBF16: 'BF16 (TFLOPS)',
+        colComputeFP8: 'FP8 (TFLOPS)',
+        colTDP: '功耗 (W)',
+        colInterconnect: '互联',
+        colMaxCards: '最大卡数/节点',
+        colStatus: '状态',
+        statusAvailable: '可用',
+        statusAnnounced: '已发布',
+        statusDraft: '⚠️ 草稿',
+      }
+    };
+    
+    function t(key) {
+      return I18N[currentLang][key] || I18N.en[key] || key;
+    }
+    
+    function applyTranslations() {
+      // document.getElementById('langLabel').textContent = t('langLabel');
+      document.getElementById('pageTitle').textContent = t('pageTitle');
+      document.getElementById('pageDesc').textContent = t('pageDesc');
+    }
+    
+    let minVramFilter = null;
+    
+    function getQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        min_vram: params.get('min_vram') ? parseInt(params.get('min_vram')) : null
+      };
+    }
+    
+    async function loadHardwareData() {
+      try {
+        const [nvidiaRes, huaweiRes] = await Promise.all([
+          fetch('../data/hardware/nvidia.json'),
+          fetch('../data/hardware/huawei.json')
+        ]);
+        
+        const nvidiaData = await nvidiaRes.json();
+        const huaweiData = await huaweiRes.json();
+        
+        hardwareData.nvidia = nvidiaData.hardware || [];
+        hardwareData.huawei = huaweiData.hardware || [];
+        
+        // Check for query parameters
+        const params = getQueryParams();
+        if (params.min_vram) {
+          minVramFilter = params.min_vram;
+        }
+        
+        renderContent();
+      } catch (error) {
+        document.getElementById('content').innerHTML = `
+          <div style="text-align: center; color: #ef4444;">
+            <p>Failed to load hardware data</p>
+            <p style="font-size: 0.9rem; opacity: 0.7;">${error.message}</p>
+          </div>
+        `;
+      }
+    }
+    
+    function renderContent() {
+      const filterBanner = minVramFilter ? `
+        <div style="background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); border-radius: 8px; padding: 1rem; margin-bottom: 2rem; text-align: center;">
+          <strong>🔍 Filtering:</strong> Showing hardware with ${minVramFilter}+ GB VRAM
+          <button onclick="clearFilter()" style="margin-left: 1rem; background: none; border: 1px solid var(--border); padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; color: var(--muted);">Clear filter</button>
+        </div>
+      ` : '';
+      
+      const content = `
+        ${filterBanner}
+        <div class="vendor-sections">
+          ${renderVendorSection('nvidia', t('nvidiaTitle'), hardwareData.nvidia)}
+          ${renderVendorSection('huawei', t('huaweiTitle'), hardwareData.huawei)}
+        </div>
+        
+        <div class="comparison-table">
+          <h2>${t('comparisonTitle')}</h2>
+          ${renderComparisonTable()}
+        </div>
+      `;
+      
+      document.getElementById('content').innerHTML = content;
+      attachEventListeners();
+    }
+    
+    function clearFilter() {
+      window.location.href = '../hardware/';
+    }
+    
+    function renderVendorSection(vendor, title, hardware) {
+      return `
+        <div class="vendor-card">
+          <div class="vendor-header">
+            <h2>${title}</h2>
+            <span class="vendor-count">${hardware.length} ${hardware.length === 1 ? 'product' : 'products'}</span>
+          </div>
+          <div class="hardware-grid">
+            ${hardware.map(hw => renderHardwareCard(vendor, hw)).join('')}
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderHardwareCard(vendor, hw) {
+      const isDraft = hw.verified_date === null || hw.notes?.includes('PLACEHOLDER');
+      const status = isDraft ? 'draft' : hw.status;
+      
+      // Check if hardware meets VRAM filter
+      const meetsFilter = minVramFilter ? hw.vram_gb >= minVramFilter : true;
+      const filterStyle = minVramFilter ? 
+        (meetsFilter ? 'border-color: var(--success); box-shadow: 0 0 0 2px rgba(16,185,129,0.2);' : 'opacity: 0.4;') : '';
+      const filterBadge = minVramFilter && meetsFilter ? '<div style="color: var(--success); font-size: 0.85rem; margin-top: 0.5rem;">✓ Meets VRAM requirement</div>' : '';
+      
+      return `
+        <div class="hw-card" style="${filterStyle}">
+          <div class="hw-card-header">
+            <h3 class="hw-card-title">${hw.name}</h3>
+            <div class="hw-card-gen">${hw.generation}</div>
+          </div>
+          <div class="hw-card-specs">
+            <div class="hw-spec">
+              <span class="hw-spec-label">${t('vram')}</span>
+              <span class="hw-spec-value">${hw.vram_gb} GB</span>
+            </div>
+            <div class="hw-spec">
+              <span class="hw-spec-label">${t('bandwidth')}</span>
+              <span class="hw-spec-value">${hw.bandwidth_gbps} GB/s</span>
+            </div>
+            <div class="hw-spec">
+              <span class="hw-spec-label">${t('compute')}</span>
+              <span class="hw-spec-value">${hw.bf16_tflops} TFLOPS</span>
+            </div>
+            <div class="hw-spec">
+              <span class="hw-spec-label">${t('tdp')}</span>
+              <span class="hw-spec-value">${hw.tdp_watts}W</span>
+            </div>
+            <div class="hw-spec">
+              <span class="hw-spec-label">${t('interconnect')}</span>
+              <span class="hw-spec-value">${hw.interconnect}</span>
+            </div>
+            <div class="hw-spec">
+              <span class="hw-spec-label">${t('maxCards')}</span>
+              <span class="hw-spec-value">${hw.max_cards_per_node}</span>
+            </div>
+          </div>
+          <div class="hw-card-actions">
+            <button class="btn-calc" data-gpu="${hw.id}">${t('testWithModel')}</button>
+            <button class="btn-details" data-vendor="${vendor}" data-gpu="${hw.id}">${t('viewDetails')}</button>
+          </div>
+          ${filterBadge}
+          ${isDraft ? '<div style="margin-top: 0.5rem; font-size: 0.8rem; color: #ef4444;">⚠️ ' + t('statusDraft') + '</div>' : ''}
+        </div>
+      `;
+    }
+    
+    function renderComparisonTable() {
+      const allHardware = [
+        ...hardwareData.nvidia.map(hw => ({ ...hw, vendor: 'NVIDIA' })),
+        ...hardwareData.huawei.map(hw => ({ ...hw, vendor: 'Huawei' }))
+      ];
+      
+      // Sort by VRAM descending
+      allHardware.sort((a, b) => b.vram_gb - a.vram_gb);
+      
+      return `
+        <table>
+          <thead>
+            <tr>
+              <th>${t('colVendor')}</th>
+              <th>${t('colName')}</th>
+              <th>${t('colVRAM')}</th>
+              <th>${t('colBandwidth')}</th>
+              <th>${t('colComputeBF16')}</th>
+              <th>${t('colComputeFP8')}</th>
+              <th>${t('colTDP')}</th>
+              <th>${t('colInterconnect')}</th>
+              <th>${t('colMaxCards')}</th>
+              <th>${t('colStatus')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${allHardware.map(hw => {
+              const isDraft = hw.verified_date === null || hw.notes?.includes('PLACEHOLDER');
+              const status = isDraft ? 'draft' : hw.status;
+              let statusClass = 'status-available';
+              let statusText = t('statusAvailable');
+              
+              if (status === 'announced') {
+                statusClass = 'status-announced';
+                statusText = t('statusAnnounced');
+              } else if (status === 'draft') {
+                statusClass = 'status-draft';
+                statusText = t('statusDraft');
+              }
+              
+              return `
+                <tr>
+                  <td>${hw.vendor}</td>
+                  <td><strong>${hw.name}</strong></td>
+                  <td>${hw.vram_gb}</td>
+                  <td>${hw.bandwidth_gbps}</td>
+                  <td>${hw.bf16_tflops}</td>
+                  <td>${hw.fp8_tflops || '—'}</td>
+                  <td>${hw.tdp_watts}</td>
+                  <td>${hw.interconnect}</td>
+                  <td>${hw.max_cards_per_node}</td>
+                  <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    function attachEventListeners() {
+      // Test with Model buttons
+      document.querySelectorAll('.btn-calc').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const gpuId = btn.getAttribute('data-gpu');
+          window.location.href = `../?gpu=${gpuId}#calculator`;
+        });
+      });
+      
+      // View Details buttons
+      document.querySelectorAll('.btn-details').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const vendor = btn.getAttribute('data-vendor');
+          const gpuId = btn.getAttribute('data-gpu');
+          window.location.href = `./${vendor}.html#${gpuId}`;
+        });
+      });
+    }
+    
+    // Language switching
+    document.getElementById('langSelect').addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      applyTranslations();
+      renderContent();
+    });
+    
+    // Initialize
+    applyTranslations();
+    loadHardwareData();
+  </script>
+</body>
+</html>
+

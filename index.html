@@ -27,6 +27,28 @@
   </script>
 </head>
 <body>
+  <nav class="global-nav">
+    <a href="/" class="nav-brand">
+      <span class="nav-icon">🧮</span>
+      <span class="nav-logo">LLM Sizer</span>
+    </a>
+    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="/" class="nav-item active">Calculator</a>
+      <a href="models/" class="nav-item">Models</a>
+      <a href="hardware/" class="nav-item">Hardware</a>
+      <a href="for/enterprise.html" class="nav-item">Guides</a>
+    </div>
+    <div class="nav-actions">
+      <label class="field compact language-switch" style="margin-bottom: 0;">
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="zh">中文</option>
+        </select>
+      </label>
+    </div>
+  </nav>
+
   <header class="hero">
     <div class="header-content">
       <h1 class="hero-title" data-i18n="title">LLM Resource Sizer</h1>
@@ -37,16 +59,45 @@
         <button class="quick-preset-btn" data-preset="deepseek-v3" data-i18n-title="quickDeepseek">Try DeepSeek-V3</button>
       </div>
     </div>
-    <div class="header-actions">
-      <label class="field compact language-switch">
-        <span data-i18n="langLabel">Language</span>
-        <select id="langSelect">
-          <option value="en">English</option>
-          <option value="zh">中文</option>
-        </select>
-      </label>
-    </div>
   </header>
+
+  <section class="ecosystem-grid" id="ecosystemGrid">
+    <div class="ecosystem-header">
+      <h2 class="ecosystem-title" data-i18n="ecosystemTitle">🔍 Explore the Platform</h2>
+      <p class="ecosystem-subtitle" data-i18n="ecosystemSubtitle">Not just a calculator — discover models, compare hardware, learn deployment strategies</p>
+    </div>
+    
+    <div class="ecosystem-cards">
+      <a href="models/" class="ecosystem-card">
+        <div class="card-icon">📚</div>
+        <div class="card-content">
+          <h3 data-i18n="navModels">Model Explorer</h3>
+          <p data-i18n="ecoModelsDesc">Browse 47+ open-source models (80B+) with specs and calculator integration.</p>
+        </div>
+        <div class="card-cta" data-i18n="ecoDiscover">Discover →</div>
+      </a>
+      
+      <a href="hardware/" class="ecosystem-card">
+        <div class="card-icon">⚙️</div>
+        <div class="card-content">
+          <h3 data-i18n="navHardware">Hardware Hub</h3>
+          <p data-i18n="ecoHardwareDesc">Compare NVIDIA & Huawei multi-GPU configurations for LLM deployment.</p>
+        </div>
+        <div class="card-cta" data-i18n="ecoCompare">Compare →</div>
+      </a>
+      
+      <a href="for/enterprise.html" class="ecosystem-card">
+        <div class="card-icon">💼</div>
+        <div class="card-content">
+          <h3 data-i18n="navGuides">Enterprise Guide</h3>
+          <p data-i18n="ecoGuidesDesc">Pre-configured deployment scenarios and capacity planning workflows.</p>
+        </div>
+        <div class="card-cta" data-i18n="ecoLearn">Learn →</div>
+      </a>
+    </div>
+    
+    <button class="ecosystem-dismiss" id="dismissEcosystem" data-i18n="ecoDismiss">↓ Just show me the calculator</button>
+  </section>
 
   <main>
     <section class="panel">
@@ -54,7 +105,10 @@
       <div class="grid two">
         <label class="field">
           <span data-i18n="modelPreset">Preset</span>
-          <select id="modelPreset"></select>
+          <div class="field-with-action">
+            <select id="modelPreset"></select>
+            <a href="models/" class="inline-link" data-i18n="browseModels">📚 Browse all</a>
+          </div>
           <small data-i18n="modelPresetHelp">You can edit any value after prefilling.</small>
           <div class="preset-meta">
             <a id="hfLink" class="hf-link" href="#" target="_blank" rel="noreferrer noopener">
@@ -127,9 +181,12 @@
         <div class="grid two">
           <label class="field">
             <span data-i18n="selectGPU">Select GPU</span>
-            <select id="gpuSelect">
-              <option value="">None (manual entry)</option>
-            </select>
+            <div class="field-with-action">
+              <select id="gpuSelect">
+                <option value="">None (manual entry)</option>
+              </select>
+              <a href="hardware/" class="inline-link" data-i18n="compareHardware">⚙️ Compare all</a>
+            </div>
             <small data-i18n="gpuHelp">Auto-fills specs to check if requirements fit.</small>
           </label>
           <div class="gpu-info" id="gpuInfo"></div>

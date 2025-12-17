@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Huawei Ascend NPU specifications for LLM inference - Atlas 300I Duo, Ascend 910, 910B hardware reference.">
+  <meta name="keywords" content="Huawei Ascend, Atlas 300I Duo, Ascend 910, NPU specifications, AI accelerator, LLM inference hardware">
+  <title>Huawei Ascend NPUs — LLM Resource Sizer</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .hardware-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .hardware-card {
+      background: var(--card-bg, #1a1a1a);
+      border: 1px solid var(--border-color, #333);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .hardware-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .hardware-card.draft {
+      border-left: 4px solid #ff9800;
+    }
+    
+    .card-header {
+      margin-bottom: 1rem;
+    }
+    
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      color: var(--text-primary, #fff);
+    }
+    
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary, #888);
+      margin: 0;
+    }
+    
+    .specs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .spec-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-secondary, #888);
+      margin-bottom: 0.25rem;
+    }
+    
+    .spec-value {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text-primary, #fff);
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .badge-warning {
+      background: #ff9800;
+      color: #000;
+    }
+    
+    .badge-available {
+      background: #4caf50;
+      color: #fff;
+    }
+    
+    .card-actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .btn-primary {
+      background: var(--primary-color, #2196f3);
+      color: #fff;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-hover, #1976d2);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-color, #333);
+      color: var(--text-primary, #fff);
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .warning-banner {
+      background: #ff9800;
+      color: #000;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+    
+    .metadata-section {
+      background: var(--card-bg, #1a1a1a);
+      border: 1px solid var(--border-color, #333);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    
+    .breadcrumb {
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary, #888);
+    }
+    
+    .breadcrumb a {
+      color: var(--primary-color, #2196f3);
+      text-decoration: none;
+    }
+    
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav class="global-nav">
+    <a href="../" class="nav-brand">
+      <span class="nav-icon">🧮</span>
+      <span class="nav-logo">LLM Sizer</span>
+    </a>
+    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="../" class="nav-item">Calculator</a>
+      <a href="../models/" class="nav-item">Models</a>
+      <a href="../hardware/" class="nav-item active">Hardware</a>
+      <a href="../for/enterprise.html" class="nav-item">Guides</a>
+    </div>
+    <div class="nav-actions">
+      <label class="field compact language-switch" style="margin-bottom: 0;">
+        <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+          <option value="en">English</option>
+        </select>
+      </label>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="header-content">
+      <h1 class="hero-title">Huawei Ascend NPUs</h1>
+      <p class="lede">AI accelerators for multi-GPU LLM inference</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="warning-banner" class="warning-banner" style="display: none;">
+      ⚠️ <strong>DRAFT DATA:</strong> All specifications on this page require verification from official Huawei documentation. Do not use for production decisions.
+    </div>
+
+    <section class="metadata-section" id="metadata">
+      <h2>Data Status</h2>
+      <p><strong>Last Updated:</strong> <span id="updated-date">Loading...</span></p>
+      <p><strong>Source:</strong> <a id="source-link" href="#" target="_blank">Huawei Official Site</a></p>
+      <p><strong>Version:</strong> <span id="version">Loading...</span></p>
+    </section>
+
+    <section>
+      <h2>Available NPUs</h2>
+      <div class="hardware-grid" id="hardware-grid">
+        <!-- Hardware cards will be inserted here by JavaScript -->
+      </div>
+    </section>
+
+    <section class="metadata-section">
+      <h3>Research Notes</h3>
+      <div id="research-notes">
+        <p>Loading research status...</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/nav.js"></script>
+  <script>
+    // Load and display Huawei hardware data
+    async function loadHuaweiHardware() {
+      try {
+        const response = await fetch('../data/hardware/huawei.json');
+        if (!response.ok) throw new Error('Failed to load hardware data');
+        
+        const data = await response.json();
+        
+        // Display metadata
+        document.getElementById('updated-date').textContent = data.metadata.updated_at;
+        document.getElementById('source-link').href = data.metadata.source;
+        document.getElementById('version').textContent = data.metadata.version;
+        
+        // Show warning if draft
+        if (data.metadata.status && data.metadata.status.includes('DRAFT')) {
+          document.getElementById('warning-banner').style.display = 'block';
+        }
+        
+        // Render hardware cards
+        const grid = document.getElementById('hardware-grid');
+        grid.innerHTML = data.hardware.map(hw => createHardwareCard(hw)).join('');
+        
+        // Render research notes
+        if (data.research_notes) {
+          renderResearchNotes(data.research_notes);
+        }
+        
+      } catch (error) {
+        console.error('Error loading hardware data:', error);
+        document.getElementById('hardware-grid').innerHTML = 
+          '<p style="color: #ff5252;">Error loading hardware data. Please check that the data file exists.</p>';
+      }
+    }
+    
+    function createHardwareCard(hw) {
+      const hasWarning = hw.notes && hw.notes.includes('PLACEHOLDER');
+      const statusBadge = hw.status === 'available' ? 
+        '<span class="badge badge-available">Available</span>' : 
+        '<span class="badge">' + hw.status + '</span>';
+      
+      return `
+        <div class="hardware-card ${hasWarning ? 'draft' : ''}">
+          <div class="card-header">
+            <h3 class="card-title">${hw.name}</h3>
+            <p class="card-subtitle">${hw.generation} • ${hw.type.toUpperCase()}</p>
+            ${statusBadge}
+            ${hasWarning ? '<span class="badge badge-warning">⚠️ DRAFT</span>' : ''}
+          </div>
+          
+          <div class="specs-grid">
+            <div class="spec-item">
+              <span class="spec-label">VRAM</span>
+              <span class="spec-value">${hw.vram_gb} GB ${hw.memory_type}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Bandwidth</span>
+              <span class="spec-value">${hw.bandwidth_gbps} GB/s</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">FP16</span>
+              <span class="spec-value">${hw.fp16_tflops} TFLOPS</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">BF16</span>
+              <span class="spec-value">${hw.bf16_tflops || 'N/A'} TFLOPS</span>
+            </div>
+            ${hw.int8_tops ? `
+            <div class="spec-item">
+              <span class="spec-label">INT8</span>
+              <span class="spec-value">${hw.int8_tops} TOPS</span>
+            </div>
+            ` : ''}
+            <div class="spec-item">
+              <span class="spec-label">TDP</span>
+              <span class="spec-value">${hw.tdp_watts}W</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Form Factor</span>
+              <span class="spec-value">${hw.form_factor}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">Max per Node</span>
+              <span class="spec-value">${hw.max_cards_per_node}×</span>
+            </div>
+          </div>
+          
+          ${hw.notes ? `<p style="font-size: 0.85rem; color: #ff9800; margin-top: 1rem;">${hw.notes}</p>` : ''}
+          
+          <div class="card-actions">
+            <button class="btn btn-primary" onclick="useInCalculator('${hw.id}')">
+              ⚡ Test with Model →
+            </button>
+            ${hw.source_url ? `
+            <a href="${hw.source_url}" target="_blank" class="btn btn-secondary">
+              Official Specs
+            </a>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+    
+    function renderResearchNotes(notes) {
+      const container = document.getElementById('research-notes');
+      let html = `<p><strong>Status:</strong> ${notes.status}</p>`;
+      
+      if (notes.todo && notes.todo.length > 0) {
+        html += '<h4>Research TODO:</h4><ul>';
+        notes.todo.forEach(item => {
+          html += `<li>${item}</li>`;
+        });
+        html += '</ul>';
+      }
+      
+      if (notes.official_resources && notes.official_resources.length > 0) {
+        html += '<h4>Official Resources:</h4><ul>';
+        notes.official_resources.forEach(url => {
+          html += `<li><a href="${url}" target="_blank">${url}</a></li>`;
+        });
+        html += '</ul>';
+      }
+      
+      container.innerHTML = html;
+    }
+    
+    function useInCalculator(hwId) {
+      // Navigate to calculator with pre-selected hardware
+      window.location.href = `../index.html?gpu=${hwId}`;
+    }
+    
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', loadHuaweiHardware);
+  </script>
+</body>
+</html>
+

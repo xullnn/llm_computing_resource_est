@@ -41,6 +41,20 @@ const I18N = {
     landingCalloutUseCases: "Benchmark Llama, Qwen, DeepSeek, Phi and more.",
     sectionLandingWhy: "Why this calculator",
     sectionLandingFeatures: "Built for accuracy and privacy",
+    // Ecosystem Grid
+    ecosystemTitle: "🔍 Explore the Platform",
+    ecosystemSubtitle: "Not just a calculator — discover models, compare hardware, learn deployment strategies",
+    navModels: "Model Explorer",
+    ecoModelsDesc: "Browse 47+ open-source models (80B+) with specs and calculator integration.",
+    ecoDiscover: "Discover →",
+    navHardware: "Hardware Hub",
+    ecoHardwareDesc: "Compare NVIDIA & Huawei multi-GPU configurations for LLM deployment.",
+    ecoCompare: "Compare →",
+    navGuides: "Enterprise Guide",
+    ecoGuidesDesc: "Pre-configured deployment scenarios and capacity planning workflows.",
+    ecoLearn: "Learn →",
+    ecoDismiss: "↓ Just show me the calculator",
+    
     featureOfflineTitle: "Offline & private",
     featureOfflineDesc: "No sign-in, no telemetry, no servers. Your workload stays on your device.",
     featurePhysicsTitle: "Physics-backed",
@@ -73,6 +87,9 @@ const I18N = {
     quickLlama: "Try Llama 3 8B",
     quickQwen: "Try Qwen 32B",
     quickDeepseek: "Try DeepSeek-V3",
+    browseModels: "📚 Browse all",
+    compareHardware: "⚙️ Compare all",
+    findHardware: "🔍 Find compatible hardware →",
     langLabel: "Language",
     reset: "Reset to defaults",
     sectionModel: "Model",
@@ -158,6 +175,20 @@ const I18N = {
     landingCalloutUseCases: "可对 Llama、Qwen、DeepSeek、Phi 等进行预估。",
     sectionLandingWhy: "为何使用本工具",
     sectionLandingFeatures: "准确且重视隐私",
+    // Ecosystem Grid
+    ecosystemTitle: "🔍 探索平台",
+    ecosystemSubtitle: "不仅仅是计算器 —— 探索模型、对比硬件、学习部署策略",
+    navModels: "模型库",
+    ecoModelsDesc: "浏览 47+ 个开源模型 (80B+)，查看规格并一键计算。",
+    ecoDiscover: "探索 →",
+    navHardware: "硬件中心",
+    ecoHardwareDesc: "对比 NVIDIA 和华为的多卡 GPU/NPU 配置。",
+    ecoCompare: "对比 →",
+    navGuides: "企业指南",
+    ecoGuidesDesc: "预设的部署场景和容量规划工作流。",
+    ecoLearn: "学习 →",
+    ecoDismiss: "↓ 直接显示计算器",
+
     featureOfflineTitle: "离线 & 隐私",
     featureOfflineDesc: "无需登录、无遥测、无服务器。你的负载留在本地。",
     featurePhysicsTitle: "物理模型支撑",
@@ -190,6 +221,9 @@ const I18N = {
     quickLlama: "试试 Llama 3 8B",
     quickQwen: "试试 Qwen 32B",
     quickDeepseek: "试试 DeepSeek-V3",
+    browseModels: "📚 浏览全部",
+    compareHardware: "⚙️ 对比全部",
+    findHardware: "🔍 查找兼容硬件 →",
     langLabel: "语言",
     reset: "恢复默认",
     sectionModel: "模型",
@@ -576,12 +610,14 @@ function render(results) {
   const computeSummary = getComputeSummary(results.requiredTflops);
   const bwSummary = getBandwidthSummary(results.requiredBwGbps);
 
+  const vramNeeded = Math.ceil(results.totalVramGb);
   byId("vramCard").innerHTML = `
     <strong>💾 Memory Needed</strong>
     <div class="metric">${fmt(results.totalVramGb, 2)} GB</div>
     ${vramBar}
     <div class="sub" style="color: var(--accent); font-weight: 600; margin: 8px 0 4px;">${vramSummary}</div>
     <div class="sub">${t("weightsLabel") ?? "Weights"}: ${fmt(results.weightBytesTotal / 1e9, 2)} GB · KV: ${fmt(results.kvCacheBytes / 1e9, 2)} GB</div>
+    <a href="hardware/?min_vram=${vramNeeded}#search" class="card-action" data-i18n="findHardware">🔍 Find compatible hardware →</a>
   `;
 
   byId("computeCard").innerHTML = `
@@ -975,7 +1011,42 @@ function init() {
   // Initialize hardware picker
   initHardwarePicker();
 
+  // Initialize navigation
+  initNavigation();
+
   computeAndRender();
 }
 
 document.addEventListener("DOMContentLoaded", init);
+
+function initNavigation() {
+  // Mobile menu toggle
+  const mobileToggle = document.querySelector('.mobile-menu-toggle');
+  const navLinks = document.getElementById('navLinks');
+  
+  if (mobileToggle && navLinks) {
+    mobileToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const isOpen = navLinks.classList.contains('open');
+      mobileToggle.setAttribute('aria-expanded', isOpen);
+      mobileToggle.textContent = isOpen ? '✕' : '☰';
+    });
+  }
+  
+  // Ecosystem grid dismissal
+  const ecosystemGrid = byId('ecosystemGrid');
+  const dismissBtn = byId('dismissEcosystem');
+  
+  if (ecosystemGrid && dismissBtn) {
+    // Check localStorage
+    const isDismissed = localStorage.getItem('ecosystemDismissed') === 'true';
+    if (isDismissed) {
+      ecosystemGrid.style.display = 'none';
+    }
+    
+    dismissBtn.addEventListener('click', () => {
+      ecosystemGrid.style.display = 'none';
+      localStorage.setItem('ecosystemDismissed', 'true');
+    });
+  }
+}
