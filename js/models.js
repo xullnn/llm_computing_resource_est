@@ -4,7 +4,7 @@
  * activeParamsB = parameters actually used per token for MoE (compute-side).
  * hiddenSize / layers are optional; heuristics will fill gaps if absent.
  */
-const MODEL_PRESETS = [
+let MODEL_PRESETS = [
   {
     id: "qwen3-235b-a22b-fp8",
     provider: "Qwen",

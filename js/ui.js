@@ -90,6 +90,8 @@ const I18N = {
     browseModels: "📚 Browse all",
     compareHardware: "⚙️ Compare all",
     findHardware: "🔍 Find compatible hardware →",
+    gpuCount: "Number of GPUs",
+    gpuCountHelp: "Total VRAM = Count × Single GPU VRAM.",
     langLabel: "Language",
     reset: "Reset to defaults",
     sectionModel: "Model",
@@ -224,6 +226,8 @@ const I18N = {
     browseModels: "📚 浏览全部",
     compareHardware: "⚙️ 对比全部",
     findHardware: "🔍 查找兼容硬件 →",
+    gpuCount: "GPU 数量",
+    gpuCountHelp: "总显存 = 数量 × 单卡显存。",
     langLabel: "语言",
     reset: "恢复默认",
     sectionModel: "模型",
@@ -308,6 +312,7 @@ function getURLParams() {
     mode: params.get('mode'),           // 'local', 'cloud', 'compare'
     preset: params.get('preset'),       // model preset ID
     gpu: params.get('gpu'),             // GPU ID
+    gpuCount: params.get('gpuCount'),   // Number of GPUs
     lang: params.get('lang'),           // 'en' or 'zh'
     promptTokens: params.get('prompt'),
     newTokens: params.get('new'),
@@ -334,12 +339,15 @@ function applyURLParams(params) {
   // Apply preset
   if (params.preset) {
     const presetSelect = byId('modelPreset');
+    // Check if preset is already in hardcoded list or will be loaded later
     const presetExists = MODEL_PRESETS.find(m => m.id === params.preset);
-    if (presetSelect && presetExists) {
+    if (presetSelect && (presetExists || true)) { // Allow even if not loaded yet, fetch will handle
       presetSelect.value = params.preset;
       const preset = getSelectedPreset();
-      applyPreset(preset);
-      updatePresetLink(preset);
+      if (preset) {
+        applyPreset(preset);
+        updatePresetLink(preset);
+      }
     }
   }
   
@@ -350,10 +358,13 @@ function applyURLParams(params) {
   if (params.targetTps) byId('targetTps').value = params.targetTps;
   if (params.ttftMs) byId('ttftMs').value = params.ttftMs;
   
-  // Apply GPU if provided (will be used with hardware picker)
+  // Apply GPU if provided
   if (params.gpu) {
-    // Store for later use when hardware picker is initialized
     document.body.setAttribute('data-preset-gpu', params.gpu);
+    const gpuCountSelect = byId('gpuCount');
+    if (gpuCountSelect && params.gpuCount) {
+      gpuCountSelect.value = params.gpuCount;
+    }
   }
 }
 
@@ -366,6 +377,13 @@ function generateShareableURL(includeResults = false) {
   if (currentMode) params.set('mode', currentMode);
   if (currentLang !== 'en') params.set('lang', currentLang);
   
+  const gpu = byId('gpuSelect')?.value;
+  if (gpu) {
+    params.set('gpu', gpu);
+    const gpuCount = byId('gpuCount')?.value;
+    if (gpuCount && gpuCount !== "1") params.set('gpuCount', gpuCount);
+  }
+
   if (includeResults) {
     params.set('prompt', byId('promptTokens').value);
     params.set('new', byId('newTokens').value);
@@ -378,6 +396,83 @@ function generateShareableURL(includeResults = false) {
   url.search = params.toString();
   url.hash = '#calculator';
   return url.toString();
+}
+
+async function fetchDynamicData() {
+  try {
+    // 1. Fetch models
+    const modelsRes = await fetch('data/models.json');
+    if (modelsRes.ok) {
+      const modelsData = await modelsRes.json();
+      if (modelsData && modelsData.models) {
+        // Map the structure if necessary. The automated fetch script structure:
+        // { id, name, parameters_billion, architecture, hidden_size, num_layers, num_heads, ... }
+        // Our MODEL_PRESETS structure:
+        // { id, provider, name, repo, hfUrl, paramsB, hiddenSize, layers, heads, weightPrecision, kvPrecision }
+        const mappedModels = modelsData.models.map(m => {
+            const provider = m.id.split('/')[0];
+            return {
+                id: m.id,
+                provider: provider.charAt(0).toUpperCase() + provider.slice(1),
+                name: m.name,
+                repo: m.id,
+                hfUrl: m.huggingface_url,
+                paramsB: m.parameters_billion,
+                activeParamsB: m.moe_num_experts ? (m.parameters_billion / m.moe_num_experts * (m.moe_top_k || 1)) : m.parameters_billion,
+                hiddenSize: m.hidden_size,
+                layers: m.num_layers,
+                heads: m.num_heads,
+                weightPrecision: "bf16",
+                kvPrecision: "bf16"
+            };
+        });
+        
+        // Merge or replace? User says "Replace hardcoded presets"
+        MODEL_PRESETS = mappedModels;
+        populatePresetSelect();
+      }
+    }
+
+    // 2. Fetch hardware
+    const [nvidiaRes, huaweiRes] = await Promise.all([
+      fetch('data/hardware/nvidia.json'),
+      fetch('data/hardware/huawei.json')
+    ]);
+
+    let newHardware = [];
+    if (nvidiaRes.ok) {
+      const data = await nvidiaRes.json();
+      newHardware = newHardware.concat(data.hardware.map(h => ({
+        ...h,
+        category: 'datacenter', // default for these lists
+        tflops_bf16: h.bf16_tflops,
+        tflops_fp16: h.fp16_tflops,
+        tops_int8: h.int8_tops,
+        popular: h.id.includes('h100') || h.id.includes('a100')
+      })));
+    }
+    if (huaweiRes.ok) {
+      const data = await huaweiRes.json();
+      newHardware = newHardware.concat(data.hardware.map(h => ({
+        ...h,
+        category: 'datacenter',
+        tflops_bf16: h.bf16_tflops,
+        tflops_fp16: h.fp16_tflops,
+        tops_int8: h.int8_tops,
+        popular: false
+      })));
+    }
+
+    if (newHardware.length > 0) {
+      // Merge with existing consumer/apple/pro gpus which aren't in the new JSONs yet
+      const consumerGpus = gpuDatabase.filter(g => ['consumer', 'apple', 'professional'].includes(g.category));
+      gpuDatabase = [...consumerGpus, ...newHardware];
+      populateGPUSelect();
+    }
+  } catch (err) {
+    console.error("Failed to fetch dynamic data:", err);
+    // Fallback to hardcoded data already in memory
+  }
 }
 
 function applyStaticTranslations() {
@@ -443,7 +538,11 @@ function readNumber(id) {
 
 function gatherInputs() {
   const preset = getSelectedPreset();
-  return {
+  const gpuId = byId('gpuSelect')?.value;
+  const gpu = gpuId ? getGPUById(gpuId) : null;
+  const gpuCount = parseInt(byId('gpuCount')?.value || "1");
+
+  const inputs = {
     paramsB: readNumber("paramsB"),
     activeParamsB: readNumber("activeParamsB") || (preset ? preset.activeParamsB : undefined),
     heads: preset ? preset.heads : undefined,
@@ -459,6 +558,16 @@ function gatherInputs() {
     utilCompute: readNumber("utilCompute"),
     utilBandwidth: readNumber("utilBandwidth"),
   };
+
+  // If a GPU is selected, override hardware specs
+  if (gpu) {
+    inputs.peakTflops = (gpu.tflops_bf16 || gpu.tflops_fp16 || 0) * gpuCount;
+    inputs.peakTops = (gpu.tops_int8 || 0) * gpuCount;
+    inputs.memBandwidth = (gpu.bandwidth_gbps || 0) * gpuCount;
+    inputs.totalVramAvailable = (gpu.vram_gb || 0) * gpuCount;
+  }
+
+  return inputs;
 }
 
 function convertCompute(valueTflops, unit) {
@@ -601,10 +710,15 @@ function render(results) {
   // Get selected GPU for comparison
   const gpuId = byId('gpuSelect')?.value;
   const gpu = gpuId ? getGPUById(gpuId) : null;
+  const gpuCount = parseInt(byId('gpuCount')?.value || "1");
   
-  const vramBar = gpu ? renderProgressBar(results.totalVramGb, gpu.vram_gb, `vs ${gpu.vram_gb}GB available`) : '';
-  const computeBar = gpu ? renderProgressBar(results.requiredTflops, gpu.tflops_bf16 || gpu.tflops_fp16, `vs ${fmt(gpu.tflops_bf16 || gpu.tflops_fp16, 1)} TFLOPS available`) : '';
-  const bwBar = gpu ? renderProgressBar(results.requiredBwGbps, gpu.bandwidth_gbps, `vs ${gpu.bandwidth_gbps} GB/s available`) : '';
+  const totalVramAvailable = gpu ? gpu.vram_gb * gpuCount : 0;
+  const totalComputeAvailable = gpu ? (gpu.tflops_bf16 || gpu.tflops_fp16) * gpuCount : 0;
+  const totalBwAvailable = gpu ? gpu.bandwidth_gbps * gpuCount : 0;
+
+  const vramBar = gpu ? renderProgressBar(results.totalVramGb, totalVramAvailable, `vs ${totalVramAvailable}GB available (${gpuCount}× ${gpu.vram_gb}GB)`) : '';
+  const computeBar = gpu ? renderProgressBar(results.requiredTflops, totalComputeAvailable, `vs ${fmt(totalComputeAvailable, 1)} TFLOPS available`) : '';
+  const bwBar = gpu ? renderProgressBar(results.requiredBwGbps, totalBwAvailable, `vs ${totalBwAvailable} GB/s available`) : '';
 
   const vramSummary = getVramSummary(results.totalVramGb);
   const computeSummary = getComputeSummary(results.requiredTflops);
@@ -835,7 +949,7 @@ function populateGPUSelect() {
     consumer: 'Consumer GPUs',
     professional: 'Professional / Workstation',
     apple: 'Apple Silicon',
-    datacenter: 'Datacenter GPUs'
+    datacenter: 'Datacenter / Enterprise accelerators'
   };
   
   Object.entries(categories).forEach(([category, label]) => {
@@ -852,6 +966,27 @@ function populateGPUSelect() {
       sel.appendChild(optgroup);
     }
   });
+
+  // Populate GPU count select (1-72)
+  const countSel = byId('gpuCount');
+  if (countSel) {
+    const currentVal = countSel.value || "1";
+    countSel.innerHTML = "";
+    [1, 2, 4, 8, 16, 32, 64, 72].forEach(count => {
+      const opt = document.createElement('option');
+      opt.value = count;
+      opt.textContent = count;
+      countSel.appendChild(opt);
+    });
+    // Add custom option if not in the list
+    if (![1, 2, 4, 8, 16, 32, 64, 72].includes(parseInt(currentVal))) {
+        const opt = document.createElement('option');
+        opt.value = currentVal;
+        opt.textContent = currentVal;
+        countSel.appendChild(opt);
+    }
+    countSel.value = currentVal;
+  }
 }
 
 function handleGPUSelection() {
@@ -890,24 +1025,27 @@ function updateGPUFitness(results) {
   const gpu = getGPUById(gpuId);
   if (!gpu) return;
   
+  const gpuCount = parseInt(byId('gpuCount')?.value || "1");
   const infoDiv = byId('gpuInfo');
   if (!infoDiv) return;
   
   // Check if requirements fit
-  const vramFits = gpu.vram_gb >= results.totalVramGb;
-  const tflops = gpu.tflops_bf16 || gpu.tflops_fp16;
-  const computeFits = tflops >= results.requiredTflops;
-  const bwFits = gpu.bandwidth_gbps >= results.requiredBwGbps;
+  const totalVram = gpu.vram_gb * gpuCount;
+  const vramFits = totalVram >= results.totalVramGb;
+  const totalTflops = (gpu.tflops_bf16 || gpu.tflops_fp16) * gpuCount;
+  const computeFits = totalTflops >= results.requiredTflops;
+  const totalBw = gpu.bandwidth_gbps * gpuCount;
+  const bwFits = totalBw >= results.requiredBwGbps;
   
   const allFit = vramFits && computeFits && bwFits;
   
   const fitnessHtml = `
     <div class="gpu-fitness ${allFit ? 'fit' : 'no-fit'}">
-      <div class="fitness-title">${allFit ? '✅ This GPU fits!' : '⚠️ May not meet requirements'}</div>
+      <div class="fitness-title">${allFit ? '✅ This configuration fits!' : '⚠️ May not meet requirements'}</div>
       <div class="fitness-details">
-        <div class="${vramFits ? 'ok' : 'warn'}">VRAM: ${fmt(gpu.vram_gb, 0)}GB ${vramFits ? '≥' : '<'} ${fmt(results.totalVramGb, 0)}GB needed</div>
-        <div class="${computeFits ? 'ok' : 'warn'}">Compute: ${fmt(tflops, 0)} ${computeFits ? '≥' : '<'} ${fmt(results.requiredTflops, 0)} TFLOPS</div>
-        <div class="${bwFits ? 'ok' : 'warn'}">Bandwidth: ${fmt(gpu.bandwidth_gbps, 0)} ${bwFits ? '≥' : '<'} ${fmt(results.requiredBwGbps, 0)} GB/s</div>
+        <div class="${vramFits ? 'ok' : 'warn'}">VRAM: ${fmt(totalVram, 0)}GB ${vramFits ? '≥' : '<'} ${fmt(results.totalVramGb, 0)}GB needed</div>
+        <div class="${computeFits ? 'ok' : 'warn'}">Compute: ${fmt(totalTflops, 0)} ${computeFits ? '≥' : '<'} ${fmt(results.requiredTflops, 0)} TFLOPS</div>
+        <div class="${bwFits ? 'ok' : 'warn'}">Bandwidth: ${fmt(totalBw, 0)} ${bwFits ? '≥' : '<'} ${fmt(results.requiredBwGbps, 0)} GB/s</div>
       </div>
     </div>
   `;
@@ -965,7 +1103,7 @@ function initAdvancedToggles() {
   }
 }
 
-function init() {
+async function init() {
   // Check for URL parameters first
   const urlParams = getURLParams();
   
@@ -980,6 +1118,22 @@ function init() {
   }
   
   applyStaticTranslations();
+
+  // Load dynamic data in background
+  fetchDynamicData().then(() => {
+    // Re-apply URL params in case the dynamic data added the requested preset
+    if (urlParams.preset) {
+        const presetSelect = byId('modelPreset');
+        const presetExists = MODEL_PRESETS.find(m => m.id === urlParams.preset);
+        if (presetSelect && presetExists) {
+            presetSelect.value = urlParams.preset;
+            const preset = getSelectedPreset();
+            applyPreset(preset);
+            updatePresetLink(preset);
+            computeAndRender();
+        }
+    }
+  });
 
   const handlePresetSelect = () => {
     const preset = getSelectedPreset();

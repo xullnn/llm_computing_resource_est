@@ -178,7 +178,7 @@
         </button>
       </h2>
       <div class="hardware-picker" id="hardwarePicker" style="display: none;">
-        <div class="grid two">
+        <div class="grid three">
           <label class="field">
             <span data-i18n="selectGPU">Select GPU</span>
             <div class="field-with-action">
@@ -189,7 +189,21 @@
             </div>
             <small data-i18n="gpuHelp">Auto-fills specs to check if requirements fit.</small>
           </label>
-          <div class="gpu-info" id="gpuInfo"></div>
+          <label class="field">
+            <span data-i18n="gpuCount">Number of GPUs</span>
+            <select id="gpuCount">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="8">8</option>
+              <option value="16">16</option>
+              <option value="32">32</option>
+              <option value="64">64</option>
+              <option value="72">72</option>
+            </select>
+            <small data-i18n="gpuCountHelp">Total VRAM = Count × Single GPU VRAM.</small>
+          </label>
+          <div class="gpu-info" id="gpuInfo" style="grid-column: span 1;"></div>
         </div>
       </div>
     </section>

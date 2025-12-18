@@ -1,7 +1,7 @@
 // GPU database and hardware recommendation logic
 // Embedded directly to work offline without fetch/CORS issues
 
-const gpuDatabase = [
+let gpuDatabase = [
   {
     "id": "rtx-4090",
     "name": "NVIDIA RTX 4090",
