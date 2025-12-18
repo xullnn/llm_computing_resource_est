@@ -13,7 +13,14 @@ const path = require('path');
 const https = require('https');
 
 const MIN_PARAMS_BILLION = 80; // 80B+ parameters as specified
-const ONE_YEAR_AGO = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000); // Exactly 1 year (365 days) as requested
+
+// Date cutoff: 2 years to include important models like Llama 3.1 (July 2024) and Qwen 2.5 (Sept 2024)
+// For large models (80B+), 2-year window is appropriate because:
+// - Major releases are infrequent (months apart)
+// - Enterprise adoption lags cutting-edge releases  
+// - Model stability/maturity matters more than recency
+const CUTOFF_DAYS = 730; // 2 years
+const CUTOFF_DATE = new Date(Date.now() - CUTOFF_DAYS * 24 * 60 * 60 * 1000);
 
 // Permissive open-source licenses we accept
 const OPEN_SOURCE_LICENSES = [
@@ -178,12 +185,29 @@ async function fetchOpenSourceModels() {
   const models = [];
   const seenModels = new Set();
   
-  // Search strategies to find 80B+ models (they're not always top downloads)
+  // Strategic organizations - leading foundation model providers only
+  const STRATEGIC_ORGS = [
+    { author: 'Qwen', limit: 200 },
+    { author: 'deepseek-ai', limit: 100 },
+    { author: 'openai', limit: 50 },
+    { author: 'google', limit: 100 },
+    { author: 'anthropics', limit: 50 },
+    { author: 'apple', limit: 50 },
+  ];
+  
+  // Search strategies to find 80B+ models
   const searchStrategies = [
+    // Tier 1: Broad discovery (catches popular models)
     { url: 'https://huggingface.co/api/models?filter=text-generation&sort=downloads&direction=-1&limit=500', desc: 'top downloads' },
     { url: 'https://huggingface.co/api/models?filter=text-generation&sort=likes&direction=-1&limit=500', desc: 'most liked' },
     { url: 'https://huggingface.co/api/models?filter=text-generation&sort=lastModified&direction=-1&limit=500', desc: 'recently updated' },
     { url: 'https://huggingface.co/api/models?filter=text-generation&sort=createdAt&direction=-1&limit=1000', desc: 'recently created' },
+    
+    // Tier 2: Strategic organizations (ensures comprehensive coverage of key providers)
+    ...STRATEGIC_ORGS.map(org => ({
+      url: `https://huggingface.co/api/models?author=${org.author}&filter=text-generation&limit=${org.limit}`,
+      desc: `${org.author} org`
+    }))
   ];
   
   let allRawModels = [];
@@ -225,9 +249,9 @@ async function fetchOpenSourceModels() {
       continue;
     }
     
-    // Filter: Only models from past 1 year (use createdAt for release date)
+    // Filter: Only models from past 2 years (use createdAt for release date)
     const createdAt = model.createdAt ? new Date(model.createdAt) : null;
-    if (!createdAt || createdAt < ONE_YEAR_AGO) {
+    if (!createdAt || createdAt < CUTOFF_DATE) {
       if (isMajor) console.log(`⚠️  ${model.id}: TOO OLD (${createdAt ? createdAt.toISOString().split('T')[0] : 'no date'})`);
       skipped.tooOld++;
       continue;
@@ -342,12 +366,12 @@ async function fetchOpenSourceModels() {
   models.sort((a, b) => b.parameters_billion - a.parameters_billion);
   
   // Generate output
-  const oneYearAgo = new Date(ONE_YEAR_AGO).toISOString().split('T')[0];
+  const cutoffDate = new Date(CUTOFF_DATE).toISOString().split('T')[0];
   const output = {
     metadata: {
       updated_at: new Date().toISOString(),
       source: 'Hugging Face Hub API',
-      filter: `open-source licenses only, 80B+ parameters, released after ${oneYearAgo}`,
+      filter: `open-source licenses only, 80B+ parameters, released after ${cutoffDate} (2 years)`,
       count: models.length,
     },
     models: models,
