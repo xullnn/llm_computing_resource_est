@@ -82,6 +82,94 @@ function fetchJson(url) {
 }
 
 /**
+ * Fetch text content from URL (for model cards)
+ */
+function fetchText(url) {
+  return new Promise((resolve, reject) => {
+    const headers = {
+      'User-Agent': 'LLM-Resource-Tool/1.0',
+    };
+    
+    if (process.env.HF_TOKEN) {
+      headers['Authorization'] = `Bearer ${process.env.HF_TOKEN}`;
+    }
+    
+    https.get(url, { headers }, (res) => {
+      let data = '';
+      
+      // Follow redirects
+      if (res.statusCode === 301 || res.statusCode === 302) {
+        return resolve(fetchText(res.headers.location));
+      }
+      
+      if (res.statusCode !== 200) {
+        return reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+      }
+      
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve(data));
+    }).on('error', reject);
+  });
+}
+
+/**
+ * STEP 1: Extract parameter count from model card (README.md)
+ * This is the most reliable source as model authors state the official count
+ */
+async function fetchStatedParams(modelId) {
+  try {
+    const readmeUrl = `https://huggingface.co/${modelId}/raw/main/README.md`;
+    const markdown = await fetchText(readmeUrl);
+    
+    // Look for TOTAL parameter count patterns (not activated params)
+    // Prioritize patterns that explicitly mention "total"
+    const patterns = [
+      // High priority: explicit "total params"
+      /(?:#\s*)?total\s+(?:params?|parameters?)[\s:]+(\d+(?:\.\d+)?)\s*([BT])/i,
+      /(\d+(?:\.\d+)?)\s*([BT])\s+total\s+(?:params?|parameters?)/i,
+      
+      // Medium priority: table rows with "total"
+      /\|\s*(?:#\s*)?total\s+(?:params?|parameters?)\s*\|[^\d]*(\d+(?:\.\d+)?)\s*([BT])?/i,
+      
+      // Look for context that indicates total vs active
+      /(\d+(?:\.\d+)?)\s*([BT])\s+(?:params?|parameters?).*?total/i,
+      
+      // Generic patterns (lower priority, may catch "activated" by mistake)
+      /(?<!activated?\s)(?<!active\s)(\d+(?:\.\d+)?)\s*([BT])\s+(?:params?|parameters?)/i,
+      /(?:params?|parameters?)[\s:]*(\d+(?:\.\d+)?)\s*([BT])/i,
+    ];
+    
+    for (const pattern of patterns) {
+      const match = markdown.match(pattern);
+      if (match) {
+        let num = parseFloat(match[1]);
+        const unit = match[2] ? match[2].toUpperCase() : 'B';
+        
+        // Convert to billions
+        if (unit === 'T') {
+          num *= 1000;
+        }
+        
+        // Sanity check: reasonable range for LLMs
+        // For models < 100B, be suspicious (might be activated params)
+        if (num >= 80 && num <= 10000) {
+          // Additional check: skip if it's clearly "activated" params
+          const context = markdown.substring(Math.max(0, match.index - 100), match.index + 100);
+          if (!context.toLowerCase().includes('activated') && !context.toLowerCase().includes('active param')) {
+            return num;
+          }
+        }
+      }
+    }
+    
+    return null;
+  } catch (e) {
+    // Model card not found or error reading - that's OK
+    return null;
+  }
+}
+
+/**
  * Main function to fetch open-source models
  */
 async function fetchOpenSourceModels() {
@@ -171,16 +259,35 @@ async function fetchOpenSourceModels() {
       const configUrl = `https://huggingface.co/${model.id}/raw/main/config.json`;
       const config = await fetchJson(configUrl);
       
-      // Estimate parameter count from architecture
-      const params = estimateParams(config);
+      // STEP 4: Validate and choose best parameter estimate
+      const estimatedParams = estimateParams(config);
+      const statedParams = await fetchStatedParams(model.id);
       
-      if (params < MIN_PARAMS_BILLION) {
-        if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL (${params.toFixed(1)}B)`);
+      let finalParams = estimatedParams;
+      let paramSource = 'estimated';
+      
+      // Prefer stated params if available and reasonable
+      if (statedParams && statedParams >= MIN_PARAMS_BILLION) {
+        finalParams = statedParams;
+        paramSource = 'stated';
+        
+        // Warn if estimation differs significantly from stated value
+        if (estimatedParams && Math.abs(estimatedParams - statedParams) / statedParams > 0.3) {
+          console.log(`   ⚠️  ${model.id}: Estimated ${estimatedParams.toFixed(1)}B but model card states ${statedParams.toFixed(1)}B (using stated)`);
+        }
+      } else if (!estimatedParams || estimatedParams < MIN_PARAMS_BILLION) {
+        if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL (${(estimatedParams || 0).toFixed(1)}B)`);
         skipped.tooSmall++;
         continue;
       }
       
-      const msg = `✓ ${model.id}: ${params.toFixed(1)}B params (${license}) [${createdAt.toISOString().split('T')[0]}]`;
+      if (finalParams < MIN_PARAMS_BILLION) {
+        if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL (${finalParams.toFixed(1)}B)`);
+        skipped.tooSmall++;
+        continue;
+      }
+      
+      const msg = `✓ ${model.id}: ${finalParams.toFixed(1)}B params [${paramSource}] (${license}) [${createdAt.toISOString().split('T')[0]}]`;
       console.log(isMajor ? `🎯 ${msg}` : msg);
       
       seenModels.add(model.id);
@@ -188,7 +295,7 @@ async function fetchOpenSourceModels() {
       const modelData = {
         id: model.id,
         name: formatModelName(model.id),
-        parameters_billion: Math.round(params * 10) / 10,
+        parameters_billion: Math.round(finalParams * 10) / 10,
         architecture: detectArchitecture(config),
         hidden_size: config.hidden_size || null,
         num_layers: config.num_hidden_layers || config.num_layers || null,
@@ -207,6 +314,7 @@ async function fetchOpenSourceModels() {
         created_at: createdAt ? createdAt.toISOString() : null,
         last_modified: lastModified ? lastModified.toISOString() : null,
         huggingface_url: `https://huggingface.co/${model.id}`,
+        param_source: paramSource, // Track whether we used stated or estimated value
       };
       
       models.push(modelData);
@@ -255,7 +363,31 @@ async function fetchOpenSourceModels() {
 }
 
 /**
- * Estimate parameter count from model config
+ * STEP 2: Get intermediate FFN size with extended field recognition
+ * Different MoE architectures use different field names
+ */
+function getIntermediateSize(config, h, isMoE) {
+  // Try various field names in priority order
+  const candidateFields = [
+    'expert_ffn_hidden_size',    // DeepSeek-V3, LongCat-Flash
+    'moe_intermediate_size',     // Standard MoE naming
+    'ffn_dim',                   // Some architectures
+    'intermediate_size',         // Dense models and some MoE
+  ];
+  
+  for (const field of candidateFields) {
+    if (config[field] && config[field] > 0) {
+      return config[field];
+    }
+  }
+  
+  // Fallback: estimate based on model type
+  // Most modern models use 4x or larger expansion
+  return 4 * h;
+}
+
+/**
+ * STEP 3: Estimate parameter count with improved MoE handling
  */
 function estimateParams(config) {
   const h = config.hidden_size || config.d_model || 0;
@@ -266,33 +398,60 @@ function estimateParams(config) {
     return 0;
   }
   
-  // Transformer parameter estimation:
-  // - Attention: 4 * h^2 per layer (Q, K, V, O projections)
-  // - FFN: 2 * h * I or 3 * h * I for gated FFN
-  // - Embeddings: V * h
+  // Check for explicit parameter count in config (some models have this)
+  if (config.num_parameters && config.num_parameters > 1e9) {
+    return config.num_parameters / 1e9;
+  }
+  if (config.total_params && config.total_params > 1e9) {
+    return config.total_params / 1e9;
+  }
   
+  // Detect MoE architecture
+  const numExperts = config.num_local_experts || config.n_routed_experts || 1;
+  const isMoE = numExperts > 1;
+  
+  // Check if model uses gated FFN (SwiGLU, etc.)
+  // Modern models (especially MoE) almost always use gated FFN
   const hasGatedFFN = 
     config.hidden_act === 'silu' || 
     config.activation_function === 'silu' ||
     config.model_type === 'llama' ||
     config.model_type === 'qwen2' ||
     config.model_type === 'mistral' ||
-    config.model_type === 'deepseek_v3';
+    config.model_type === 'deepseek_v3' ||
+    isMoE; // Default to gated FFN for MoE models (almost all modern MoE use it)
   
   const ffnMultiplier = hasGatedFFN ? 3 : 2;
   
-  // For MoE models, use moe_intermediate_size if present, otherwise intermediate_size
-  const numExperts = config.num_local_experts || config.n_routed_experts || 1;
-  const isMoE = numExperts > 1;
-  const I = (isMoE && config.moe_intermediate_size) 
-    ? config.moe_intermediate_size 
-    : (config.intermediate_size || (4 * h));
+  // Get intermediate size with extended field recognition
+  const I = getIntermediateSize(config, h, isMoE);
   
+  // Calculate parameters
+  // Attention layers: shared across all tokens (not multiplied by experts)
   const attentionParams = L * 4 * h * h;
-  const ffnParams = L * ffnMultiplier * h * I * (isMoE ? numExperts : 1);
+  
+  // Embeddings: shared
   const embeddingParams = V * h;
   
-  return (attentionParams + ffnParams + embeddingParams) / 1e9;
+  // FFN parameters: For MoE, each expert is an alternative, not additive
+  let ffnParams;
+  if (isMoE) {
+    // Each expert has: ffnMultiplier * h * I parameters
+    // Total FFN params = (single expert size) * numExperts
+    const singleExpertParams = ffnMultiplier * h * I;
+    ffnParams = L * singleExpertParams * numExperts;
+    
+    // Router/gating network overhead (very small, ~1% of expert params)
+    const routerParams = L * h * numExperts * 0.01;
+    ffnParams += routerParams;
+  } else {
+    // Dense model: just one FFN per layer
+    ffnParams = L * ffnMultiplier * h * I;
+  }
+  
+  const totalParams = attentionParams + embeddingParams + ffnParams;
+  
+  return totalParams / 1e9;
 }
 
 /**

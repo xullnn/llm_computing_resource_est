@@ -1,0 +1,79 @@
+🔍 Fetching open-source models from Hugging Face...
+
+📡 Querying: top downloads...
+📡 Querying: most liked...
+📡 Querying: recently updated...
+📡 Querying: recently created...
+✓ Found 1996 unique text-generation models
+
+✓ openai/gpt-oss-120b: 116.4B params [estimated] (apache-2.0) [2025-08-04]
+✓ deepseek-ai/DeepSeek-R1: 701.2B params [estimated] (mit) [2025-01-20]
+🎯 ✓ deepseek-ai/DeepSeek-V3: 701.2B params [estimated] () [2024-12-25]
+✓ zai-org/GLM-4.5-Air: 105.6B params [estimated] (mit) [2025-07-20]
+✓ deepseek-ai/DeepSeek-R1-0528: 701.2B params [estimated] (mit) [2025-05-28]
+✓ moonshotai/Kimi-K2-Thinking: 1045.3B params [estimated] (other) [2025-11-04]
+⚠️  Qwen/Qwen2.5-72B-Instruct: TOO OLD (2024-09-16)
+✓ nvidia/Llama-3_3-Nemotron-Super-49B-v1_5: 87.0B params [estimated] (other) [2025-07-25]
+✓ zai-org/GLM-4.6: 357.7B params [estimated] (mit) [2025-09-29]
+✓ cpatonn/GLM-4.5-Air-AWQ-4bit: 105.6B params [estimated] (mit) [2025-07-29]
+✓ zai-org/GLM-4.6-FP8: 357.7B params [estimated] (mit) [2025-09-29]
+✓ nvidia/Llama-3_1-Nemotron-Ultra-253B-v1: 697.9B params [estimated] (other) [2025-04-07]
+⚠️  meta-llama/Llama-3.1-405B-Instruct: TOO OLD (2024-07-16)
+✓ MiniMaxAI/MiniMax-M2: 227.6B params [estimated] (other) [2025-10-22]
+✓ deepseek-ai/DeepSeek-V3-0324: 701.2B params [estimated] (mit) [2025-03-24]
+✓ nvidia/DeepSeek-R1-0528-NVFP4-v2: 701.2B params [estimated] (mit) [2025-07-21]
+✓ AI-MO/Kimina-Prover-72B: 80.9B params [estimated] (mit) [2025-07-09]
+✓ unsloth/gpt-oss-120b-GGUF: 116.4B params [estimated] (apache-2.0) [2025-08-05]
+✓ unsloth/gpt-oss-120b: 116.4B params [estimated] (apache-2.0) [2025-08-05]
+✓ nvidia/DeepSeek-V3-0324-NVFP4: 701.2B params [estimated] (mit) [2025-05-03]
+✓ deepseek-ai/DeepSeek-V3.2-Exp: 701.2B params [estimated] (mit) [2025-09-29]
+✓ unsloth/DeepSeek-V3.1-BF16: 701.2B params [estimated] (mit) [2025-08-21]
+✓ QuantTrio/MiniMax-M2-AWQ: 227.6B params [estimated] (apache-2.0) [2025-10-28]
+✓ deepseek-ai/DeepSeek-V3.2: 701.2B params [estimated] (mit) [2025-12-01]
+✓ zai-org/GLM-4.5-Air-FP8: 105.6B params [estimated] (mit) [2025-07-20]
+✓ deepseek-ai/DeepSeek-V3.1: 701.2B params [estimated] (mit) [2025-08-21]
+✓ stepfun-ai/step3: 321.0B params [stated] (apache-2.0) [2025-07-28]
+✓ unsloth/gpt-oss-120b-BF16: 116.4B params [estimated] (apache-2.0) [2025-08-05]
+✓ unsloth/Kimi-K2-Instruct-GGUF: 1000.0B params [stated] (other) [2025-07-12]
+✓ moonshotai/Kimi-K2-Instruct: 1000.0B params [stated] (other) [2025-07-11]
+✓ perplexity-ai/r1-1776: 701.2B params [estimated] (mit) [2025-02-18]
+✓ zai-org/GLM-4.5: 357.7B params [estimated] (mit) [2025-07-20]
+✓ unsloth/DeepSeek-R1-GGUF: 701.2B params [estimated] (mit) [2025-01-20]
+✓ deepseek-ai/DeepSeek-V3.1-Base: 701.2B params [estimated] (mit) [2025-08-19]
+✓ deepseek-ai/DeepSeek-R1-Zero: 701.2B params [estimated] (mit) [2025-01-20]
+✓ deepseek-ai/DeepSeek-Prover-V2-671B: 671.0B params [stated] () [2025-04-30]
+✓ MiniMaxAI/MiniMax-M1-80k: 448.2B params [estimated] (apache-2.0) [2025-06-13]
+✓ deepseek-ai/DeepSeek-Math-V2: 701.2B params [estimated] (apache-2.0) [2025-11-27]
+✓ moonshotai/Kimi-K2-Instruct-0905: 1045.3B params [estimated] (other) [2025-09-03]
+✓ deepseek-ai/DeepSeek-V3.2-Speciale: 701.2B params [estimated] (mit) [2025-11-28]
+✓ meituan-longcat/LongCat-Flash-Chat: 546.2B params [estimated] (mit) [2025-08-29]
+   ⚠️  OpenHands/openhands-lm-32b-v0.1: Estimated 34.7B but model card states 671.0B (using stated)
+✓ OpenHands/openhands-lm-32b-v0.1: 671.0B params [stated] (mit) [2025-03-26]
+✓ moonshotai/Kimi-Dev-72B: 80.9B params [estimated] (mit) [2025-06-16]
+✓ deepseek-ai/DeepSeek-V3.1-Terminus: 701.2B params [estimated] (mit) [2025-09-22]
+✓ nvidia/Llama-3_3-Nemotron-Super-49B-v1: 87.0B params [estimated] (other) [2025-03-16]
+✓ microsoft/MAI-DS-R1: 701.2B params [estimated] (mit) [2025-04-16]
+✓ moonshotai/Kimi-K2-Base: 1000.0B params [stated] (other) [2025-07-03]
+✓ nvidia/DeepSeek-R1-NVFP4: 701.2B params [estimated] (mit) [2025-02-21]
+✓ tngtech/DeepSeek-R1T-Chimera: 701.2B params [estimated] (mit) [2025-04-26]
+✓ XiaomiMiMo/MiMo-V2-Flash: 313.1B params [estimated] (mit) [2025-12-16]
+✓ tngtech/DeepSeek-TNG-R1T2-Chimera: 701.2B params [estimated] (mit) [2025-07-02]
+✓ cyankiwi/MiMo-V2-Flash-AWQ-4bit: 313.1B params [estimated] (mit) [2025-12-18]
+✓ cybermotaz/nemotron3-nano-nvfp4-w4a16: 101.5B params [estimated] (other) [2025-12-18]
+✓ avtc/GLM-4.5-Air-GPTQMODEL-W4A16: 114.8B params [estimated] (mit) [2025-12-12]
+✓ avtc/GLM-4.6-REAP-268B-A32B-GPTQMODEL-W4A16: 268.0B params [stated] (mit) [2025-11-29]
+✓ gecfdo/GLM-4.5-Air_EXL3_6.38bpw_H16: 105.6B params [estimated] (mit) [2025-12-17]
+✓ gecfdo/Monstral-123B-v2_EXL3_4.75bpw_H16: 146.6B params [estimated] (other) [2025-12-17]
+✓ avtc/GLM-4.6-REAP-268B-A32B-GPTQMODEL-W4A16-V2: 268.0B params [stated] (mit) [2025-12-17]
+✓ mlx-community/MiMo-V2-Flash-4bit: 313.1B params [estimated] (mit) [2025-12-16]
+
+📊 Summary:
+   - Skipped (older than 1 year): 522
+   - Skipped (no open-source license): 770
+   - Skipped (< 80B params): 503
+   - Skipped (no/invalid config): 144
+   - Matched: 57
+
+📋 Open-source licenses found: apache-2.0, mit, llama3.2, gemma, other, llama3, llama3.1, cc-by-nc-4.0, apple-amlr, llama2, cc-by-nc-2.0, cc0-1.0, bigscience-bloom-rail-1.0, cc-by-4.0, cc-by-sa-4.0, bigcode-openrail-m
+
+✅ Saved 57 open-source models to data/models.json
