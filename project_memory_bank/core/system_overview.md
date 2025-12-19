@@ -1,58 +1,50 @@
 ---
 name: System Overview
-description: High-level architecture
-last_updated: 2025-12-10
-go_deeper:
-  - modules/*/summary.md: Module details
-  - integration/data-flow.md: End-to-end data flow
+description: High-level architecture of the LLM Resource Decision Hub
+last_updated: 2025-12-19
 ---
 
 # System Overview
 
-## Architecture Pattern
-**Pure client-side reactive calculator**: User input → calculation → render (no server, no build)
+## 🏢 Multi-Page Ecosystem (The "Virtuous Loop")
 
-## Module Flow
+The project has evolved from a single-page calculator into an interconnected platform designed for Enterprise PMs. Navigation follows a circular discovery/validation pattern:
+
+```mermaid
+graph LR
+    Discover[Model Explorer] --> Calculate[Calculator Hub]
+    Calculate --> Compare[Hardware Hub]
+    Compare --> Validate[Vendor Specifics]
+    Validate --> Discover
+    Guides[Persona Guides] --> Calculate
 ```
-[Model Presets]──┐
-                 ↓
-[User Inputs] → [Calculator] → [Results Display]
-                 ↑
-         [Heuristics/Formulas]
-```
 
-## Modules
+## 🛠️ Module Map
 
-| Module | File | Responsibility | Lines |
-|--------|------|----------------|-------|
-| **Models** | `js/models.js` | 16 flagship LLM presets (Qwen, DeepSeek, Llama, etc.) | 232 |
-| **Calculator** | `js/calc.js` | Physics-based estimation (VRAM, FLOPs, bandwidth, TTFT) | 147 |
-| **UI** | `js/ui.js` | Bilingual interface, input gathering, real-time rendering | 339 |
-| **Styles** | `css/main.css` | Dark theme with glassmorphism, responsive grids | 283 |
-| **Structure** | `index.html` | Semantic HTML, form fields, result cards | 149 |
+| Module | Location | Responsibility |
+| :--- | :--- | :--- |
+| **Pipeline** | `scripts/fetch-models.js` | Automated fetching of 93+ open-source models from HF. |
+| **Data Hub** | `data/` | Static JSON files for models and hardware (NVIDIA/Huawei). |
+| **Calculator** | `js/calc.js` | Pure logic for VRAM, FLOPs, Bandwidth, and TTFT. |
+| **UI/i18n** | `js/ui.js` | Real-time rendering, multi-GPU selector, and bilingual support. |
+| **Navigation** | `js/nav.js` | Global sticky nav and persona-based deep linking. |
 
-## Key Characteristics
-- **Offline-first**: All computation in browser, no API calls
-- **Reactive**: Every input change triggers recalculation (input/change event listeners)
-- **Bilingual**: English & Chinese i18n with dynamic translation
-- **Educational**: Displays calculation assumptions to build user understanding
-- **No dependencies**: Vanilla JavaScript, no frameworks, no build system
+## 🔄 Dynamic Data Architecture
 
-## Technology Stack
-- **Frontend**: HTML5, CSS3 (CSS Grid, CSS Variables)
-- **Logic**: ES6 JavaScript (pure functions, event-driven)
-- **I18n**: Object-based translation dictionary
-- **Deployment**: Static hosting (any CDN or file server)
+The tool uses a **Hybrid Build-Time Pipeline** to maintain high performance with up-to-date data without a backend API:
 
-## Data Flow (High-Level)
-1. **Initialization**: Load presets → apply first preset → render
-2. **User interaction**: Change input → gather values → calculate → update DOM
-3. **Preset selection**: Apply preset values → trigger recalculation
-4. **Language switch**: Update translations → re-render
+1.  **Build-Time (GitHub Actions)**:
+    *   `fetch-models.js` queries HF API for models ≥ 80B.
+    *   Estimates parameters (MoE/Dense aware) and parses model cards.
+    *   Writes to `data/models.json`.
+2.  **Runtime (Client Browser)**:
+    *   `js/ui.js` fetches JSON data on page load.
+    *   Initializes the "Number of GPUs" selector (1-72 cards).
+    *   Calculates aggregate capacity (VRAM × Count) in real-time.
 
-## 📚 Go Deeper
-- **Module details**: See `modules/*/summary.md`
-- **Complete data flow**: See `integration/data-flow.md`
-- **Design decisions**: See `insights/architecture.md`
-- **Physics & math**: See `insights/physics.md`
+## 🛡️ Key Principles
 
+*   **Offline-Capable**: Works on `file://` protocols after data is fetched.
+*   **Privacy-First**: No telemetry, no user data sent to servers.
+*   **Multi-GPU Centric**: Designed for server bundle sales, not just consumer cards.
+*   **Physics-Backed**: Estimates based on Transformer hardware constraints.

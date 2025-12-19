@@ -1,36 +1,28 @@
 ---
 name: Project Vision
-description: Goals and problem space
-last_updated: 2025-12-10
+description: Evolution from a simple calculator to an Enterprise Decision Hub
+last_updated: 2025-12-19
 ---
 
-# Vision
+# Project Vision
 
-## Problem
-Users need to estimate hardware requirements (VRAM, compute, bandwidth) to run 
-large language models at specific performance targets (tokens/sec, TTFT) before 
-investing in expensive infrastructure.
+## 🎯 The Mission
+To empower AI Product Managers and Infrastructure Teams to transition from "Experimental AI" to "Production Deployment" by providing physics-backed hardware estimations for massive open-source models (80B+).
 
-## Solution
-Offline, serverless calculator that models transformer inference physics:
-- **Memory**: Weights + KV cache + workspace overhead
-- **Compute**: Prefill (O(seq²) attention) + decode (memory-bound) FLOPs
-- **Bandwidth**: Weight reads + KV cache I/O per token
-- **TTFT**: Dominated by prefill phase throughput
+## 🏢 Target Persona: The Enterprise PM
+The tool is specifically tuned for PMs who sell **Server + AI App Bundles**.
+*   **Business Goal**: Match the right model tier (e.g., 80B vs 400B) to the right hardware configuration (e.g., 2× vs 8× H100).
+*   **The Problem**: "Can I run DeepSeek-V3 on this server?" is a complex question involving VRAM, interconnect bandwidth, and multi-GPU overhead.
+*   **The Solution**: An interconnected "Decision Hub" that links model specifications to hardware capacity.
 
-## Goals
-1. **Accessibility**: Works offline, no backend, no dependencies
-2. **Accuracy**: Based on transformer architecture math, validated against real deployments
-3. **Flexibility**: Supports dense & MoE models, multiple precision formats (BF16/FP16/FP8/INT4)
-4. **Clarity**: Real-time updates, bilingual (EN/ZH), educational assumptions display
+## 🔄 The "Virtuous Loop" UX Pattern
+Our goal is to create a circular navigation flow that answers three fundamental questions:
+1.  **Discovery**: "What models are available and what are their specs?" → **Model Explorer**
+2.  **Estimation**: "What resources do these models actually need?" → **Calculator Hub**
+3.  **Validation**: "Does my specific hardware meet these needs?" → **Hardware Hub**
 
-## Non-goals
-- Not a deployment tool (estimation only)
-- Not covering distributed inference (single-node focus)
-- Not modeling network latency or scheduling overhead
-
-## 📚 Go Deeper
-- **System overview**: See `system_overview.md`
-- **Key terms**: See `glossary.md`
-- **Architecture decisions**: See `../insights/architecture.md`
-
+## 🛡️ Non-Negotiable Pillars
+*   **Open-Source Only**: Focus on models that can be deployed on private infrastructure (Qwen, Llama, DeepSeek).
+*   **Privacy-First**: Zero-telemetry, zero-API architecture. User workloads never leave the browser.
+*   **Multi-GPU by Default**: Moving away from "single-GPU thinking" to realistic "cluster/node thinking" (1-72 GPUs).
+*   **Automation-Driven**: Automated model specification fetching to keep pace with the rapidly evolving LLM landscape.

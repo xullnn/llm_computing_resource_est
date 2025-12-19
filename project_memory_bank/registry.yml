@@ -1,38 +1,33 @@
 ---
-last_updated: 2025-12-14
+last_updated: 2025-12-19
 project: LLM Resource Sizer
-type: Offline serverless web calculator
-stack: Vanilla JavaScript, HTML5, CSS3
+type: Enterprise AI Infrastructure Decision Hub
+stack: Vanilla JavaScript, GitHub Actions, Node.js (Build-time), HTML5, CSS3
 
-modules:
+core_files:
+  - index.html: Main calculator entry point
+  - models/index.html: Model Explorer database
+  - hardware/index.html: Hardware Hub overview
+  - js/ui.js: Core UI logic, i18n, and dynamic data binding
+  - js/calc.js: Physics-based calculation engine
+  - scripts/fetch-models.js: Automated Hugging Face data pipeline
+  - data/models.json: Auto-updated model specifications (93+ models)
+  - data/hardware/*.json: Verified NVIDIA and Huawei hardware specs
+
+data_schema:
   models:
-    description: Model presets data layer with 16 flagship LLMs
-    file: js/models.js
-    load_when: Adding/modifying model presets, understanding model parameters
-  
-  calculator:
-    description: Core computation engine for VRAM, compute, bandwidth, TTFT estimation
-    file: js/calc.js
-    load_when: Changing calculation logic, understanding formulas, debugging estimates
-  
-  ui:
-    description: Presentation layer with i18n, input gathering, results rendering
-    file: js/ui.js
-    load_when: UI changes, adding languages, modifying display logic
-  
-  styles:
-    description: Dark theme visual design with responsive grid layouts
-    file: css/main.css
-    load_when: Style changes, layout adjustments, theming
-  
-  structure:
-    description: HTML structure with hero, model params, workload, results sections
-    file: index.html
-    load_when: Adding form fields, restructuring sections, SEO/accessibility
+    source: scripts/fetch-models.js
+    storage: data/models.json
+    fields: [id, name, parameters_billion, architecture, hidden_size, num_layers, moe_num_experts, moe_top_k]
+  hardware:
+    source: Manual curation (verified sources)
+    storage: data/hardware/{vendor}.json
+    fields: [id, name, vram_gb, bandwidth_gbps, fp16_tflops, bf16_tflops, max_cards_per_node]
 
-planning:
-  enterprise-pm:
-    description: Requirements for Enterprise PM persona (selling server+AI app bundles)
-    file: project_memory_bank/planning/enterprise-pm-requirements.md
-    load_when: Working on enterprise features, understanding PM pain points, data requirements
+interconnected_pages:
+  - persona_guides: [/for/enterprise.html, /for/teams.html, /for/researchers.html, /for/hobbyists.html]
+  - vendor_pages: [/hardware/nvidia.html, /hardware/huawei.html]
 
+pipeline:
+  trigger: GitHub Actions (Weekly / Manual)
+  logic: Fetch HF API -> Filter 80B+ Open Source -> Estimate/Parse Params -> JSON Output
