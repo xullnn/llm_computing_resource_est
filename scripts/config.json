@@ -13,7 +13,8 @@
     "Qwen",
     "deepseek-ai",
     "nvidia",
-    "apple"
+    "apple",
+    "XiaomiMiMo"
   ],
   "vendorQueryLimits": {
     "Qwen": 200,

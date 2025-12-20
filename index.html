@@ -1,294 +1,198 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Serverless LLM resource calculator to estimate VRAM, compute, bandwidth, and TTFT for models like Llama, DeepSeek, Qwen, and more. Runs fully offline with English/Chinese support.">
-  <meta name="keywords" content="LLM resource calculator, VRAM estimator, GPU requirements, transformer inference calculator, TTFT, bandwidth, FLOPs">
-  <meta property="og:title" content="LLM Resource Sizer — Offline LLM hardware calculator">
-  <meta property="og:description" content="Estimate VRAM, compute, bandwidth, and TTFT for open LLMs in your browser. Offline, private, bilingual.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://llmrunnable.com/">
-  <meta name="twitter:card" content="summary">
-  <link rel="canonical" href="https://llmrunnable.com/">
-  <title>LLM Resource Sizer</title>
-  <link rel="stylesheet" href="css/main.css">
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "LLM Resource Sizer",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Web",
-      "url": "https://llmrunnable.com/",
-      "description": "Serverless calculator that estimates VRAM, compute, bandwidth, and TTFT for running open LLMs. Works fully offline with English and Chinese UI.",
-      "offers": { "@type": "Offer", "price": "0" }
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Resource Calculator</title>
+    <meta name="description" content="Browse large language models (70B+ parameters) and calculate resource requirements">
+    <meta property="og:title" content="LLM Resource Calculator">
+    <meta property="og:description" content="Calculate hardware requirements for large language models.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://llmrunnable.com/">
+    <link rel="canonical" href="https://llmrunnable.com/">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/models.css">
+    <link rel="stylesheet" href="css/drawer.css">
 </head>
 <body>
-  <nav class="global-nav">
-    <a href="/" class="nav-brand">
-      <span class="nav-icon">🧮</span>
-      <span class="nav-logo">LLM Sizer</span>
-    </a>
-    <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
-    <div class="nav-links" id="navLinks">
-      <a href="/" class="nav-item active">Calculator</a>
-      <a href="models/" class="nav-item">Models</a>
-      <a href="hardware/" class="nav-item">Hardware</a>
-      <a href="for/enterprise.html" class="nav-item">Guides</a>
-    </div>
-    <div class="nav-actions">
-      <label class="field compact language-switch" style="margin-bottom: 0;">
-        <select id="langSelect">
-          <option value="en">English</option>
-          <option value="zh">中文</option>
-        </select>
-      </label>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <div class="header-content">
-      <h1 class="hero-title" data-i18n="title">LLM Resource Sizer</h1>
-      <p class="lede" data-i18n="lead">Find out if your GPU can run AI models like Llama, Qwen, or DeepSeek — and how fast.</p>
-      <div class="quick-start-buttons">
-        <button class="quick-preset-btn" data-preset="llama-3-8b" data-i18n-title="quickLlama">Try Llama 3 8B</button>
-        <button class="quick-preset-btn" data-preset="qwen-2.5-32b" data-i18n-title="quickQwen">Try Qwen 32B</button>
-        <button class="quick-preset-btn" data-preset="deepseek-v3" data-i18n-title="quickDeepseek">Try DeepSeek-V3</button>
-      </div>
-    </div>
-  </header>
-
-  <section class="ecosystem-grid" id="ecosystemGrid">
-    <div class="ecosystem-header">
-      <h2 class="ecosystem-title" data-i18n="ecosystemTitle">🔍 Explore the Platform</h2>
-      <p class="ecosystem-subtitle" data-i18n="ecosystemSubtitle">Not just a calculator — discover models, compare hardware, learn deployment strategies</p>
+    <nav class="global-nav">
+        <a href="/" class="nav-brand">
+            <span class="nav-icon">🧮</span>
+            <span class="nav-logo">LLM Sizer</span>
+        </a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="/" class="nav-item active">Models</a>
+            <a href="calculator.html" class="nav-item">Calculator</a>
+            <a href="hardware/" class="nav-item">Hardware</a>
+            <a href="for/enterprise.html" class="nav-item">Guides</a>
+        </div>
+        <div class="nav-actions">
+            <label class="field compact language-switch" style="margin-bottom: 0;">
+                <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+                    <option value="en">English</option>
+                </select>
+            </label>
+        </div>
+    </nav>
+    
+    <!-- Hero Search Section -->
+    <div class="models-header">
+        <h1>Large Language Models</h1>
+        <p>70B+ parameters · Search or browse models below</p>
     </div>
     
-    <div class="ecosystem-cards">
-      <a href="models/" class="ecosystem-card">
-        <div class="card-icon">📚</div>
-        <div class="card-content">
-          <h3 data-i18n="navModels">Model Explorer</h3>
-          <p data-i18n="ecoModelsDesc">Browse 47+ open-source models (80B+) with specs and calculator integration.</p>
-        </div>
-        <div class="card-cta" data-i18n="ecoDiscover">Discover →</div>
-      </a>
-      
-      <a href="hardware/" class="ecosystem-card">
-        <div class="card-icon">⚙️</div>
-        <div class="card-content">
-          <h3 data-i18n="navHardware">Hardware Hub</h3>
-          <p data-i18n="ecoHardwareDesc">Compare NVIDIA & Huawei multi-GPU configurations for LLM deployment.</p>
-        </div>
-        <div class="card-cta" data-i18n="ecoCompare">Compare →</div>
-      </a>
-      
-      <a href="for/enterprise.html" class="ecosystem-card">
-        <div class="card-icon">💼</div>
-        <div class="card-content">
-          <h3 data-i18n="navGuides">Enterprise Guide</h3>
-          <p data-i18n="ecoGuidesDesc">Pre-configured deployment scenarios and capacity planning workflows.</p>
-        </div>
-        <div class="card-cta" data-i18n="ecoLearn">Learn →</div>
-      </a>
-    </div>
-    
-    <button class="ecosystem-dismiss" id="dismissEcosystem" data-i18n="ecoDismiss">↓ Just show me the calculator</button>
-  </section>
-
-  <main>
-    <section class="panel">
-      <h2 data-i18n="sectionModel">Model</h2>
-      <div class="grid two">
-        <label class="field">
-          <span data-i18n="modelPreset">Preset</span>
-          <div class="field-with-action">
-            <select id="modelPreset"></select>
-            <a href="models/" class="inline-link" data-i18n="browseModels">📚 Browse all</a>
-          </div>
-          <small data-i18n="modelPresetHelp">You can edit any value after prefilling.</small>
-          <div class="preset-meta">
-            <a id="hfLink" class="hf-link" href="#" target="_blank" rel="noreferrer noopener">
-              <svg class="hf-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-                <circle cx="16" cy="16" r="14" fill="currentColor" />
-                <path d="M11 14h2M19 14h2" stroke="#0b1423" stroke-width="2" stroke-linecap="round" />
-                <path d="M12 20c1.2 1.8 3 2.7 4 2.7s2.8-.6 4-2.7" fill="none" stroke="#0b1423" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <span class="hf-link-text" data-i18n="hfLinkLabel">Hugging Face</span>
-            </a>
-          </div>
-        </label>
-        <label class="field">
-          <span data-i18n="modelParams">Model params (B)</span>
-          <input id="paramsB" type="number" min="0" step="0.1" value="80">
-        </label>
-        <label class="field">
-          <span data-i18n="weightPrecision">Quality / Size tradeoff</span>
-          <select id="weightPrecision">
-            <option value="bf16">Full quality (largest) — BF16</option>
-            <option value="fp16">Full quality — FP16</option>
-            <option value="fp8">Good quality — FP8</option>
-            <option value="int8">Balanced (recommended) — INT8</option>
-            <option value="int4">Compact (smallest) — INT4</option>
-          </select>
-          <small data-i18n="weightPrecisionHelp">Lower = smaller & faster, but less accurate</small>
-        </label>
-        <label class="field">
-          <span data-i18n="kvPrecision">Cache precision</span>
-          <select id="kvPrecision">
-            <option value="bf16">Full (BF16)</option>
-            <option value="fp16">Full (FP16)</option>
-            <option value="fp8">Compact (FP8)</option>
-          </select>
-          <small data-i18n="kvPrecisionHelp">Usually matches weight precision</small>
-        </label>
-      </div>
-      
-      <button type="button" class="toggle-advanced" id="toggleAdvanced" aria-expanded="false">
-        <span data-i18n="showAdvanced">▸ Advanced options</span>
-      </button>
-      
-      <div class="advanced-options" id="advancedOptions" style="display: none;">
-        <div class="grid two">
-          <label class="field">
-            <span data-i18n="activeParams">Active params for MoE (B, optional)</span>
-            <input id="activeParamsB" type="number" min="0" step="0.1" placeholder="defaults to params">
-            <small data-i18n="activeParamsHelp">If MoE, set the activated parameters per token.</small>
-          </label>
-          <label class="field">
-            <span data-i18n="hiddenSize">Hidden size (override, optional)</span>
-            <input id="hiddenSize" type="number" min="0" step="1" placeholder="auto">
-          </label>
-          <label class="field">
-            <span data-i18n="layers">Layers (override, optional)</span>
-            <input id="numLayers" type="number" min="0" step="1" placeholder="auto">
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel hardware-section">
-      <h2>
-        <span data-i18n="sectionHardware">Hardware (optional)</span>
-        <button type="button" class="toggle-hardware btn ghost" id="toggleHardware" aria-expanded="false">
-          <span data-i18n="showHardware">+ Select GPU to test fit</span>
-        </button>
-      </h2>
-      <div class="hardware-picker" id="hardwarePicker" style="display: none;">
-        <div class="grid three">
-          <label class="field">
-            <span data-i18n="selectGPU">Select GPU</span>
-            <div class="field-with-action">
-              <select id="gpuSelect">
-                <option value="">None (manual entry)</option>
-              </select>
-              <a href="hardware/" class="inline-link" data-i18n="compareHardware">⚙️ Compare all</a>
+    <!-- Trending Models Bar -->
+    <div class="trending-bar" id="trendingBar" style="display: none;">
+        <div class="trending-bar-content">
+            <div class="trending-bar-header">
+                <span class="trending-bar-label">Trending:</span>
+                <button class="trending-info-btn" id="trendingInfoBtn" title="How are trending models calculated?">
+                    <span class="info-icon">ⓘ</span>
+                </button>
             </div>
-            <small data-i18n="gpuHelp">Auto-fills specs to check if requirements fit.</small>
-          </label>
-          <label class="field">
-            <span data-i18n="gpuCount">Number of GPUs</span>
-            <select id="gpuCount">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="16">16</option>
-              <option value="32">32</option>
-              <option value="64">64</option>
-              <option value="72">72</option>
-            </select>
-            <small data-i18n="gpuCountHelp">Total VRAM = Count × Single GPU VRAM.</small>
-          </label>
-          <div class="gpu-info" id="gpuInfo" style="grid-column: span 1;"></div>
+            <div class="trending-bar-tags" id="trendingBarTags">
+                <!-- Dynamically populated -->
+            </div>
+            <button class="trending-expand-btn" id="trendingExpandBtn" style="display: none;">
+                <span id="trendingExpandText">+<span id="trendingMoreCount">0</span> more</span>
+            </button>
         </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h2 data-i18n="sectionWorkload">Workload</h2>
-      <div class="grid three">
-        <label class="field">
-          <span data-i18n="promptTokens">Input length (tokens)</span>
-          <input id="promptTokens" type="number" min="1" step="50" value="10000">
-          <small data-i18n="promptTokensHelp">Short: 500 · Document: 8K · Long: 32K</small>
-        </label>
-        <label class="field">
-          <span data-i18n="newTokens">Output length (tokens)</span>
-          <input id="newTokens" type="number" min="1" step="10" value="200">
-          <small data-i18n="newTokensHelp">Typical: 100-500 · Long: 1K-2K</small>
-        </label>
-        <label class="field">
-          <span data-i18n="batchSize">Simultaneous users</span>
-          <input id="batchSize" type="number" min="1" step="1" value="1">
-          <small data-i18n="batchSizeHelp">Personal: 1 · Team: 4-8 · Production: 16+</small>
-        </label>
-        <label class="field">
-          <span data-i18n="targetTps">Speed (tokens/sec)</span>
-          <input id="targetTps" type="number" min="0.1" step="0.5" value="10">
-          <small data-i18n="targetTpsHelp">Slow: 5 · Good: 15 · Fast: 30+</small>
-        </label>
-        <label class="field">
-          <span data-i18n="ttftMs">First response time (ms)</span>
-          <input id="ttftMs" type="number" min="1" step="10" value="1500">
-          <small data-i18n="ttftMsHelp">Fast: 500 · Acceptable: 2000</small>
-        </label>
-      </div>
-      
-      <button type="button" class="toggle-advanced" id="toggleAdvancedWorkload" aria-expanded="false">
-        <span data-i18n="showAdvanced">▸ Advanced options</span>
-      </button>
-      
-      <div class="advanced-options" id="advancedWorkloadOptions" style="display: none;">
-        <div class="grid two">
-          <label class="field">
-            <span data-i18n="utilCompute">Utilization (compute)</span>
-            <input id="utilCompute" type="number" min="0.05" max="1" step="0.05" value="0.45">
-            <small data-i18n="utilComputeHelp">Effective fraction of peak TFLOPS/TOPS.</small>
-          </label>
-          <label class="field">
-            <span data-i18n="utilBw">Utilization (bandwidth)</span>
-            <input id="utilBandwidth" type="number" min="0.05" max="1" step="0.05" value="0.6">
-            <small data-i18n="utilBwHelp">Effective fraction of peak memory bandwidth.</small>
-          </label>
+        <div class="trending-criteria" id="trendingCriteria" style="display: none;">
+            <div class="criteria-title">Trending Algorithm</div>
+            <div class="criteria-grid">
+                <div class="criteria-item">
+                    <div class="criteria-label">Time Window</div>
+                    <div class="criteria-value">Released in last 90 days</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-label">Min. Downloads</div>
+                    <div class="criteria-value">10,000+ in 3 months</div>
+                </div>
+                <div class="criteria-item">
+                    <div class="criteria-label">Min. Likes</div>
+                    <div class="criteria-value">1,000+ in 3 months</div>
+                </div>
+            </div>
+            <div class="criteria-formula">
+                <strong>Score Formula:</strong> (Recency × 40%) + (Downloads × 40%) + (Engagement × 20%)
+            </div>
         </div>
-      </div>
-    </section>
+    </div>
+    
+    <!-- Search & Filters -->
+    <div class="search-filter">
+        <input 
+            type="text" 
+            id="searchBox" 
+            class="search-box" 
+            placeholder="Search: Qwen3, DeepSeek, moe, 70-100B..."
+        >
+        
+        <button class="filter-toggle-btn" id="filterToggleBtn">
+            <span class="filter-icon">⚙️</span> Filters
+        </button>
+        
+        <div class="filter-group" id="filterGroup" style="display: none;">
+            <!-- Row 1: Recency -->
+            <div class="filter-row">
+                <span class="filter-label">Recency</span>
+                <div class="filter-tags" data-group="recency">
+                    <button class="filter-tag active" data-val="all">All Time</button>
+                    <button class="filter-tag" data-val="1">Last Month</button>
+                    <button class="filter-tag" data-val="3">Last 3 Months</button>
+                    <button class="filter-tag" data-val="6">Last 6 Months</button>
+                    <button class="filter-tag" data-val="12">Last Year</button>
+                </div>
+            </div>
 
-    <section class="panel results">
-      <div class="results-header">
-        <h2 data-i18n="sectionResults">Results</h2>
-        <label class="field compact">
-          <span data-i18n="computeUnit">Compute unit</span>
-          <select id="computeUnit">
-            <option value="tflops">TFLOPS</option>
-            <option value="gflops">GFLOPS</option>
-            <option value="pflops">PFLOPS</option>
-            <option value="tops_int8">TOPS (INT8)</option>
-            <option value="tops_int4">TOPS (INT4)</option>
-          </select>
-        </label>
-      </div>
-      
-      <div class="verdict-card" id="verdictCard"></div>
-      
-      <div class="grid two">
-        <div class="card" id="vramCard"></div>
-        <div class="card" id="computeCard"></div>
-        <div class="card" id="bandwidthCard"></div>
-        <div class="card" id="ttftCard"></div>
-      </div>
-      <div class="hardware-recommendations" id="hardwareRecommendations"></div>
-      <div class="assumptions" id="assumptions"></div>
-    </section>
-  </main>
+            <!-- Row 2: Architecture -->
+            <div class="filter-row">
+                <span class="filter-label">Architecture</span>
+                <div class="filter-tags" data-group="architecture">
+                    <button class="filter-tag active" data-val="all">All Types</button>
+                    <button class="filter-tag" data-val="dense">Dense</button>
+                    <button class="filter-tag" data-val="moe">MoE</button>
+                </div>
+            </div>
 
-  <script src="js/models.js"></script>
-  <script src="js/calc.js"></script>
-  <script src="js/gpus.js"></script>
-  <script src="js/ui.js"></script>
+            <!-- Row 3: Organization -->
+            <div class="filter-row" id="orgFilterRow">
+                <span class="filter-label">Organization</span>
+                <div class="filter-tags" data-group="org" id="orgFilterTags">
+                    <button class="filter-tag active" data-val="all">All Orgs</button>
+                </div>
+            </div>
+
+            <!-- Row 4: Size -->
+            <div class="filter-row">
+                <span class="filter-label">Size</span>
+                <div class="filter-tags" data-group="size">
+                    <button class="filter-tag active" data-val="all">Any Size</button>
+                    <button class="filter-tag" data-val="70-100">70-100B</button>
+                    <button class="filter-tag" data-val="100-200">100-200B</button>
+                    <button class="filter-tag" data-val="200-400">200-400B</button>
+                    <button class="filter-tag" data-val="400+">400B+</button>
+                </div>
+            </div>
+
+            <!-- Row 5: Sort -->
+            <div class="filter-row">
+                <span class="filter-label">Sort By</span>
+                <div class="filter-tags" data-group="sort">
+                    <button class="filter-tag active" data-val="newest">Newest First</button>
+                    <button class="filter-tag" data-val="largest">Largest First</button>
+                    <button class="filter-tag" data-val="popular">Most Popular</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="activeFilterChips" class="active-filters" style="display: none;"></div>
+    </div>
+    
+    <!-- Models Grid -->
+    <div class="models-grid" id="modelsGrid"></div>
+    
+    <!-- Metadata -->
+    <div class="metadata" id="metadata"></div>
+
+    <!-- Comparison UI -->
+    <div id="compareBar" class="compare-bar">
+        <span>Selected <span id="compareCount" class="compare-count">0</span> models</span>
+        <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary" onclick="clearComparison()">Clear</button>
+            <button class="btn btn-primary" onclick="showComparison()">Compare Side-by-Side</button>
+        </div>
+    </div>
+
+    <div id="compareModal" class="compare-modal">
+        <div class="compare-content">
+            <button class="close-compare" onclick="hideComparison()">×</button>
+            <h2 style="margin-bottom: 1rem;">Model Comparison</h2>
+            <div id="compareTableContainer"></div>
+        </div>
+    </div>
+
+    <!-- Calculator Drawer -->
+    <div id="calculatorDrawer" class="calculator-drawer">
+        <div class="drawer-header">
+            <h2 id="drawerModelName">Calculator</h2>
+            <button class="drawer-close" id="drawerCloseBtn">×</button>
+        </div>
+        <div class="drawer-content" id="drawerContent">
+            <!-- Calculator will be dynamically loaded here -->
+            <p style="color: var(--muted); text-align: center; padding: 2rem;">Select a model to begin</p>
+        </div>
+    </div>
+    
+    <!-- Backdrop for drawer -->
+    <div id="drawerBackdrop" class="drawer-backdrop"></div>
+    
+    <script src="js/nav.js"></script>
+    <script src="js/models.js"></script>
+    <script src="js/calc.js"></script>
+    <script src="js/gpus.js"></script>
+    <script src="js/models-page.js"></script>
+    <script src="js/drawer.js"></script>
 </body>
 </html>

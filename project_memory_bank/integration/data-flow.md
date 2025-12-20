@@ -53,7 +53,7 @@ sequenceDiagram
 ## 📂 Data Storage Structures
 
 ### 1. Model Data (`/data/models.json`)
-Vendor-exclusive list of 73 models (70-700B, 7 vendors, 2-year window). Each entry includes:
+Vendor-exclusive list of 75 models (70-700B, 8 vendors, 2-year window). Each entry includes:
 *   **Identification**: `id`, `name`, `huggingface_url`.
 *   **Architecture**: `architecture` (dense/moe), `num_layers`, `hidden_size`.
 *   **MoE Details**: `moe_num_experts`, `moe_top_k`.

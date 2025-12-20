@@ -45,7 +45,7 @@ const I18N = {
     ecosystemTitle: "🔍 Explore the Platform",
     ecosystemSubtitle: "Not just a calculator — discover models, compare hardware, learn deployment strategies",
     navModels: "Model Explorer",
-    ecoModelsDesc: "Browse 47+ open-source models (80B+) with specs and calculator integration.",
+    ecoModelsDesc: "Browse 75+ open-source models (70B+) with specs and calculator integration.",
     ecoDiscover: "Discover →",
     navHardware: "Hardware Hub",
     ecoHardwareDesc: "Compare NVIDIA & Huawei multi-GPU configurations for LLM deployment.",
@@ -82,14 +82,16 @@ const I18N = {
     sectionModelsEyebrow: "Model coverage",
     sectionModelsTitle: "Preset roster you can edit",
     sectionModelsDesc: "Qwen, DeepSeek, Llama, Phi, Gemma, Yi, GLM, Mistral, Mixtral, StableLM, Command R, DBRX, OLMo, InternLM, Llama Guard, and Code models.",
-    title: "LLM Resource Sizer",
-    lead: "Find out if your GPU can run AI models like Llama, Qwen, or DeepSeek — and how fast.",
+    heroTitle: "LLM Resource Calculator",
+    heroSubhead: "Find models and estimate hardware requirements.",
+    title: "LLM Resource Calculator",
+    lead: "Calculate hardware requirements for large language models.",
     quickLlama: "Try Llama 3 8B",
     quickQwen: "Try Qwen 32B",
     quickDeepseek: "Try DeepSeek-V3",
-    browseModels: "📚 Browse all",
-    compareHardware: "⚙️ Compare all",
-    findHardware: "🔍 Find compatible hardware →",
+    browseModels: "Browse all",
+    compareHardware: "Compare all",
+    findHardware: "Find compatible hardware →",
     gpuCount: "Number of GPUs",
     gpuCountHelp: "Total VRAM = Count × Single GPU VRAM.",
     langLabel: "Language",
@@ -181,7 +183,7 @@ const I18N = {
     ecosystemTitle: "🔍 探索平台",
     ecosystemSubtitle: "不仅仅是计算器 —— 探索模型、对比硬件、学习部署策略",
     navModels: "模型库",
-    ecoModelsDesc: "浏览 47+ 个开源模型 (80B+)，查看规格并一键计算。",
+    ecoModelsDesc: "浏览 75+ 个开源模型 (70B+)，查看规格并一键计算。",
     ecoDiscover: "探索 →",
     navHardware: "硬件中心",
     ecoHardwareDesc: "对比 NVIDIA 和华为的多卡 GPU/NPU 配置。",
@@ -218,14 +220,16 @@ const I18N = {
     sectionModelsEyebrow: "覆盖的模型",
     sectionModelsTitle: "可编辑的预设清单",
     sectionModelsDesc: "Qwen、DeepSeek、Llama、Phi、Gemma、Yi、GLM、Mistral、Mixtral、StableLM、Command R、DBRX、OLMo、InternLM、Llama Guard 与多款 Code 模型。",
-    title: "LLM 资源估算",
-    lead: "查看你的 GPU 能否运行 Llama、Qwen、DeepSeek 等 AI 模型 — 以及速度如何。",
+    heroTitle: "LLM 资源计算器",
+    heroSubhead: "查找模型并估算硬件需求。",
+    title: "LLM 资源计算器",
+    lead: "计算大型语言模型的硬件需求。",
     quickLlama: "试试 Llama 3 8B",
     quickQwen: "试试 Qwen 32B",
     quickDeepseek: "试试 DeepSeek-V3",
-    browseModels: "📚 浏览全部",
-    compareHardware: "⚙️ 对比全部",
-    findHardware: "🔍 查找兼容硬件 →",
+    browseModels: "浏览全部",
+    compareHardware: "对比全部",
+    findHardware: "查找兼容硬件 →",
     gpuCount: "GPU 数量",
     gpuCountHelp: "总显存 = 数量 × 单卡显存。",
     langLabel: "语言",
@@ -418,7 +422,7 @@ async function fetchDynamicData() {
                 repo: m.id,
                 hfUrl: m.huggingface_url,
                 paramsB: m.parameters_billion,
-                activeParamsB: m.moe_num_experts ? (m.parameters_billion / m.moe_num_experts * (m.moe_top_k || 1)) : m.parameters_billion,
+                activeParamsB: m.active_parameters_billion || (m.moe_num_experts ? (m.parameters_billion / m.moe_num_experts * (m.moe_top_k || 1)) : m.parameters_billion),
                 hiddenSize: m.hidden_size,
                 layers: m.num_layers,
                 heads: m.num_heads,
@@ -1063,20 +1067,140 @@ function initQuickStartButtons() {
   document.querySelectorAll('.quick-preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const presetId = btn.getAttribute('data-preset');
-      const presetSelect = byId('modelPreset');
-      if (presetSelect && presetId) {
-        presetSelect.value = presetId;
-        const preset = getSelectedPreset();
-        applyPreset(preset);
-        updatePresetLink(preset);
-        computeAndRender();
-        // Scroll to results
-        setTimeout(() => {
-          document.querySelector('.results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      }
+      useModelInCalc(presetId);
     });
   });
+
+  // Hero Search Logic
+  const searchInput = byId('heroSearchInput');
+  const searchBtn = byId('heroSearchBtn');
+  
+  const handleSearch = () => {
+    const term = searchInput.value.toLowerCase().trim();
+    if (!term) return;
+    
+    // Simple search: find first matching model
+    const match = MODEL_PRESETS.find(m => 
+      m.name.toLowerCase().includes(term) || 
+      m.id.toLowerCase().includes(term) ||
+      m.provider.toLowerCase().includes(term)
+    );
+    
+    if (match) {
+      useModelInCalc(match.id);
+    } else {
+      // If no match, maybe redirect to models page with search term?
+      window.location.href = `models/index.html?search=${encodeURIComponent(term)}`;
+    }
+  };
+
+  if (searchBtn) searchBtn.addEventListener('click', handleSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSearch();
+    });
+  }
+
+  // Trending tags
+  document.querySelectorAll('.trending-tag').forEach(tag => {
+    tag.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = tag.getAttribute('data-id');
+      useModelInCalc(id);
+    });
+  });
+}
+
+/**
+ * Bridges model selection to the calculator
+ */
+window.useModelInCalc = function(id) {
+  const presetSelect = byId('modelPreset');
+  if (!presetSelect) return;
+  
+  presetSelect.value = id;
+  // If not in select yet (dynamic data still loading), wait or fallback
+  if (presetSelect.value !== id) {
+    // Attempt to apply from MODEL_PRESETS directly if available
+    const preset = MODEL_PRESETS.find(m => m.id === id);
+    if (preset) {
+      applyPreset(preset);
+      updatePresetLink(preset);
+      computeAndRender();
+    }
+  } else {
+    const preset = getSelectedPreset();
+    applyPreset(preset);
+    updatePresetLink(preset);
+    computeAndRender();
+  }
+  
+  // Smooth scroll to results
+  setTimeout(() => {
+    byId('verdictCard')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+};
+
+async function initModelSpotlight() {
+  const spotlightGrid = byId('featuredModelsGrid');
+  if (!spotlightGrid) return;
+
+  // We'll use MODEL_PRESETS which is populated in fetchDynamicData
+  // Since fetchDynamicData is async, we might need to wait for it
+  // or trigger this after it's done.
+  
+  const renderSpotlight = () => {
+    if (!MODEL_PRESETS || MODEL_PRESETS.length === 0) return;
+    
+    // Pick flagships: Qwen 235B, DeepSeek-V3, Llama 3.1 70B
+    const spotlightIds = [
+      'Qwen/Qwen3-235B-A22B-Thinking-2507-FP8', 
+      'deepseek-ai/DeepSeek-V3', 
+      'meta-llama/Llama-3.1-70B-Instruct'
+    ];
+    
+    // Filter and maintain order
+    const featured = spotlightIds
+      .map(id => MODEL_PRESETS.find(m => m.id === id))
+      .filter(m => m !== undefined);
+
+    if (featured.length === 0) {
+      // Fallback: pick top 3 by size
+      featured.push(...[...MODEL_PRESETS]
+        .sort((a, b) => b.paramsB - a.paramsB)
+        .slice(0, 3));
+    }
+
+    spotlightGrid.innerHTML = featured.map(model => {
+      const vramInt8 = Math.ceil(model.paramsB * 1.05);
+      const vramBf16 = Math.ceil(model.paramsB * 2);
+      
+      return `
+        <div class="card-landing spotlight-card" onclick="useModelInCalc('${model.id}')" style="cursor: pointer;">
+          <div class="pill">${model.provider}</div>
+          <h3>${model.name}</h3>
+          <div class="stat-row">
+            <span class="stat-chip">${model.paramsB}B params</span>
+            <span class="stat-chip">${model.layers} layers</span>
+          </div>
+          <div class="deployment-preview">
+            <small>Est. VRAM:</small>
+            <strong>INT8: ~${vramInt8} GB · BF16: ~${vramBf16} GB</strong>
+          </div>
+          <div class="card-actions-row" style="display: flex; gap: 8px; margin-top: 8px;">
+            <a href="https://artificialanalysis.ai/models/${model.id.split('/')[1]?.toLowerCase() || ''}" target="_blank" class="btn ghost btn-sm" style="padding: 6px 10px; font-size: 0.8rem;" onclick="event.stopPropagation();">Benchmarks</a>
+            <div class="card-cta">Calculate →</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+
+  // Initial attempt
+  renderSpotlight();
+  
+  // Return the function so it can be called again after dynamic fetch
+  return renderSpotlight;
 }
 
 function initAdvancedToggles() {
@@ -1119,8 +1243,14 @@ async function init() {
   
   applyStaticTranslations();
 
+  // Initialize spotlight with current hardcoded data
+  const reRenderSpotlight = await initModelSpotlight();
+
   // Load dynamic data in background
   fetchDynamicData().then(() => {
+    // Re-render spotlight after dynamic data is loaded
+    if (reRenderSpotlight) reRenderSpotlight();
+    
     // Re-apply URL params in case the dynamic data added the requested preset
     if (urlParams.preset) {
         const presetSelect = byId('modelPreset');

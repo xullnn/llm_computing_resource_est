@@ -32,7 +32,7 @@ vendorQueryLimits:
 
 ## 🏢 Vendor Whitelist Strategy
 
-### Current Vendors (7 Tier-1 Only)
+### Current Vendors (8 Tier-1 Only)
 ```
 google
 anthropic
@@ -41,6 +41,7 @@ Qwen
 deepseek-ai
 nvidia
 apple
+XiaomiMiMo
 ```
 
 ### Rationale for Exclusivity

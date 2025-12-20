@@ -12,7 +12,7 @@ core_files:
   - js/calc.js: Physics-based calculation engine (VRAM, FLOPs, Bandwidth, TTFT)
   - scripts/fetch-models.js: Automated HF data pipeline with two-stage fetch
   - scripts/config.json: Centralized configuration (vendors, param range, time window)
-  - data/models.json: Auto-updated model specifications (73 vendor-exclusive models)
+  - data/models.json: Auto-updated model specifications (75 vendor-exclusive models)
   - data/overrides.json: Manual model metadata for gated/auth-required repos
   - data/hardware/*.json: Verified NVIDIA and Huawei hardware specs
 
@@ -20,9 +20,9 @@ data_schema:
   models:
     source: scripts/fetch-models.js (driven by scripts/config.json)
     storage: data/models.json
-    count: 73 models
+    count: 75 models
     filters: 
-      - vendors: [google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple]
+      - vendors: [google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo]
       - param_range: 70-700B
       - time_window: 2 years (730 days)
     fields: [id, name, parameters_billion, architecture, hidden_size, num_layers, moe_num_experts, moe_top_k, param_source, created_at, last_modified]
@@ -40,5 +40,5 @@ interconnected_pages:
 pipeline:
   trigger: Manual execution (node scripts/fetch-models.js)
   config: scripts/config.json
-  logic: Load Config -> Query 7 Vendors -> Individual Fetch (safetensors) -> Merge Overrides -> Validate -> Output JSON
-  api_calls: 7 list queries + N individual model fetches + N config.json fetches
+  logic: Load Config -> Query 8 Vendors -> Individual Fetch (safetensors) -> Merge Overrides -> Validate -> Output JSON
+  api_calls: 8 list queries + N individual model fetches + N config.json fetches

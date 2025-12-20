@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open-Source Models (80B+) | LLM Resource Sizer</title>
-    <meta name="description" content="Browse and compare large open-source language models (80B+ parameters) for deployment">
+    <title>Models (70B+) | LLM Resource Calculator</title>
+    <meta name="description" content="Browse large language models (70B+ parameters) and calculate resource requirements">
     <link rel="stylesheet" href="../css/main.css">
     <style>
         .models-header {
@@ -488,8 +488,8 @@
     </nav>
     
     <div class="models-header">
-        <h1>🤖 Open-Source Models (80B+)</h1>
-        <p>Explore large language models with open-source licenses, ready for enterprise deployment</p>
+        <h1>Models (70B+)</h1>
+        <p>Large language models from major vendors. Click any model to calculate requirements.</p>
     </div>
     
     <div class="search-filter">
@@ -974,10 +974,13 @@
                     
                     <div class="model-actions">
                         <button class="btn btn-primary" onclick="useInCalculator('${model.id}')">
-                            🧮 Size This Model
+                            Calculate
                         </button>
                         <a href="${model.huggingface_url}" target="_blank" class="btn btn-secondary">
                             HF Repo
+                        </a>
+                        <a href="https://artificialanalysis.ai/models/${model.id.split('/')[1]?.toLowerCase() || ''}" target="_blank" class="btn btn-secondary" title="External benchmarks">
+                            Benchmarks
                         </a>
                     </div>
                 </div>

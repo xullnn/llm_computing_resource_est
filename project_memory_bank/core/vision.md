@@ -7,7 +7,7 @@ last_updated: 2025-12-19
 # Project Vision
 
 ## 🎯 The Mission
-To empower AI Product Managers and Infrastructure Teams to transition from "Experimental AI" to "Production Deployment" by providing physics-backed hardware estimations for massive open-source models (80B+).
+To empower AI Product Managers and Infrastructure Teams to transition from "Experimental AI" to "Production Deployment" by providing physics-backed hardware estimations for massive open-source models (70B+).
 
 ## 🏢 Target Persona: The Enterprise PM
 The tool is specifically tuned for PMs who sell **Server + AI App Bundles**.

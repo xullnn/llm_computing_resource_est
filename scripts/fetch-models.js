@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Fetch open-source LLM models (80B+) from Hugging Face Hub API
+ * Fetch open-source LLM models (70B+) from Hugging Face Hub API
  * 
  * Usage: node scripts/fetch-models.js
  * 

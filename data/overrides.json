@@ -33,6 +33,46 @@
       "huggingface_url": "https://huggingface.co/meta-llama/Llama-3.1-405B",
       "param_source": "manual_override",
       "notes": "Manually added due to HF 401 gate"
+    },
+    {
+      "id": "XiaomiMiMo/MiMo-V2-Flash",
+      "name": "MiMo V2 Flash",
+      "parameters_billion": 309.8,
+      "active_parameters_billion": 15.0,
+      "architecture": "moe",
+      "hidden_size": 4096,
+      "num_layers": 48,
+      "num_heads": 64,
+      "num_kv_heads": 4,
+      "vocab_size": 152576,
+      "max_seq_length": 262144,
+      "intermediate_size": 16384,
+      "moe_num_experts": 256,
+      "moe_top_k": 8,
+      "license": "mit",
+      "huggingface_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2-Flash",
+      "param_source": "manual_override",
+      "notes": "Ensuring 15B active params for accurate calculator results"
+    },
+    {
+      "id": "XiaomiMiMo/MiMo-V2-Flash-Base",
+      "name": "MiMo V2 Flash Base",
+      "parameters_billion": 309.8,
+      "active_parameters_billion": 15.0,
+      "architecture": "moe",
+      "hidden_size": 4096,
+      "num_layers": 48,
+      "num_heads": 64,
+      "num_kv_heads": 4,
+      "vocab_size": 152576,
+      "max_seq_length": 262144,
+      "intermediate_size": 16384,
+      "moe_num_experts": 256,
+      "moe_top_k": 8,
+      "license": "mit",
+      "huggingface_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2-Flash-Base",
+      "param_source": "manual_override",
+      "notes": "Ensuring 15B active params for accurate calculator results"
     }
   ]
 }

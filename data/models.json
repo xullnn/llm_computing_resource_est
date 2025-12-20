@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "updated_at": "2025-12-20T07:31:02.373Z",
+    "updated_at": "2025-12-20T08:20:20.331Z",
     "source": "Hugging Face Hub API",
-    "filter": "Vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple | Parameters: 70-700B | Released after 2023-12-21",
-    "count": 73,
+    "filter": "Vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo | Parameters: 70-700B | Released after 2023-12-21",
+    "count": 75,
     "vendors": [
       "google",
       "anthropic",
@@ -11,7 +11,8 @@
       "Qwen",
       "deepseek-ai",
       "nvidia",
-      "apple"
+      "apple",
+      "XiaomiMiMo"
     ],
     "paramRange": {
       "min": 70,
@@ -470,6 +471,46 @@
       "last_modified": "2025-07-21T21:33:03.000Z",
       "huggingface_url": "https://huggingface.co/nvidia/DeepSeek-R1-0528-NVFP4-v2",
       "param_source": "safetensors"
+    },
+    {
+      "id": "XiaomiMiMo/MiMo-V2-Flash",
+      "name": "MiMo V2 Flash",
+      "parameters_billion": 309.8,
+      "active_parameters_billion": 15,
+      "architecture": "moe",
+      "hidden_size": 4096,
+      "num_layers": 48,
+      "num_heads": 64,
+      "num_kv_heads": 4,
+      "vocab_size": 152576,
+      "max_seq_length": 262144,
+      "intermediate_size": 16384,
+      "moe_num_experts": 256,
+      "moe_top_k": 8,
+      "license": "mit",
+      "huggingface_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2-Flash",
+      "param_source": "manual_override",
+      "notes": "Ensuring 15B active params for accurate calculator results"
+    },
+    {
+      "id": "XiaomiMiMo/MiMo-V2-Flash-Base",
+      "name": "MiMo V2 Flash Base",
+      "parameters_billion": 309.8,
+      "active_parameters_billion": 15,
+      "architecture": "moe",
+      "hidden_size": 4096,
+      "num_layers": 48,
+      "num_heads": 64,
+      "num_kv_heads": 4,
+      "vocab_size": 152576,
+      "max_seq_length": 262144,
+      "intermediate_size": 16384,
+      "moe_num_experts": 256,
+      "moe_top_k": 8,
+      "license": "mit",
+      "huggingface_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2-Flash-Base",
+      "param_source": "manual_override",
+      "notes": "Ensuring 15B active params for accurate calculator results"
     },
     {
       "id": "nvidia/Llama-3_1-Nemotron-Ultra-253B-v1",

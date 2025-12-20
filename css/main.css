@@ -900,6 +900,127 @@ button.ghost {
   font-weight: 600;
 }
 
+/* Hero Search & Trending Styles */
+.hero-search-container {
+  margin-top: 2rem;
+  max-width: 700px;
+}
+
+.search-box-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 6px 6px 6px 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box-wrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2), 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.search-icon {
+  font-size: 1.2rem;
+  margin-right: 12px;
+  opacity: 0.7;
+}
+
+#heroSearchInput {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  color: var(--text);
+  outline: none;
+}
+
+#heroSearchBtn {
+  padding: 10px 24px;
+  border-radius: 12px;
+}
+
+.trending-tags {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.trending-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.trending-tag {
+  font-size: 0.85rem;
+  color: #c4b5fd;
+  text-decoration: none;
+  padding: 4px 10px;
+  background: rgba(124, 58, 237, 0.1);
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.trending-tag:hover {
+  background: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+/* Spotlight Card Enhancements */
+.spotlight-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spotlight-card h3 {
+  font-size: 1.25rem;
+  margin: 4px 0;
+}
+
+.deployment-preview {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 4px 0;
+}
+
+.deployment-preview small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.deployment-preview strong {
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
+.card-cta {
+  margin-top: auto;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-landing.spotlight-card:hover .card-cta {
+  text-decoration: underline;
+}
+
 @media (max-width: 720px) {
   header.hero {
     flex-direction: column;

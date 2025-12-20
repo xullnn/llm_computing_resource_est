@@ -25,7 +25,7 @@ graph LR
 | :--- | :--- | :--- |
 | **Configuration** | `scripts/config.json` | Vendor whitelist, param range (70-700B), time window. |
 | **Pipeline** | `scripts/fetch-models.js` | Two-stage fetch: list → individual (safetensors). |
-| **Data Hub** | `data/models.json` | 73 vendor-exclusive models (70-700B, 7 vendors). |
+| **Data Hub** | `data/models.json` | 75 vendor-exclusive models (70-700B, 8 vendors). |
 | **Overrides** | `data/overrides.json` | Manual metadata for gated repos (Llama 3.1 405B). |
 | **Calculator** | `js/calc.js` | Pure logic for VRAM, FLOPs, Bandwidth, and TTFT. |
 | **UI/i18n** | `js/ui.js` | Real-time rendering, multi-GPU selector, bilingual support. |
@@ -37,11 +37,11 @@ graph LR
 The tool uses a **Vendor-Exclusive Discovery Pipeline** with two-stage enrichment:
 
 1.  **Build-Time (Manual Execution)**:
-    *   Load `config.json` (vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple).
-    *   Query HF list API for each vendor (7 queries).
+    *   Load `config.json` (vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo).
+    *   Query HF list API for each vendor (8 queries).
     *   For each candidate: fetch individual model API (safetensors), fetch config.json (architecture).
     *   Merge with `overrides.json`, validate parameter range (70-700B), detect anomalies.
-    *   Write to `data/models.json` (73 models).
+    *   Write to `data/models.json` (75 models).
 2.  **Runtime (Client Browser)**:
     *   `js/ui.js` fetches JSON data on page load.
     *   `models/index.html` provides multi-row discovery filters.
