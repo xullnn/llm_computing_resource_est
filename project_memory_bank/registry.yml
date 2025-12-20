@@ -1,33 +1,44 @@
 ---
-last_updated: 2025-12-19
+last_updated: 2025-12-20
 project: LLM Resource Sizer
 type: Enterprise AI Infrastructure Decision Hub
 stack: Vanilla JavaScript, GitHub Actions, Node.js (Build-time), HTML5, CSS3
 
 core_files:
   - index.html: Main calculator entry point
-  - models/index.html: Model Explorer database
+  - models/index.html: Model Explorer with multi-row filters and comparison mode
   - hardware/index.html: Hardware Hub overview
   - js/ui.js: Core UI logic, i18n, and dynamic data binding
-  - js/calc.js: Physics-based calculation engine
-  - scripts/fetch-models.js: Automated Hugging Face data pipeline
-  - data/models.json: Auto-updated model specifications (93+ models)
+  - js/calc.js: Physics-based calculation engine (VRAM, FLOPs, Bandwidth, TTFT)
+  - scripts/fetch-models.js: Automated HF data pipeline with two-stage fetch
+  - scripts/config.json: Centralized configuration (vendors, param range, time window)
+  - data/models.json: Auto-updated model specifications (73 vendor-exclusive models)
+  - data/overrides.json: Manual model metadata for gated/auth-required repos
   - data/hardware/*.json: Verified NVIDIA and Huawei hardware specs
 
 data_schema:
   models:
-    source: scripts/fetch-models.js
+    source: scripts/fetch-models.js (driven by scripts/config.json)
     storage: data/models.json
-    fields: [id, name, parameters_billion, architecture, hidden_size, num_layers, moe_num_experts, moe_top_k]
+    count: 73 models
+    filters: 
+      - vendors: [google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple]
+      - param_range: 70-700B
+      - time_window: 2 years (730 days)
+    fields: [id, name, parameters_billion, architecture, hidden_size, num_layers, moe_num_experts, moe_top_k, param_source, created_at, last_modified]
+    param_source_types: [safetensors, manual_override, stated, estimated]
+  
   hardware:
-    source: Manual curation (verified sources)
+    source: Manual curation (verified datasheets)
     storage: data/hardware/{vendor}.json
-    fields: [id, name, vram_gb, bandwidth_gbps, fp16_tflops, bf16_tflops, max_cards_per_node]
+    fields: [id, name, vram_gb, bandwidth_gbps, fp16_tflops, bf16_tflops, int8_tops, max_cards_per_node, interconnect]
 
 interconnected_pages:
   - persona_guides: [/for/enterprise.html, /for/teams.html, /for/researchers.html, /for/hobbyists.html]
   - vendor_pages: [/hardware/nvidia.html, /hardware/huawei.html]
 
 pipeline:
-  trigger: GitHub Actions (Weekly / Manual)
-  logic: Fetch HF API -> Filter 80B+ Open Source -> Estimate/Parse Params -> JSON Output
+  trigger: Manual execution (node scripts/fetch-models.js)
+  config: scripts/config.json
+  logic: Load Config -> Query 7 Vendors -> Individual Fetch (safetensors) -> Merge Overrides -> Validate -> Output JSON
+  api_calls: 7 list queries + N individual model fetches + N config.json fetches

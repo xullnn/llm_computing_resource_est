@@ -17,7 +17,8 @@ Refer to **`registry.yml`** for the map of critical files and dynamic data schem
 
 ## ⚡ Current System State (Dec 2025)
 
-*   **Models**: 93+ open-source models (80B+) fetched automatically from Hugging Face.
-*   **Hardware**: Verified specs for NVIDIA (9+ GPUs) and Huawei (4+ NPUs).
-*   **Architecture**: Static build-time pipeline (GitHub Actions) + Dynamic runtime fetching (Vanilla JS).
-*   **Deployment**: Static hosting on Vercel.
+*   **Models**: 73 vendor-exclusive models (70-700B) from 7 tier-1 vendors, fetched via two-stage HF API.
+*   **Vendors**: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple.
+*   **Hardware**: Verified specs for NVIDIA (15+ GPUs) and Huawei (4+ NPUs).
+*   **Architecture**: Config-driven build-time pipeline + Dynamic runtime filtering (Vanilla JS).
+*   **Discovery**: Multi-row filters (recency, org, arch, size) with comparison mode.
