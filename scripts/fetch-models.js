@@ -43,6 +43,13 @@ const OPEN_SOURCE_LICENSES = [
   'cc-by-sa-4.0',
 ];
 
+// Map of common "other" license tags to their permissive equivalents
+const LICENSE_ALIASES = {
+  'tongyi-qianwen-license-agreement': 'qwen',
+  'deepseek-license': 'deepseek',
+  'yi-license': 'yi',
+};
+
 // Known open-source model families (for models without license tags)
 const KNOWN_OPEN_SOURCE_ORGS = [
   'deepseek-ai', // DeepSeek models are MIT licensed
@@ -50,6 +57,42 @@ const KNOWN_OPEN_SOURCE_ORGS = [
   'meta-llama',
   'mistralai',
 ];
+
+/**
+ * Load manual overrides from data/overrides.json
+ */
+function loadOverrides() {
+  const overridesPath = path.join(__dirname, '../data/overrides.json');
+  if (fs.existsSync(overridesPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(overridesPath, 'utf8'));
+      return new Map(data.models.map(m => [m.id, m]));
+    } catch (e) {
+      console.warn(`⚠️  Failed to load overrides.json: ${e.message}`);
+    }
+  }
+  return new Map();
+}
+
+const OVERRIDES = loadOverrides();
+
+/**
+ * Load existing models to support incremental updates
+ */
+function loadExistingModels() {
+  const modelsPath = path.join(__dirname, '../data/models.json');
+  if (fs.existsSync(modelsPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(modelsPath, 'utf8'));
+      return new Map(data.models.map(m => [m.id, m]));
+    } catch (e) {
+      console.warn(`⚠️  Failed to load existing models.json: ${e.message}`);
+    }
+  }
+  return new Map();
+}
+
+const EXISTING_MODELS = loadExistingModels();
 
 /**
  * Fetch JSON from URL using https module
@@ -248,6 +291,15 @@ async function fetchOpenSourceModels() {
       if (isMajor) console.log(`⚠️  ${model.id}: DUPLICATE`);
       continue;
     }
+
+    // NEW: Check for manual overrides first
+    if (OVERRIDES.has(model.id)) {
+      const override = OVERRIDES.get(model.id);
+      console.log(`🎯 ${model.id}: Using manual override (${override.parameters_billion}B)`);
+      models.push(override);
+      seenModels.add(model.id);
+      continue;
+    }
     
     // Filter: Only models from past 2 years (use createdAt for release date)
     const createdAt = model.createdAt ? new Date(model.createdAt) : null;
@@ -260,7 +312,12 @@ async function fetchOpenSourceModels() {
     
     // Extract license from tags (format: "license:apache-2.0")
     const licenseTag = (model.tags || []).find(tag => tag.startsWith('license:'));
-    const license = licenseTag ? licenseTag.replace('license:', '').toLowerCase() : '';
+    let license = licenseTag ? licenseTag.replace('license:', '').toLowerCase() : '';
+    
+    // Resolve license aliases (e.g., "tongyi-qianwen" -> "qwen")
+    if (LICENSE_ALIASES[license]) {
+      license = LICENSE_ALIASES[license];
+    }
     
     if (license) {
       seenLicenses.add(license);
@@ -276,6 +333,20 @@ async function fetchOpenSourceModels() {
       if (isMajor) console.log(`⚠️  ${model.id}: NOT OPEN SOURCE (license: ${license || 'none'}, org: ${modelOrg})`);
       skipped.noLicense++;
       continue;
+    }
+
+    // NEW: Incremental Update Check
+    if (EXISTING_MODELS.has(model.id)) {
+      const existing = EXISTING_MODELS.get(model.id);
+      const existingModified = existing.last_modified ? new Date(existing.last_modified) : null;
+      
+      // If the model hasn't been modified on HF since our last fetch, reuse it
+      if (existingModified && lastModified && existingModified.getTime() >= new Date(lastModified).getTime()) {
+        // console.log(`⏭️ ${model.id}: Unchanged, skipping fetch`);
+        models.push(existing);
+        seenModels.add(model.id);
+        continue;
+      }
     }
     
     // Fetch config.json for architecture details
@@ -353,6 +424,15 @@ async function fetchOpenSourceModels() {
       continue;
     }
   }
+
+  // NEW: Add any overrides that weren't found in the search
+  for (const [id, override] of OVERRIDES) {
+    if (!seenModels.has(id)) {
+      console.log(`🎯 ${id}: Adding manual override (not found in search)`);
+      models.push(override);
+      seenModels.add(id);
+    }
+  }
   
   console.log(`\n📊 Summary:`);
   console.log(`   - Skipped (older than 1 year): ${skipped.tooOld}`);
@@ -364,6 +444,34 @@ async function fetchOpenSourceModels() {
   
   // Sort by parameters descending
   models.sort((a, b) => b.parameters_billion - a.parameters_billion);
+
+  // NEW: Validation Layer (Sanity Check)
+  const anomalies = [];
+  for (const model of models) {
+    if (EXISTING_MODELS.has(model.id)) {
+      const oldModel = EXISTING_MODELS.get(model.id);
+      const oldParams = oldModel.parameters_billion;
+      const newParams = model.parameters_billion;
+      
+      if (oldParams > 0) {
+        const ratio = newParams / oldParams;
+        if (ratio > 1.5 || ratio < 0.66) {
+          anomalies.push({
+            id: model.id,
+            oldParams: `${oldParams}B`,
+            newParams: `${newParams}B`,
+            change: `${((ratio - 1) * 100).toFixed(1)}%`
+          });
+        }
+      }
+    }
+  }
+
+  if (anomalies.length > 0) {
+    console.log('\n⚠️  ANOMALIES DETECTED:');
+    console.table(anomalies);
+    // In a real CI environment, we might want to fail the build if anomalies are severe
+  }
   
   // Generate output
   const cutoffDate = new Date(CUTOFF_DATE).toISOString().split('T')[0];
@@ -482,10 +590,11 @@ function estimateParams(config) {
  * Detect if model is dense or MoE
  */
 function detectArchitecture(config) {
-  if (config.num_local_experts && config.num_local_experts > 1) {
+  const numExperts = config.num_local_experts || config.n_routed_experts || config.num_experts || 1;
+  if (numExperts > 1) {
     return 'moe';
   }
-  if (config.model_type && config.model_type.includes('moe')) {
+  if (config.model_type && config.model_type.toLowerCase().includes('moe')) {
     return 'moe';
   }
   return 'dense';

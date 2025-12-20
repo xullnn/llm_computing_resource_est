@@ -1,0 +1,39 @@
+{
+  "models": [
+    {
+      "id": "meta-llama/Llama-3.1-405B-Instruct",
+      "name": "Llama 3.1 405B Instruct",
+      "parameters_billion": 405.0,
+      "architecture": "dense",
+      "hidden_size": 16384,
+      "num_layers": 126,
+      "num_heads": 128,
+      "num_kv_heads": 8,
+      "vocab_size": 128256,
+      "max_seq_length": 131072,
+      "intermediate_size": 53248,
+      "license": "llama3.1",
+      "huggingface_url": "https://huggingface.co/meta-llama/Llama-3.1-405B-Instruct",
+      "param_source": "manual_override",
+      "notes": "Manually added due to HF 401 gate"
+    },
+    {
+      "id": "meta-llama/Llama-3.1-405B",
+      "name": "Llama 3.1 405B",
+      "parameters_billion": 405.0,
+      "architecture": "dense",
+      "hidden_size": 16384,
+      "num_layers": 126,
+      "num_heads": 128,
+      "num_kv_heads": 8,
+      "vocab_size": 128256,
+      "max_seq_length": 131072,
+      "intermediate_size": 53248,
+      "license": "llama3.1",
+      "huggingface_url": "https://huggingface.co/meta-llama/Llama-3.1-405B",
+      "param_source": "manual_override",
+      "notes": "Manually added due to HF 401 gate"
+    }
+  ]
+}
+
