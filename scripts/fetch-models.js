@@ -241,14 +241,14 @@ async function fetchOpenSourceModels() {
   // Search strategies to find 80B+ models
   const searchStrategies = [
     // Tier 1: Broad discovery (catches popular models)
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=downloads&direction=-1&limit=500', desc: 'top downloads' },
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=likes&direction=-1&limit=500', desc: 'most liked' },
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=lastModified&direction=-1&limit=500', desc: 'recently updated' },
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=createdAt&direction=-1&limit=1000', desc: 'recently created' },
+    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=downloads&direction=-1&limit=500&expand[]=safetensors', desc: 'top downloads' },
+    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=likes&direction=-1&limit=500&expand[]=safetensors', desc: 'most liked' },
+    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=lastModified&direction=-1&limit=500&expand[]=safetensors', desc: 'recently updated' },
+    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=createdAt&direction=-1&limit=1000&expand[]=safetensors', desc: 'recently created' },
     
     // Tier 2: Strategic organizations (ensures comprehensive coverage of key providers)
     ...STRATEGIC_ORGS.map(org => ({
-      url: `https://huggingface.co/api/models?author=${org.author}&filter=text-generation&limit=${org.limit}`,
+      url: `https://huggingface.co/api/models?author=${org.author}&filter=text-generation&limit=${org.limit}&expand[]=safetensors`,
       desc: `${org.author} org`
     }))
   ];
@@ -355,31 +355,43 @@ async function fetchOpenSourceModels() {
       const config = await fetchJson(configUrl);
       
       // STEP 4: Validate and choose best parameter estimate
-      const estimatedParams = estimateParams(config);
-      const statedParams = await fetchStatedParams(model.id);
+      let finalParams = null;
+      let paramSource = null;
+
+      // Priority 1: Safetensors (from model object expansion)
+      if (model.safetensors && model.safetensors.total) {
+        finalParams = model.safetensors.total / 1e9;
+        paramSource = 'safetensors';
+      } 
       
-      let finalParams = estimatedParams;
-      let paramSource = 'estimated';
-      
-      // Prefer stated params if available and reasonable
-      if (statedParams && statedParams >= MIN_PARAMS_BILLION) {
-        finalParams = statedParams;
-        paramSource = 'stated';
-        
-        // Warn if estimation differs significantly from stated value
-        if (estimatedParams && Math.abs(estimatedParams - statedParams) / statedParams > 0.3) {
-          console.log(`   ⚠️  ${model.id}: Estimated ${estimatedParams.toFixed(1)}B but model card states ${statedParams.toFixed(1)}B (using stated)`);
+      // Priority 2: Stated (from README)
+      if (!finalParams) {
+        const statedParams = await fetchStatedParams(model.id);
+        if (statedParams && statedParams >= MIN_PARAMS_BILLION) {
+          finalParams = statedParams;
+          paramSource = 'stated';
         }
-      } else if (!estimatedParams || estimatedParams < MIN_PARAMS_BILLION) {
-        if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL (${(estimatedParams || 0).toFixed(1)}B)`);
+      }
+
+      // Priority 3: Estimated (Physics)
+      const estimatedParams = estimateParams(config);
+      if (!finalParams) {
+        if (estimatedParams && estimatedParams >= MIN_PARAMS_BILLION) {
+          finalParams = estimatedParams;
+          paramSource = 'estimated';
+        }
+      }
+
+      // Final validation
+      if (!finalParams || finalParams < MIN_PARAMS_BILLION) {
+        if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL or UNKNOWN (${(finalParams || estimatedParams || 0).toFixed(1)}B)`);
         skipped.tooSmall++;
         continue;
       }
-      
-      if (finalParams < MIN_PARAMS_BILLION) {
-        if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL (${finalParams.toFixed(1)}B)`);
-        skipped.tooSmall++;
-        continue;
+
+      // Warn if estimation differs significantly from authoritative source
+      if (paramSource !== 'estimated' && estimatedParams && Math.abs(estimatedParams - finalParams) / finalParams > 0.3) {
+        console.log(`   ⚠️  ${model.id}: Physics estimated ${estimatedParams.toFixed(1)}B but ${paramSource} says ${finalParams.toFixed(1)}B (using ${paramSource})`);
       }
       
       const msg = `✓ ${model.id}: ${finalParams.toFixed(1)}B params [${paramSource}] (${license}) [${createdAt.toISOString().split('T')[0]}]`;
