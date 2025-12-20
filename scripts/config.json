@@ -1,0 +1,25 @@
+{
+  "params": {
+    "min": 70,
+    "max": 700,
+    "comment": "Filter models by parameter range (in billions). 70B captures flagship 72B models, 700B excludes experimental massive MoE."
+  },
+  "cutoffDays": 730,
+  "cutoffComment": "2 years - appropriate for enterprise-grade 70B+ models with longer adoption cycles",
+  "vendors": [
+    "google",
+    "anthropic",
+    "openai",
+    "Qwen",
+    "deepseek-ai",
+    "nvidia",
+    "apple"
+  ],
+  "vendorQueryLimits": {
+    "Qwen": 200,
+    "deepseek-ai": 100,
+    "default": 100
+  },
+  "vendorComment": "Exclusive tier-1 enterprise vendors only. No community fine-tunes or smaller organizations."
+}
+

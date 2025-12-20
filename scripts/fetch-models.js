@@ -12,51 +12,14 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 
-const MIN_PARAMS_BILLION = 80; // 80B+ parameters as specified
+// Load configuration
+const CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
-// Date cutoff: 2 years to include important models like Llama 3.1 (July 2024) and Qwen 2.5 (Sept 2024)
-// For large models (80B+), 2-year window is appropriate because:
-// - Major releases are infrequent (months apart)
-// - Enterprise adoption lags cutting-edge releases  
-// - Model stability/maturity matters more than recency
-const CUTOFF_DAYS = 730; // 2 years
+const MIN_PARAMS_BILLION = CONFIG.params.min;
+const MAX_PARAMS_BILLION = CONFIG.params.max;
+const CUTOFF_DAYS = CONFIG.cutoffDays;
 const CUTOFF_DATE = new Date(Date.now() - CUTOFF_DAYS * 24 * 60 * 60 * 1000);
-
-// Permissive open-source licenses we accept
-const OPEN_SOURCE_LICENSES = [
-  'apache-2.0',
-  'mit',
-  'bsd-3-clause',
-  'llama3.1',
-  'llama3.2',
-  'llama3.3',
-  'llama3',
-  'llama2',
-  'qwen',
-  'other', // Qwen models often use this tag
-  'gemma',
-  'deepseek',
-  'yi',
-  'mistral',
-  'openrail',
-  'cc-by-4.0',
-  'cc-by-sa-4.0',
-];
-
-// Map of common "other" license tags to their permissive equivalents
-const LICENSE_ALIASES = {
-  'tongyi-qianwen-license-agreement': 'qwen',
-  'deepseek-license': 'deepseek',
-  'yi-license': 'yi',
-};
-
-// Known open-source model families (for models without license tags)
-const KNOWN_OPEN_SOURCE_ORGS = [
-  'deepseek-ai', // DeepSeek models are MIT licensed
-  'Qwen',
-  'meta-llama',
-  'mistralai',
-];
+const VENDORS = CONFIG.vendors;
 
 /**
  * Load manual overrides from data/overrides.json
@@ -93,6 +56,19 @@ function loadExistingModels() {
 }
 
 const EXISTING_MODELS = loadExistingModels();
+
+/**
+ * Fetch individual model metadata (includes safetensors data)
+ */
+async function fetchModelMetadata(modelId) {
+  try {
+    const url = `https://huggingface.co/api/models/${modelId}`;
+    const metadata = await fetchJson(url);
+    return metadata;
+  } catch (e) {
+    return null;
+  }
+}
 
 /**
  * Fetch JSON from URL using https module
@@ -228,30 +204,14 @@ async function fetchOpenSourceModels() {
   const models = [];
   const seenModels = new Set();
   
-  // Strategic organizations - leading foundation model providers only
-  const STRATEGIC_ORGS = [
-    { author: 'Qwen', limit: 200 },
-    { author: 'deepseek-ai', limit: 100 },
-    { author: 'openai', limit: 50 },
-    { author: 'google', limit: 100 },
-    { author: 'anthropics', limit: 50 },
-    { author: 'apple', limit: 50 },
-  ];
-  
-  // Search strategies to find 80B+ models
-  const searchStrategies = [
-    // Tier 1: Broad discovery (catches popular models)
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=downloads&direction=-1&limit=500&expand[]=safetensors', desc: 'top downloads' },
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=likes&direction=-1&limit=500&expand[]=safetensors', desc: 'most liked' },
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=lastModified&direction=-1&limit=500&expand[]=safetensors', desc: 'recently updated' },
-    { url: 'https://huggingface.co/api/models?filter=text-generation&sort=createdAt&direction=-1&limit=1000&expand[]=safetensors', desc: 'recently created' },
-    
-    // Tier 2: Strategic organizations (ensures comprehensive coverage of key providers)
-    ...STRATEGIC_ORGS.map(org => ({
-      url: `https://huggingface.co/api/models?author=${org.author}&filter=text-generation&limit=${org.limit}&expand[]=safetensors`,
-      desc: `${org.author} org`
-    }))
-  ];
+  // Query only the configured vendors (exclusive whitelist)
+  const searchStrategies = VENDORS.map(vendor => {
+    const limit = CONFIG.vendorQueryLimits?.[vendor] || 100;
+    return {
+      url: `https://huggingface.co/api/models?author=${vendor}&filter=text-generation&limit=${limit}`,
+      desc: `${vendor} org`
+    };
+  });
   
   let allRawModels = [];
   
@@ -271,15 +231,17 @@ async function fetchOpenSourceModels() {
   
   console.log(`✓ Found ${uniqueModels.length} unique text-generation models\n`);
   
-  let skipped = { noLicense: 0, tooSmall: 0, noConfig: 0, tooOld: 0 };
+  let skipped = { wrongVendor: 0, tooSmall: 0, tooLarge: 0, noConfig: 0, tooOld: 0 };
   let seenLicenses = new Set();
   
-  // Track specific major models
+  // Track specific major models for detailed logging
   const majorModels = [
     'meta-llama/Llama-3.1-405B-Instruct',
     'deepseek-ai/DeepSeek-V3',
+    'deepseek-ai/DeepSeek-R1',
     'Qwen/Qwen2.5-72B-Instruct',
-    'mistralai/Mixtral-8x22B-Instruct-v0.1'
+    'Qwen/Qwen3-235B-A22B-Instruct-2507',
+    'openai/gpt-oss-120b'
   ];
   
   // Process each model
@@ -301,8 +263,11 @@ async function fetchOpenSourceModels() {
       continue;
     }
     
-    // Filter: Only models from past 2 years (use createdAt for release date)
-    const createdAt = model.createdAt ? new Date(model.createdAt) : null;
+    // Filter: Only models from past 2 years (use createdAt or lastModified)
+    // Use lastModified as fallback if createdAt is missing (HF API inconsistency)
+    const dateString = model.createdAt || model.lastModified;
+    const createdAt = dateString ? new Date(dateString) : null;
+    
     if (!createdAt || createdAt < CUTOFF_DATE) {
       if (isMajor) console.log(`⚠️  ${model.id}: TOO OLD (${createdAt ? createdAt.toISOString().split('T')[0] : 'no date'})`);
       skipped.tooOld++;
@@ -312,26 +277,16 @@ async function fetchOpenSourceModels() {
     
     // Extract license from tags (format: "license:apache-2.0")
     const licenseTag = (model.tags || []).find(tag => tag.startsWith('license:'));
-    let license = licenseTag ? licenseTag.replace('license:', '').toLowerCase() : '';
+    const license = licenseTag ? licenseTag.replace('license:', '') : 'unknown';
     
-    // Resolve license aliases (e.g., "tongyi-qianwen" -> "qwen")
-    if (LICENSE_ALIASES[license]) {
-      license = LICENSE_ALIASES[license];
-    }
-    
-    if (license) {
+    if (license && license !== 'unknown') {
       seenLicenses.add(license);
     }
     
-    // Check if open-source: either by license tag or known organization
+    // Check vendor whitelist (exclusive filtering)
     const modelOrg = model.id.split('/')[0];
-    const isOpenSource = 
-      (license && OPEN_SOURCE_LICENSES.some(l => license.includes(l.toLowerCase()))) ||
-      KNOWN_OPEN_SOURCE_ORGS.includes(modelOrg);
-    
-    if (!isOpenSource) {
-      if (isMajor) console.log(`⚠️  ${model.id}: NOT OPEN SOURCE (license: ${license || 'none'}, org: ${modelOrg})`);
-      skipped.noLicense++;
+    if (!VENDORS.includes(modelOrg)) {
+      // Skip models not from our vendor whitelist
       continue;
     }
 
@@ -349,6 +304,16 @@ async function fetchOpenSourceModels() {
       }
     }
     
+    // Fetch individual model metadata for safetensors data
+    let modelMetadata = null;
+    try {
+      modelMetadata = await fetchModelMetadata(model.id);
+      // Small delay to respect rate limits
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch (e) {
+      // Continue without metadata
+    }
+
     // Fetch config.json for architecture details
     try {
       const configUrl = `https://huggingface.co/${model.id}/raw/main/config.json`;
@@ -358,9 +323,9 @@ async function fetchOpenSourceModels() {
       let finalParams = null;
       let paramSource = null;
 
-      // Priority 1: Safetensors (from model object expansion)
-      if (model.safetensors && model.safetensors.total) {
-        finalParams = model.safetensors.total / 1e9;
+      // Priority 1: Safetensors (from individual model API)
+      if (modelMetadata && modelMetadata.safetensors && modelMetadata.safetensors.total) {
+        finalParams = modelMetadata.safetensors.total / 1e9;
         paramSource = 'safetensors';
       } 
       
@@ -382,10 +347,16 @@ async function fetchOpenSourceModels() {
         }
       }
 
-      // Final validation
+      // Final validation - check parameter range
       if (!finalParams || finalParams < MIN_PARAMS_BILLION) {
         if (isMajor) console.log(`⚠️  ${model.id}: TOO SMALL or UNKNOWN (${(finalParams || estimatedParams || 0).toFixed(1)}B)`);
         skipped.tooSmall++;
+        continue;
+      }
+      
+      if (finalParams > MAX_PARAMS_BILLION) {
+        if (isMajor) console.log(`⚠️  ${model.id}: TOO LARGE (${finalParams.toFixed(1)}B, max: ${MAX_PARAMS_BILLION}B)`);
+        skipped.tooLarge++;
         continue;
       }
 
@@ -447,12 +418,13 @@ async function fetchOpenSourceModels() {
   }
   
   console.log(`\n📊 Summary:`);
-  console.log(`   - Skipped (older than 1 year): ${skipped.tooOld}`);
-  console.log(`   - Skipped (no open-source license): ${skipped.noLicense}`);
+  console.log(`   - Skipped (older than 2 years): ${skipped.tooOld}`);
+  console.log(`   - Skipped (not in vendor whitelist): ${skipped.wrongVendor}`);
   console.log(`   - Skipped (< ${MIN_PARAMS_BILLION}B params): ${skipped.tooSmall}`);
+  console.log(`   - Skipped (> ${MAX_PARAMS_BILLION}B params): ${skipped.tooLarge}`);
   console.log(`   - Skipped (no/invalid config): ${skipped.noConfig}`);
   console.log(`   - Matched: ${models.length}`);
-  console.log(`\n📋 Open-source licenses found: ${Array.from(seenLicenses).slice(0, 20).join(', ')}`);
+  console.log(`\n📋 Licenses found: ${Array.from(seenLicenses).slice(0, 20).join(', ')}`);
   
   // Sort by parameters descending
   models.sort((a, b) => b.parameters_billion - a.parameters_billion);
@@ -491,8 +463,10 @@ async function fetchOpenSourceModels() {
     metadata: {
       updated_at: new Date().toISOString(),
       source: 'Hugging Face Hub API',
-      filter: `open-source licenses only, 80B+ parameters, released after ${cutoffDate} (2 years)`,
+      filter: `Vendors: ${VENDORS.join(', ')} | Parameters: ${MIN_PARAMS_BILLION}-${MAX_PARAMS_BILLION}B | Released after ${cutoffDate}`,
       count: models.length,
+      vendors: VENDORS,
+      paramRange: { min: MIN_PARAMS_BILLION, max: MAX_PARAMS_BILLION },
     },
     models: models,
   };

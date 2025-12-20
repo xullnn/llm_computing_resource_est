@@ -1,0 +1,112 @@
+🔍 Fetching open-source models from Hugging Face...
+
+📡 Querying: google org...
+📡 Querying: anthropic org...
+📡 Querying: openai org...
+📡 Querying: Qwen org...
+📡 Querying: deepseek-ai org...
+📡 Querying: nvidia org...
+📡 Querying: apple org...
+✓ Found 482 unique text-generation models
+
+🎯 ✓ openai/gpt-oss-120b: 120.4B params [safetensors] (apache-2.0) [2025-08-04]
+✓ openai/gpt-oss-safeguard-120b: 120.4B params [safetensors] (apache-2.0) [2025-09-18]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Instruct: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Instruct: 81.3B params [safetensors] (apache-2.0) [2025-09-09]
+🎯 ✓ Qwen/Qwen2.5-72B-Instruct: 72.7B params [safetensors] (other) [2024-09-16]
+   ⚠️  Qwen/Qwen3-235B-A22B-Instruct-2507: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+🎯 ✓ Qwen/Qwen3-235B-A22B-Instruct-2507: 235.1B params [safetensors] (apache-2.0) [2025-07-21]
+   ⚠️  Qwen/Qwen3-Coder-480B-A35B-Instruct: Physics estimated 13.2B but safetensors says 480.2B (using safetensors)
+✓ Qwen/Qwen3-Coder-480B-A35B-Instruct: 480.2B params [safetensors] (apache-2.0) [2025-07-22]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Instruct-FP8: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Instruct-FP8: 81.3B params [safetensors] (apache-2.0) [2025-09-22]
+   ⚠️  Qwen/Qwen3-235B-A22B: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ Qwen/Qwen3-235B-A22B: 235.1B params [safetensors] (apache-2.0) [2025-04-27]
+   ⚠️  Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8: Physics estimated 13.2B but safetensors says 480.2B (using safetensors)
+✓ Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8: 480.2B params [safetensors] (apache-2.0) [2025-07-22]
+   ⚠️  Qwen/Qwen3-235B-A22B-Thinking-2507: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ Qwen/Qwen3-235B-A22B-Thinking-2507: 235.1B params [safetensors] (apache-2.0) [2025-07-25]
+   ⚠️  Qwen/Qwen3-235B-A22B-Thinking-2507-FP8: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ Qwen/Qwen3-235B-A22B-Thinking-2507-FP8: 235.1B params [safetensors] (apache-2.0) [2025-07-25]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Thinking-FP8: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Thinking-FP8: 81.3B params [safetensors] (apache-2.0) [2025-09-22]
+✓ Qwen/Qwen2.5-72B: 72.7B params [safetensors] (other) [2024-09-15]
+   ⚠️  Qwen/Qwen3-235B-A22B-Instruct-2507-FP8: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ Qwen/Qwen3-235B-A22B-Instruct-2507-FP8: 235.1B params [safetensors] (apache-2.0) [2025-07-21]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Thinking: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Thinking: 81.3B params [safetensors] (apache-2.0) [2025-09-09]
+✓ Qwen/Qwen1.5-72B: 72.3B params [safetensors] (other) [2024-01-23]
+✓ Qwen/Qwen1.5-72B-Chat: 72.3B params [safetensors] (other) [2024-01-30]
+✓ Qwen/Qwen1.5-72B-Chat-AWQ: 72.3B params [safetensors] (other) [2024-02-03]
+✓ Qwen/Qwen1.5-72B-Chat-GPTQ-Int8: 72.3B params [safetensors] (other) [2024-02-04]
+✓ Qwen/Qwen1.5-72B-Chat-GPTQ-Int4: 72.3B params [safetensors] (other) [2024-02-04]
+✓ Qwen/Qwen1.5-110B: 111.2B params [safetensors] (other) [2024-04-25]
+✓ Qwen/Qwen1.5-110B-Chat: 111.2B params [safetensors] (other) [2024-04-25]
+✓ Qwen/Qwen1.5-110B-Chat-GPTQ-Int4: 111.2B params [safetensors] (other) [2024-04-26]
+✓ Qwen/Qwen1.5-110B-Chat-AWQ: 111.2B params [safetensors] (other) [2024-04-27]
+✓ Qwen/Qwen2-72B: 72.7B params [safetensors] (other) [2024-05-22]
+✓ Qwen/Qwen2-72B-Instruct: 72.7B params [safetensors] (other) [2024-05-28]
+✓ Qwen/Qwen2-72B-Instruct-GPTQ-Int4: 73.0B params [safetensors] (other) [2024-06-03]
+✓ Qwen/Qwen2-72B-Instruct-GPTQ-Int8: 73.0B params [safetensors] (other) [2024-06-03]
+✓ Qwen/Qwen2-72B-Instruct-AWQ: 73.0B params [safetensors] (other) [2024-06-03]
+✓ Qwen/Qwen2-Math-72B-Instruct: 72.7B params [safetensors] (other) [2024-08-08]
+✓ Qwen/Qwen2-Math-72B: 72.7B params [safetensors] (other) [2024-08-08]
+✓ Qwen/Qwen2.5-Math-72B: 72.7B params [safetensors] (other) [2024-09-16]
+✓ Qwen/Qwen2.5-Math-72B-Instruct: 72.7B params [safetensors] (other) [2024-09-16]
+✓ deepseek-ai/DeepSeek-V3.2: 685.4B params [safetensors] (mit) [2025-12-01]
+✓ deepseek-ai/DeepSeek-V3.2-Speciale: 685.4B params [safetensors] (mit) [2025-11-28]
+✓ deepseek-ai/DeepSeek-Math-V2: 685.4B params [safetensors] (apache-2.0) [2025-11-27]
+🎯 ✓ deepseek-ai/DeepSeek-R1: 684.5B params [safetensors] (mit) [2025-01-20]
+✓ deepseek-ai/DeepSeek-V3.2-Exp: 685.4B params [safetensors] (mit) [2025-09-29]
+🎯 ✓ deepseek-ai/DeepSeek-V3: 684.5B params [safetensors] (unknown) [2024-12-25]
+✓ deepseek-ai/DeepSeek-V3.1-Base: 684.5B params [safetensors] (mit) [2025-08-19]
+✓ deepseek-ai/DeepSeek-V2: 235.7B params [safetensors] (other) [2024-04-22]
+✓ deepseek-ai/DeepSeek-R1-Zero: 684.5B params [safetensors] (mit) [2025-01-20]
+✓ deepseek-ai/DeepSeek-R1-Distill-Llama-70B: 70.6B params [safetensors] (mit) [2025-01-20]
+✓ deepseek-ai/DeepSeek-R1-0528: 684.5B params [safetensors] (mit) [2025-05-28]
+✓ deepseek-ai/DeepSeek-V2.5: 235.7B params [safetensors] (other) [2024-09-05]
+✓ deepseek-ai/DeepSeek-V3.2-Exp-Base: 685.4B params [safetensors] (mit) [2025-09-29]
+✓ deepseek-ai/DeepSeek-V2-Chat: 235.7B params [safetensors] (other) [2024-04-28]
+✓ deepseek-ai/DeepSeek-Coder-V2-Base: 235.7B params [safetensors] (other) [2024-06-14]
+✓ deepseek-ai/DeepSeek-Coder-V2-Instruct: 235.7B params [safetensors] (other) [2024-06-14]
+✓ deepseek-ai/DeepSeek-V2-Chat-0628: 235.7B params [safetensors] (other) [2024-07-18]
+✓ deepseek-ai/DeepSeek-Coder-V2-Instruct-0724: 235.7B params [safetensors] (other) [2024-09-05]
+✓ deepseek-ai/DeepSeek-V2.5-1210: 235.7B params [safetensors] (other) [2024-12-10]
+✓ deepseek-ai/DeepSeek-V3-0324: 684.5B params [safetensors] (mit) [2025-03-24]
+✓ deepseek-ai/DeepSeek-Prover-V2-671B: 684.5B params [safetensors] (unknown) [2025-04-30]
+✓ deepseek-ai/DeepSeek-V3.1: 684.5B params [safetensors] (mit) [2025-08-21]
+✓ deepseek-ai/DeepSeek-V3.1-Terminus: 684.5B params [safetensors] (mit) [2025-09-22]
+   ⚠️  nvidia/Qwen3-Nemotron-235B-A22B-GenRM: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ nvidia/Qwen3-Nemotron-235B-A22B-GenRM: 235.1B params [safetensors] (apache-2.0) [2025-12-03]
+✓ nvidia/OpenMath2-Llama3.1-70B: 70.6B params [safetensors] (llama3.1) [2024-09-30]
+✓ nvidia/Llama-3.1-Nemotron-70B-Instruct-HF: 70.6B params [safetensors] (llama3.1) [2024-10-12]
+   ⚠️  nvidia/DeepSeek-R1-NVFP4: Physics estimated 701.2B but safetensors says 396.8B (using safetensors)
+✓ nvidia/DeepSeek-R1-NVFP4: 396.8B params [safetensors] (mit) [2025-02-21]
+✓ nvidia/Llama-3.3-Nemotron-70B-Feedback: 70.6B params [safetensors] (other) [2025-03-14]
+   ⚠️  nvidia/Llama-3_1-Nemotron-Ultra-253B-v1: Physics estimated 697.9B but safetensors says 253.4B (using safetensors)
+✓ nvidia/Llama-3_1-Nemotron-Ultra-253B-v1: 253.4B params [safetensors] (other) [2025-04-07]
+   ⚠️  nvidia/DeepSeek-R1-0528-NVFP4-v2: Physics estimated 701.2B but safetensors says 393.6B (using safetensors)
+✓ nvidia/DeepSeek-R1-0528-NVFP4-v2: 393.6B params [safetensors] (mit) [2025-07-21]
+✓ nvidia/Llama3-ChatQA-1.5-70B: 70.6B params [safetensors] (llama3) [2024-04-28]
+✓ nvidia/Llama-3.1-70B-Instruct-FP8: 70.6B params [safetensors] (llama3.1) [2024-08-29]
+✓ nvidia/Llama-3.1-405B-Instruct-FP8: 405.9B params [safetensors] (llama3.1) [2024-08-29]
+✓ nvidia/AceMath-72B-Instruct: 72.7B params [safetensors] (cc-by-nc-4.0) [2025-01-14]
+✓ nvidia/AceInstruct-72B: 72.7B params [safetensors] (cc-by-nc-4.0) [2025-01-15]
+✓ nvidia/Llama-3.3-Nemotron-70B-Edit: 70.6B params [safetensors] (other) [2025-03-14]
+✓ nvidia/Llama-3.3-Nemotron-70B-Select: 70.6B params [safetensors] (other) [2025-03-14]
+   ⚠️  nvidia/Llama-3_1-Nemotron-Ultra-253B-CPT-v1: Physics estimated 697.9B but safetensors says 253.4B (using safetensors)
+✓ nvidia/Llama-3_1-Nemotron-Ultra-253B-CPT-v1: 253.4B params [safetensors] (other) [2025-04-08]
+🎯 meta-llama/Llama-3.1-405B-Instruct: Adding manual override (not found in search)
+🎯 meta-llama/Llama-3.1-405B: Adding manual override (not found in search)
+
+📊 Summary:
+   - Skipped (older than 2 years): 43
+   - Skipped (not in vendor whitelist): 0
+   - Skipped (< 70B params): 229
+   - Skipped (> 700B params): 1
+   - Skipped (no/invalid config): 138
+   - Matched: 73
+
+📋 Licenses found: gemma, other, llama2, llama3, apache-2.0, mit, cc-by-4.0, llama3.1, cc-by-nc-4.0, apple-amlr
+
+✅ Saved 73 open-source models to data/models.json

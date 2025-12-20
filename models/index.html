@@ -39,12 +39,40 @@
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.05);
             color: #fff;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
         .search-box:focus {
             outline: none;
             border-color: #4a9eff;
+        }
+
+        /* Multi-row Filter Styles */
+        .filter-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .filter-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            min-width: 100px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .filter-tags {
@@ -54,23 +82,43 @@
         }
         
         .filter-tag {
-            padding: 0.5rem 1rem;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
-            background: transparent;
-            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .filter-tag:hover {
-            background: rgba(74, 158, 255, 0.2);
-            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+            border-color: rgba(74, 158, 255, 0.4);
+            color: #fff;
         }
         
         .filter-tag.active {
             background: #4a9eff;
             border-color: #4a9eff;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+        }
+
+        .filter-tag .count {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1px 6px;
+            border-radius: 10px;
+        }
+
+        .filter-tag.active .count {
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 1;
         }
         
         .models-grid {
@@ -84,55 +132,92 @@
         
         .model-card {
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
             padding: 1.5rem;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         .model-card:hover {
             transform: translateY(-4px);
             border-color: #4a9eff;
-            box-shadow: 0 8px 24px rgba(74, 158, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(74, 158, 255, 0.15);
+            background: rgba(255, 255, 255, 0.07);
         }
         
         .model-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         
         .model-name {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: #fff;
             margin: 0;
+            line-height: 1.3;
+        }
+
+        .freshness-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .fresh-new { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+        .fresh-recent { background: #facc15; }
+        .fresh-standard { background: rgba(255, 255, 255, 0.3); }
+        
+        .model-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .provenance-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(74, 158, 255, 0.1);
+            color: #4a9eff;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            font-weight: 600;
         }
         
         .model-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
-        .badge-moe {
-            background: #ff6b6b;
-            color: #fff;
-        }
-        
-        .badge-dense {
-            background: #4a9eff;
-            color: #fff;
-        }
+        .badge-moe { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.3); }
+        .badge-dense { background: rgba(74, 158, 255, 0.15); color: #4a9eff; border: 1px solid rgba(74, 158, 255, 0.3); }
         
         .model-params {
             font-size: 2rem;
-            font-weight: 700;
+            font-weight: 800;
             color: #4a9eff;
-            margin: 0.5rem 0;
+            margin: 0.25rem 0;
         }
         
         .model-stats {
@@ -141,8 +226,9 @@
             gap: 0.75rem;
             margin: 1rem 0;
             padding: 1rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-grow: 1;
         }
         
         .model-stat {
@@ -150,74 +236,232 @@
         }
         
         .model-stat-label {
-            opacity: 0.7;
-            margin-bottom: 0.25rem;
+            opacity: 0.5;
+            margin-bottom: 0.2rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
         }
         
         .model-stat-value {
             font-weight: 600;
-            color: #fff;
+            color: rgba(255, 255, 255, 0.9);
         }
         
         .model-actions {
             display: flex;
             gap: 0.5rem;
+            margin-top: auto;
         }
         
         .btn {
             flex: 1;
-            padding: 0.75rem;
+            padding: 0.7rem;
             border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         
         .btn-primary {
             background: #4a9eff;
             color: #fff;
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
         }
         
         .btn-primary:hover {
             background: #3a8eef;
             transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 158, 255, 0.3);
         }
         
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
         
         .metadata {
             text-align: center;
             padding: 2rem 1rem;
-            opacity: 0.6;
-            font-size: 0.9rem;
+            opacity: 0.5;
+            font-size: 0.85rem;
         }
-        
-        .back-link {
-            display: inline-block;
-            margin: 2rem;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
+
+        /* Comparison Styles */
+        .compare-bar {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a1a;
+            border: 2px solid #4a9eff;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 16px rgba(74, 158, 255, 0.2);
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .compare-bar.visible {
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+            bottom: 3rem;
+        }
+
+        .compare-count {
+            font-weight: 700;
+            color: #4a9eff;
+        }
+
+        .compare-checkbox-container {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+        }
+
+        .compare-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #4a9eff;
+        }
+
+        .compare-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .compare-content {
+            background: #1a1a1a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .close-compare {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
             color: #fff;
-            text-decoration: none;
-            transition: all 0.3s ease;
+            font-size: 2rem;
+            cursor: pointer;
+            opacity: 0.5;
         }
-        
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #4a9eff;
-            transform: translateX(-4px);
+
+        .close-compare:hover {
+            opacity: 1;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .compare-table th, .compare-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .compare-table th {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .compare-table td {
+            font-weight: 600;
+        }
+
+        .compare-table tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .compare-header-cell {
+            font-size: 1.1rem;
+            color: #4a9eff !important;
+        }
+
+        .active-filters {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            background: rgba(74, 158, 255, 0.1);
+            color: #4a9eff;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .filter-chip button {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .clear-filters {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.85rem;
+        }
+
+        .clear-filters:hover {
+            color: #ff6b6b;
         }
     </style>
 </head>
@@ -256,28 +500,103 @@
             placeholder="Search models by name, organization, or license..."
         >
         
-        <div class="filter-tags">
-            <button class="filter-tag active" data-filter="all">All Models</button>
-            <button class="filter-tag" data-filter="dense">Dense</button>
-            <button class="filter-tag" data-filter="moe">MoE</button>
-            <button class="filter-tag" data-filter="100b+">100B+</button>
+        <div class="filter-group">
+            <!-- Row 1: Recency -->
+            <div class="filter-row">
+                <span class="filter-label">Recency</span>
+                <div class="filter-tags" data-group="recency">
+                    <button class="filter-tag active" data-val="all">All Time</button>
+                    <button class="filter-tag" data-val="1">Last Month</button>
+                    <button class="filter-tag" data-val="3">Last 3 Months</button>
+                    <button class="filter-tag" data-val="6">Last 6 Months</button>
+                    <button class="filter-tag" data-val="12">Last Year</button>
+                </div>
+            </div>
+
+            <!-- Row 2: Architecture -->
+            <div class="filter-row">
+                <span class="filter-label">Architecture</span>
+                <div class="filter-tags" data-group="architecture">
+                    <button class="filter-tag active" data-val="all">All Types</button>
+                    <button class="filter-tag" data-val="dense">Dense</button>
+                    <button class="filter-tag" data-val="moe">MoE</button>
+                </div>
+            </div>
+
+            <!-- Row 3: Organization -->
+            <div class="filter-row" id="orgFilterRow">
+                <span class="filter-label">Organization</span>
+                <div class="filter-tags" data-group="org" id="orgFilterTags">
+                    <button class="filter-tag active" data-val="all">All Orgs</button>
+                </div>
+            </div>
+
+            <!-- Row 4: Size -->
+            <div class="filter-row">
+                <span class="filter-label">Size</span>
+                <div class="filter-tags" data-group="size">
+                    <button class="filter-tag active" data-val="all">Any Size</button>
+                    <button class="filter-tag" data-val="80-100">80-100B</button>
+                    <button class="filter-tag" data-val="100-200">100-200B</button>
+                    <button class="filter-tag" data-val="200-400">200-400B</button>
+                    <button class="filter-tag" data-val="400+">400B+</button>
+                </div>
+            </div>
+
+            <!-- Row 4: Sort -->
+            <div class="filter-row">
+                <span class="filter-label">Sort By</span>
+                <div class="filter-tags" data-group="sort">
+                    <button class="filter-tag active" data-val="newest">Newest First</button>
+                    <button class="filter-tag" data-val="largest">Largest First</button>
+                    <button class="filter-tag" data-val="popular">Most Popular</button>
+                </div>
+            </div>
         </div>
+
+        <div id="activeFilterChips" class="active-filters" style="display: none;"></div>
     </div>
     
     <div class="models-grid" id="modelsGrid"></div>
     
     <div class="metadata" id="metadata"></div>
+
+    <!-- Comparison UI -->
+    <div id="compareBar" class="compare-bar">
+        <span>Selected <span id="compareCount" class="compare-count">0</span> models</span>
+        <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-secondary" onclick="clearComparison()">Clear</button>
+            <button class="btn btn-primary" onclick="showComparison()">Compare Side-by-Side</button>
+        </div>
+    </div>
+
+    <div id="compareModal" class="compare-modal">
+        <div class="compare-content">
+            <button class="close-compare" onclick="hideComparison()">×</button>
+            <h2 style="margin-bottom: 1rem;">Model Comparison</h2>
+            <div id="compareTableContainer"></div>
+        </div>
+    </div>
     
     <script src="../js/nav.js"></script>
     <script>
         let modelsData = [];
-        let currentFilter = 'all';
+        let selectedModels = new Set();
+        let filters = {
+            recency: 'all',
+            architecture: 'all',
+            org: 'all',
+            size: 'all',
+            sort: 'newest'
+        };
         
         // Load models data
         fetch('../data/models.json')
             .then(res => res.json())
             .then(data => {
                 modelsData = data.models;
+                populateOrgFilters();
+                updateFilterCounts();
                 renderModels();
                 renderMetadata(data.metadata);
             })
@@ -287,11 +606,271 @@
                     '<p style="text-align: center; opacity: 0.7;">Failed to load models data</p>';
             });
         
+        // Extract orgs and populate buttons
+        function populateOrgFilters() {
+            const orgs = [...new Set(modelsData.map(m => m.id.split('/')[0]))].sort();
+            const container = document.getElementById('orgFilterTags');
+            
+            orgs.forEach(org => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-tag';
+                btn.dataset.val = org;
+                btn.textContent = org;
+                btn.onclick = () => setFilter('org', org);
+                container.appendChild(btn);
+            });
+        }
+
+        // Relative time helper
+        function getRelativeTime(dateString) {
+            if (!dateString) return 'Unknown date';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 1) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+            if (diffDays < 30) return `${diffDays} days ago`;
+            if (diffDays < 365) {
+                const months = Math.floor(diffDays / 30.44);
+                return months === 1 ? '1 month ago' : `${months} months ago`;
+            }
+            const years = Math.floor(diffDays / 365.25);
+            return years === 1 ? '1 year ago' : `${years} years ago`;
+        }
+
+        // Freshness color helper
+        function getFreshnessClass(dateString) {
+            if (!dateString) return 'fresh-standard';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+            
+            if (diffDays < 7) return 'fresh-new';
+            if (diffDays < 30) return 'fresh-recent';
+            return 'fresh-standard';
+        }
+
+        // Provenance label helper
+        function getProvenanceLabel(source) {
+            const labels = {
+                'safetensors': '⚡ Official Safetensors',
+                'stated': '📄 README Stated',
+                'estimated': '🧮 Physics Estimate',
+                'manual_override': '🛠️ Manual Override'
+            };
+            return labels[source] || 'Unknown Source';
+        }
+
+        // Update counts on filter tags
+        function updateFilterCounts() {
+            // Recency counts
+            document.querySelectorAll('[data-group="recency"] .filter-tag').forEach(tag => {
+                const val = tag.dataset.val;
+                if (val === 'all') {
+                    tag.innerHTML = `All Time <span class="count">${modelsData.length}</span>`;
+                    return;
+                }
+                const months = parseInt(val);
+                const count = modelsData.filter(m => {
+                    const diffMonths = (new Date() - new Date(m.created_at)) / (1000 * 60 * 60 * 24 * 30.44);
+                    return diffMonths <= months;
+                }).length;
+                tag.innerHTML = `${tag.textContent.split('\n')[0].trim().replace(/\d+$/, '')} <span class="count">${count}</span>`;
+            });
+
+            // Architecture counts
+            document.querySelectorAll('[data-group="architecture"] .filter-tag').forEach(tag => {
+                const val = tag.dataset.val;
+                if (val === 'all') {
+                    tag.innerHTML = `All Types <span class="count">${modelsData.length}</span>`;
+                    return;
+                }
+                const count = modelsData.filter(m => m.architecture === val).length;
+                tag.innerHTML = `${tag.textContent.split('\n')[0].trim().replace(/\d+$/, '')} <span class="count">${count}</span>`;
+            });
+
+            // Organization counts
+            document.querySelectorAll('[data-group="org"] .filter-tag').forEach(tag => {
+                const val = tag.dataset.val;
+                if (val === 'all') {
+                    tag.innerHTML = `All Orgs <span class="count">${modelsData.length}</span>`;
+                    return;
+                }
+                const count = modelsData.filter(m => m.id.startsWith(val + '/')).length;
+                tag.innerHTML = `${val} <span class="count">${count}</span>`;
+            });
+
+            // Size counts
+            document.querySelectorAll('[data-group="size"] .filter-tag').forEach(tag => {
+                const val = tag.dataset.val;
+                if (val === 'all') {
+                    tag.innerHTML = `Any Size <span class="count">${modelsData.length}</span>`;
+                    return;
+                }
+                let count = 0;
+                if (val === '80-100') count = modelsData.filter(m => m.parameters_billion >= 80 && m.parameters_billion < 100).length;
+                if (val === '100-200') count = modelsData.filter(m => m.parameters_billion >= 100 && m.parameters_billion < 200).length;
+                if (val === '200-400') count = modelsData.filter(m => m.parameters_billion >= 200 && m.parameters_billion < 400).length;
+                if (val === '400+') count = modelsData.filter(m => m.parameters_billion >= 400).length;
+                tag.innerHTML = `${tag.textContent.split('\n')[0].trim().replace(/\d+$/, '')} <span class="count">${count}</span>`;
+            });
+        }
+
+        // Update active filter chips
+        function updateFilterChips() {
+            const container = document.getElementById('activeFilterChips');
+            let chips = [];
+            
+            if (filters.recency !== 'all') {
+                const label = document.querySelector(`[data-group="recency"] [data-val="${filters.recency}"]`).textContent.split('\n')[0];
+                chips.push(`<div class="filter-chip">📅 ${label} <button onclick="setFilter('recency', 'all')">×</button></div>`);
+            }
+            if (filters.architecture !== 'all') {
+                const label = filters.architecture === 'moe' ? 'MoE' : 'Dense';
+                chips.push(`<div class="filter-chip">🏗️ ${label} <button onclick="setFilter('architecture', 'all')">×</button></div>`);
+            }
+            if (filters.org !== 'all') {
+                chips.push(`<div class="filter-chip">🏢 ${filters.org} <button onclick="setFilter('org', 'all')">×</button></div>`);
+            }
+            if (filters.size !== 'all') {
+                chips.push(`<div class="filter-chip">📊 ${filters.size}B <button onclick="setFilter('size', 'all')">×</button></div>`);
+            }
+
+            if (chips.length > 0) {
+                container.innerHTML = chips.join('') + `<button class="clear-filters" onclick="clearAllFilters()">Clear All</button>`;
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function setFilter(group, val) {
+            filters[group] = val;
+            
+            // Update UI tags
+            document.querySelectorAll(`[data-group="${group}"] .filter-tag`).forEach(tag => {
+                tag.classList.toggle('active', tag.dataset.val === val);
+            });
+
+            updateFilterChips();
+            renderModels();
+        }
+
+        function clearAllFilters() {
+            filters = { recency: 'all', architecture: 'all', org: 'all', size: 'all', sort: 'newest' };
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                const group = tag.parentElement.dataset.group;
+                tag.classList.toggle('active', tag.dataset.val === filters[group]);
+            });
+            updateFilterChips();
+            renderModels();
+        }
+
+        // Comparison Logic
+        function toggleComparison(modelId) {
+            if (selectedModels.has(modelId)) {
+                selectedModels.delete(modelId);
+            } else {
+                if (selectedModels.size >= 4) {
+                    alert('You can compare up to 4 models at once.');
+                    document.querySelector(`input[data-id="${modelId}"]`).checked = false;
+                    return;
+                }
+                selectedModels.add(modelId);
+            }
+            updateCompareBar();
+        }
+
+        function updateCompareBar() {
+            const bar = document.getElementById('compareBar');
+            const count = document.getElementById('compareCount');
+            count.textContent = selectedModels.size;
+            
+            if (selectedModels.size > 0) {
+                bar.classList.add('visible');
+            } else {
+                bar.classList.remove('visible');
+            }
+        }
+
+        function clearComparison() {
+            selectedModels.clear();
+            document.querySelectorAll('.compare-checkbox').forEach(cb => cb.checked = false);
+            updateCompareBar();
+        }
+
+        function showComparison() {
+            const container = document.getElementById('compareTableContainer');
+            const selected = Array.from(selectedModels).map(id => modelsData.find(m => m.id === id));
+            
+            let html = `<table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Spec</th>
+                        ${selected.map(m => `<th class="compare-header-cell">${m.name}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Parameters</th>
+                        ${selected.map(m => `<td>${m.parameters_billion}B</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Architecture</th>
+                        ${selected.map(m => `<td>${m.architecture.toUpperCase()}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Context Length</th>
+                        ${selected.map(m => `<td>${formatNumber(m.max_seq_length)}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Hidden Size</th>
+                        ${selected.map(m => `<td>${formatNumber(m.hidden_size)}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Layers</th>
+                        ${selected.map(m => `<td>${m.num_layers}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>License</th>
+                        ${selected.map(m => `<td>${m.license}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Release</th>
+                        ${selected.map(m => `<td>${getRelativeTime(m.created_at)}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>MoE Experts</th>
+                        ${selected.map(m => `<td>${m.moe_num_experts || 'N/A'}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Data Source</th>
+                        ${selected.map(m => `<td>${getProvenanceLabel(m.param_source)}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <th>Action</th>
+                        ${selected.map(m => `<td><button class="btn btn-primary btn-sm" onclick="useInCalculator('${m.id}')">Size</button></td>`).join('')}
+                    </tr>
+                </tbody>
+            </table>`;
+            
+            container.innerHTML = html;
+            document.getElementById('compareModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideComparison() {
+            document.getElementById('compareModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
         // Render models
         function renderModels() {
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
             
-            const filtered = modelsData.filter(model => {
+            let filtered = modelsData.filter(model => {
                 // Search filter
                 const matchesSearch = 
                     model.name.toLowerCase().includes(searchTerm) ||
@@ -300,28 +879,68 @@
                 
                 if (!matchesSearch) return false;
                 
+                // Recency filter
+                if (filters.recency !== 'all') {
+                    const months = parseInt(filters.recency);
+                    const diffMonths = (new Date() - new Date(model.created_at)) / (1000 * 60 * 60 * 24 * 30.44);
+                    if (diffMonths > months) return false;
+                }
+
                 // Architecture filter
-                if (currentFilter === 'dense' && model.architecture !== 'dense') return false;
-                if (currentFilter === 'moe' && model.architecture !== 'moe') return false;
-                if (currentFilter === '100b+' && model.parameters_billion < 100) return false;
+                if (filters.architecture !== 'all' && model.architecture !== filters.architecture) return false;
+                
+                // Org filter
+                if (filters.org !== 'all' && !model.id.startsWith(filters.org + '/')) return false;
+
+                // Size filter
+                if (filters.size !== 'all') {
+                    const val = filters.size;
+                    const p = model.parameters_billion;
+                    if (val === '80-100' && (p < 80 || p >= 100)) return false;
+                    if (val === '100-200' && (p < 100 || p >= 200)) return false;
+                    if (val === '200-400' && (p < 200 || p >= 400)) return false;
+                    if (val === '400+' && p < 400) return false;
+                }
                 
                 return true;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if (filters.sort === 'newest') return new Date(b.created_at) - new Date(a.created_at);
+                if (filters.sort === 'largest') return b.parameters_billion - a.parameters_billion;
+                if (filters.sort === 'popular') return (b.downloads + b.likes) - (a.downloads + a.likes);
+                return 0;
             });
             
             const grid = document.getElementById('modelsGrid');
             
             if (filtered.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; opacity: 0.7; grid-column: 1/-1;">No models found</p>';
+                grid.innerHTML = '<p style="text-align: center; opacity: 0.7; grid-column: 1/-1;">No models found matching your criteria</p>';
                 return;
             }
             
             grid.innerHTML = filtered.map(model => `
                 <div class="model-card">
+                    <div class="compare-checkbox-container">
+                        <input type="checkbox" class="compare-checkbox" data-id="${model.id}" 
+                            ${selectedModels.has(model.id) ? 'checked' : ''} 
+                            onchange="toggleComparison('${model.id}')" title="Add to comparison">
+                    </div>
                     <div class="model-card-header">
-                        <h3 class="model-name">${model.name}</h3>
+                        <h3 class="model-name">
+                            <span class="freshness-indicator ${getFreshnessClass(model.created_at)}"></span>
+                            ${model.name}
+                        </h3>
                         <span class="model-badge badge-${model.architecture}">
                             ${model.architecture.toUpperCase()}
                         </span>
+                    </div>
+
+                    <div class="model-meta-row">
+                        <span class="meta-item">📅 ${getRelativeTime(model.created_at)}</span>
+                        <span class="provenance-badge">${getProvenanceLabel(model.param_source)}</span>
+                        <span class="meta-item">⚖️ ${model.license}</span>
                     </div>
                     
                     <div class="model-params">
@@ -330,7 +949,7 @@
                     
                     <div class="model-stats">
                         <div class="model-stat">
-                            <div class="model-stat-label">Context Length</div>
+                            <div class="model-stat-label">Context</div>
                             <div class="model-stat-value">${formatNumber(model.max_seq_length)}</div>
                         </div>
                         <div class="model-stat">
@@ -342,23 +961,23 @@
                             <div class="model-stat-value">${model.num_layers}</div>
                         </div>
                         <div class="model-stat">
-                            <div class="model-stat-label">License</div>
-                            <div class="model-stat-value">${model.license}</div>
+                            <div class="model-stat-label">Usage</div>
+                            <div class="model-stat-value">📥 ${formatNumber(model.downloads)}</div>
                         </div>
                         ${model.moe_num_experts ? `
-                        <div class="model-stat">
-                            <div class="model-stat-label">Experts</div>
-                            <div class="model-stat-value">${model.moe_num_experts} (top-${model.moe_top_k})</div>
+                        <div class="model-stat" style="grid-column: span 2; margin-top: 0.25rem;">
+                            <div class="model-stat-label">MoE Routing</div>
+                            <div class="model-stat-value">${model.moe_num_experts} experts (top-${model.moe_top_k})</div>
                         </div>
                         ` : ''}
                     </div>
                     
                     <div class="model-actions">
                         <button class="btn btn-primary" onclick="useInCalculator('${model.id}')">
-                            🧮 Can I Run This?
+                            🧮 Size This Model
                         </button>
                         <a href="${model.huggingface_url}" target="_blank" class="btn btn-secondary">
-                            View on HF
+                            HF Repo
                         </a>
                     </div>
                 </div>
@@ -408,13 +1027,12 @@
         // Search functionality
         document.getElementById('searchBox').addEventListener('input', renderModels);
         
-        // Filter functionality
+        // Filter functionality initialization
         document.querySelectorAll('.filter-tag').forEach(tag => {
             tag.addEventListener('click', () => {
-                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
-                currentFilter = tag.dataset.filter;
-                renderModels();
+                const group = tag.parentElement.dataset.group;
+                const val = tag.dataset.val;
+                setFilter(group, val);
             });
         });
     </script>

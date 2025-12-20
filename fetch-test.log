@@ -1,0 +1,39 @@
+🔍 Fetching open-source models from Hugging Face...
+
+📡 Querying: top downloads...
+📡 Querying: most liked...
+📡 Querying: recently updated...
+📡 Querying: recently created...
+📡 Querying: Qwen org...
+📡 Querying: deepseek-ai org...
+📡 Querying: openai org...
+📡 Querying: google org...
+📡 Querying: anthropics org...
+📡 Querying: apple org...
+✓ Found 2243 unique text-generation models
+
+✓ openai/gpt-oss-120b: 120.4B params [safetensors] (apache-2.0) [2025-08-04]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Instruct: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Instruct: 81.3B params [safetensors] (apache-2.0) [2025-09-09]
+✓ deepseek-ai/DeepSeek-R1: 684.5B params [safetensors] (mit) [2025-01-20]
+🎯 ✓ deepseek-ai/DeepSeek-V3: 684.5B params [safetensors] () [2024-12-25]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Instruct-FP8: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Instruct-FP8: 81.3B params [safetensors] (apache-2.0) [2025-09-22]
+✓ zerofata/L3.3-GeneticLemonade-Final-v2-70B: 70.6B params [safetensors] (llama3) [2025-06-02]
+✓ zai-org/GLM-4.5-Air: 110.5B params [safetensors] (mit) [2025-07-20]
+✓ deepseek-ai/DeepSeek-R1-0528: 684.5B params [safetensors] (mit) [2025-05-28]
+   ⚠️  Qwen/Qwen3-235B-A22B-Instruct-2507-FP8: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ Qwen/Qwen3-235B-A22B-Instruct-2507-FP8: 235.1B params [safetensors] (apache-2.0) [2025-07-21]
+✓ moonshotai/Kimi-K2-Thinking: 1045.3B params [estimated] (other) [2025-11-04]
+   ⚠️  Qwen/Qwen3-Next-80B-A3B-Thinking-FP8: Physics estimated 1.3B but safetensors says 81.3B (using safetensors)
+✓ Qwen/Qwen3-Next-80B-A3B-Thinking-FP8: 81.3B params [safetensors] (apache-2.0) [2025-09-22]
+   ⚠️  Qwen/Qwen3-235B-A22B: Physics estimated 8.7B but safetensors says 235.1B (using safetensors)
+✓ Qwen/Qwen3-235B-A22B: 235.1B params [safetensors] (apache-2.0) [2025-04-27]
+🎯 meta-llama/Llama-3.1-405B: Using manual override (405B)
+✓ kosbu/Llama-3.3-70B-Instruct-AWQ: 70.6B params [safetensors] (llama3.3) [2024-12-06]
+✓ zai-org/GLM-4.6: 356.8B params [safetensors] (mit) [2025-09-29]
+🎯 ✓ Qwen/Qwen2.5-72B-Instruct: 72.7B params [safetensors] (other) [2024-09-16]
+   ⚠️  nvidia/Llama-3_1-Nemotron-Ultra-253B-v1: Physics estimated 697.9B but safetensors says 253.4B (using safetensors)
+✓ nvidia/Llama-3_1-Nemotron-Ultra-253B-v1: 253.4B params [safetensors] (other) [2025-04-07]
+✓ zai-org/GLM-4.6-FP8: 358.5B params [safetensors] (mit) [2025-09-29]
+✓ deepseek-ai/DeepSeek-V3-0324: 684.5B params [safetensors] (mit) [2025-03-24]
