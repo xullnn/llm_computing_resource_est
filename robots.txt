@@ -1,18 +1,28 @@
-# LLM Resource Sizer — Decision Hub for AI Infrastructure
-# All pages are public and indexed
+# LLM Resource Sizer — Open-Source Deployment Planning Tool
+# Public pages for model discovery and hardware calculations
 
 User-agent: *
 Allow: /
 
-# Data files (JSON) — Allow indexing for structured data
+# Allow data files (models and hardware specs)
 Allow: /data/
 
-# Exclude development/testing files
-Disallow: *.backup.html
+# Block deprecated pages
+Disallow: /models/
+
+# Block internal documentation
+Disallow: /project_memory_bank/
+Disallow: /archive/
+
+# Block development and reference files
+Disallow: /scripts/
+Disallow: /components/references/
+Disallow: /style_references/
+
+# Block backup and test files
+Disallow: /*.backup.html
 Disallow: /check-*.js
 Disallow: /test-*.js
-Disallow: /fetch-output.log
-Disallow: /TRACK_*.md
-Disallow: /PHASE*.md
+Disallow: /*.log
 
 Sitemap: https://llmrunnable.com/sitemap.xml

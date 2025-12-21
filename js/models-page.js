@@ -185,7 +185,7 @@ function renderVendorGroups(models) {
                     </div>
                     ${hasMore && isExpanded ? `
                         <button class="vendor-show-more" onclick="showAllVendorModels('${vendor}')">
-                            ▼ Show ${vendorModels.length - 4} more ${vendor} models
+                            ▼ ${t('showMoreBtn', { n: vendorModels.length - 4, vendor: vendor })}
                         </button>
                     ` : ''}
                 </div>
@@ -285,7 +285,7 @@ function renderModelCardHTML(model) {
             <input type="checkbox" class="compare-checkbox" data-id="${model.id}" 
                 ${selectedModels.has(model.id) ? 'checked' : ''} 
                 onchange="toggleComparison('${model.id}')">
-            <span class="compare-label">Compare</span>
+            <span class="compare-label">${t('compareLabel')}</span>
         </label>
         
         <!-- Header: Name + Badge + Trending -->
@@ -305,15 +305,15 @@ function renderModelCardHTML(model) {
         <!-- Key metrics: VRAM + Bandwidth -->
         <div class="resource-metrics">
             <div class="metric-row vram-row">
-                <span class="metric-label">VRAM</span>
+                <span class="metric-label">${t('vramLabel')}</span>
                 <span class="metric-value">${Math.ceil(vramInt8)}GB INT8 · ${Math.ceil(vramBf16)}GB BF16</span>
             </div>
             <div class="metric-row bandwidth-row">
-                <span class="metric-label">Speed</span>
+                <span class="metric-label">${t('speedLabel')}</span>
                 <span class="metric-value">~${Math.ceil(bandwidthInt8)} GB/s</span>
             </div>
             <div class="metric-row perf-row">
-                <span class="metric-label">Est.</span>
+                <span class="metric-label">${t('estLabel')}</span>
                 <span class="metric-value">${tokensPerSecRTX4090} tok/s (4090) · ${tokensPerSecH100} tok/s (H100)</span>
             </div>
         </div>
@@ -323,11 +323,11 @@ function renderModelCardHTML(model) {
             <a href="calculator.html?preset=${encodeURIComponent(model.id)}" 
                class="btn btn-primary btn-sm" 
                onclick="event.stopPropagation();">
-                Calculate
+                ${t('calculateBtn')}
             </a>
             <button class="btn btn-secondary btn-sm" 
                     onclick="event.stopPropagation(); openCalculatorDrawer('${model.id}');">
-                Details
+                ${t('detailsBtn')}
             </button>
         </div>
     </div>
@@ -566,50 +566,50 @@ function showComparison() {
     let html = `<table class="compare-table">
         <thead>
             <tr>
-                <th>Spec</th>
+                <th>${t('compareSpecLabel')}</th>
                 ${selected.map(m => `<th class="compare-header-cell">${m.name}</th>`).join('')}
             </tr>
         </thead>
         <tbody>
             <tr>
-                <th>Parameters</th>
+                <th>${t('compareParametersLabel')}</th>
                 ${selected.map(m => `<td>${m.parameters_billion}B</td>`).join('')}
             </tr>
             <tr>
-                <th>Architecture</th>
+                <th>${t('compareArchitectureLabel')}</th>
                 ${selected.map(m => `<td>${m.architecture.toUpperCase()}</td>`).join('')}
             </tr>
             <tr>
-                <th>Context Length</th>
+                <th>${t('compareContextLabel')}</th>
                 ${selected.map(m => `<td>${formatNumber(m.max_seq_length)}</td>`).join('')}
             </tr>
             <tr>
-                <th>Hidden Size</th>
+                <th>${t('compareHiddenSizeLabel')}</th>
                 ${selected.map(m => `<td>${formatNumber(m.hidden_size)}</td>`).join('')}
             </tr>
             <tr>
-                <th>Layers</th>
+                <th>${t('compareLayersLabel')}</th>
                 ${selected.map(m => `<td>${m.num_layers}</td>`).join('')}
             </tr>
             <tr>
-                <th>License</th>
+                <th>${t('compareLicenseLabel')}</th>
                 ${selected.map(m => `<td>${m.license}</td>`).join('')}
             </tr>
             <tr>
-                <th>Release</th>
+                <th>${t('compareReleaseLabel')}</th>
                 ${selected.map(m => `<td>${getRelativeTime(m.created_at)}</td>`).join('')}
             </tr>
             <tr>
-                <th>MoE Experts</th>
+                <th>${t('compareMoeLabel')}</th>
                 ${selected.map(m => `<td>${m.moe_num_experts || 'N/A'}</td>`).join('')}
             </tr>
             <tr>
-                <th>Data Source</th>
+                <th>${t('compareDataSourceLabel')}</th>
                 ${selected.map(m => `<td>${getProvenanceLabel(m.param_source)}</td>`).join('')}
             </tr>
             <tr>
-                <th>Actions</th>
-                ${selected.map(m => `<td style="display: flex; gap: 0.5rem;"><a href="calculator.html?preset=${encodeURIComponent(m.id)}" class="btn btn-primary btn-sm" style="text-decoration: none; justify-content: center;">Calculate</a><button class="btn btn-secondary btn-sm" onclick="hideComparison(); openCalculatorDrawer('${m.id}')">Details</button></td>`).join('')}
+                <th>${t('compareActionsLabel')}</th>
+                ${selected.map(m => `<td style="display: flex; gap: 0.5rem;"><a href="calculator.html?preset=${encodeURIComponent(m.id)}" class="btn btn-primary btn-sm" style="text-decoration: none; justify-content: center;">${t('calculateBtn')}</a><button class="btn btn-secondary btn-sm" onclick="hideComparison(); openCalculatorDrawer('${m.id}')">${t('detailsBtn')}</button></td>`).join('')}
             </tr>
         </tbody>
     </table>`;
@@ -846,14 +846,14 @@ function renderMetadata(metadata) {
     const date = new Date(metadata.updated_at);
     const trendingCount = trendingModels.length;
     const trendingInfo = trendingCount > 0 
-        ? `${trendingCount} trending (90 days, 10K+ downloads, 1K+ likes)` 
-        : 'No models trending (90-day window)';
+        ? `${trendingCount} ${t('metadataTrending')}` 
+        : t('metadataNoTrending');
     
     document.getElementById('metadata').innerHTML = `
-        Last updated: ${date.toLocaleDateString()} | 
-        ${metadata.count} models | 
+        ${t('metadataLastUpdated')} ${date.toLocaleDateString()} | 
+        ${metadata.count} ${t('metadataModels')} | 
         ${trendingInfo} | 
-        Source: ${metadata.source}
+        ${t('metadataSource')} ${t('metadataSourceValue')}
     `;
 }
 
@@ -890,5 +890,15 @@ document.getElementById('viewHardwareBtn')?.addEventListener('click', () => {
     document.getElementById('viewHardwareBtn').classList.add('active');
     document.getElementById('viewVendorBtn').classList.remove('active');
     renderModels();
+});
+
+// Listen to language change events and re-render
+window.addEventListener('languageChanged', () => {
+    renderModels();
+    renderMetadata({ 
+        updated_at: new Date().toISOString(),
+        count: modelsData.length,
+        source: 'Hugging Face Hub API'
+    });
 });
 

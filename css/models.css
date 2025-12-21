@@ -1,4 +1,83 @@
-/* Models Page Styles */
+/* Hero Section - Minimal & Functional */
+.hero-section {
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 3rem 1rem 2.5rem;
+}
+
+.hero-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.hero-lead {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 2rem;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Journey Options - Simple Two Buttons */
+.journey-options {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.journey-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.journey-primary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.journey-primary:hover {
+    background: rgba(124, 58, 237, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+.journey-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.journey-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.journey-icon {
+    font-size: 1.1rem;
+}
+
+/* Models Browser Section */
 .models-header {
     text-align: center;
     padding: 2.5rem 1rem 1.5rem;
@@ -6,16 +85,42 @@
     margin: 0 auto;
 }
 
-.models-header h1 {
-    font-size: 2.2rem;
-    margin-bottom: 0.75rem;
-    font-weight: 700;
+.models-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .models-header p {
-    font-size: 1rem;
-    color: var(--muted);
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.6);
     margin: 0;
+}
+
+/* Responsive Hero */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2.5rem 1rem 2rem;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-lead {
+        font-size: 0.95rem;
+    }
+    
+    .journey-options {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .journey-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* Trending Bar */
@@ -217,6 +322,9 @@
     max-width: 1400px;
     margin: 0 auto 2rem;
     padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .search-box {
@@ -227,7 +335,6 @@
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    margin-bottom: 1rem;
     transition: all 0.2s ease;
 }
 
@@ -237,25 +344,33 @@
     box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
+/* View Controls - Groups view toggle and filters */
+.view-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 .filter-toggle-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    color: var(--text);
+    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 500;
     transition: all 0.2s ease;
-    margin-bottom: 1rem;
 }
 
 .filter-toggle-btn:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .filter-toggle-btn .filter-icon {
@@ -938,12 +1053,22 @@
         grid-template-columns: 1fr;
     }
     
+    .view-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+    
     .view-toggle {
         width: 100%;
     }
     
     .view-toggle-btn {
         flex: 1;
+        justify-content: center;
+    }
+    
+    .filter-toggle-btn {
+        width: 100%;
         justify-content: center;
     }
     

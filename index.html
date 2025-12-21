@@ -3,13 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Resource Calculator</title>
-    <meta name="description" content="Browse large language models (70B+ parameters) and calculate resource requirements">
-    <meta property="og:title" content="LLM Resource Calculator">
-    <meta property="og:description" content="Calculate hardware requirements for large language models.">
+    
+    <!-- SEO - Title optimized for deployment planning -->
+    <title>Open-Source LLM Deployment Planner | Model Discovery + Hardware Calculator</title>
+    
+    <!-- SEO - Description -->
+    <meta name="description" content="Find open-source LLMs and calculate GPU/VRAM requirements. 75 models from DeepSeek, Qwen, Llama. Compare hardware costs, estimate performance. Free tool, runs offline in browser.">
+    
+    <!-- SEO - Keywords for search visibility -->
+    <meta name="keywords" content="LLM deployment planning, open source AI, GPU requirements calculator, VRAM sizing, affordable LLM, self-hosted models, DeepSeek hardware, Qwen deployment, enterprise AI infrastructure, model comparison, inference cost">
+    
+    <!-- Open Graph - Social sharing -->
+    <meta property="og:title" content="Open-Source LLM Deployment Planner">
+    <meta property="og:description" content="Find models and calculate GPU requirements. 75 options from DeepSeek, Qwen, Llama. Free, offline tool.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://llmrunnable.com/">
+    <meta property="og:image" content="https://llmrunnable.com/og-preview.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LLM Deployment Planner">
+    <meta name="twitter:description" content="Find open-source LLMs and calculate GPU requirements. 75 models, free tool.">
+    <meta name="twitter:image" content="https://llmrunnable.com/og-preview.png">
+    
     <link rel="canonical" href="https://llmrunnable.com/">
+    
+    <!-- Structured Data for Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "LLM Resource Calculator",
+      "alternateName": "LLM Deployment Planner",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "url": "https://llmrunnable.com/",
+      "description": "Free deployment planning tool for open-source large language models. Browse curated models, calculate GPU/VRAM requirements, compare infrastructure costs.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "75 production-ready models (DeepSeek, Qwen, Llama, Google, NVIDIA)",
+        "GPU & VRAM requirement calculator",
+        "Memory bandwidth estimator",
+        "Performance predictions (tokens/second)",
+        "Side-by-side model comparison",
+        "Bilingual interface (English/Chinese)",
+        "100% offline & privacy-safe"
+      ],
+      "audience": [
+        {
+          "@type": "Audience",
+          "audienceType": "ML Engineers"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "DevOps Teams"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "AI Infrastructure Planners"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "CTOs"
+        }
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://llmrunnable.com/?search={search_term}",
+        "query-input": "required name=search_term"
+      }
+    }
+    </script>
+    
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/models.css">
     <link rel="stylesheet" href="css/drawer.css">
@@ -22,10 +91,10 @@
         </a>
         <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
         <div class="nav-links" id="navLinks">
-            <a href="/" class="nav-item active">Models</a>
-            <a href="calculator.html" class="nav-item">Calculator</a>
-            <a href="hardware/" class="nav-item">Hardware</a>
-            <a href="for/enterprise.html" class="nav-item">Guides</a>
+            <a href="/" class="nav-item active" data-i18n="navModels">Models</a>
+            <a href="calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+            <a href="hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+            <a href="for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
         </div>
         <div class="nav-actions">
             <label class="field compact language-switch" style="margin-bottom: 0;">
@@ -36,17 +105,39 @@
         </div>
     </nav>
     
-    <!-- Hero Search Section -->
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-container">
+            <h1 class="hero-title" data-i18n="landingHeroTitle">Open-Source LLM Deployment Planner</h1>
+            <p class="hero-lead" data-i18n="landingHeroLead">
+                Find models, calculate GPU and VRAM requirements, compare costs. All calculations run locally in your browser.
+            </p>
+            
+            <!-- Journey Options -->
+            <div class="journey-options">
+                <button class="journey-btn journey-primary" onclick="document.getElementById('searchBox').focus(); document.getElementById('searchBox').scrollIntoView({ behavior: 'smooth', block: 'center' });">
+                    <span class="journey-icon">🔍</span>
+                    <span data-i18n="journeyExploreTitle">Browse Models</span>
+                </button>
+                <a href="calculator.html" class="journey-btn journey-secondary">
+                    <span class="journey-icon">🧮</span>
+                    <span data-i18n="journeyCalculateTitle">Calculate Hardware</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Browser Section -->
     <div class="models-header">
-        <h1>Large Language Models</h1>
-        <p>70B+ parameters · Search or browse models below</p>
+        <h2 data-i18n="modelBrowserTitle">Browse Production-Ready Models</h2>
+        <p data-i18n="modelBrowserSubhead">Curated open-source models · Filter by vendor, size, or architecture</p>
     </div>
     
     <!-- Trending Models Bar -->
     <div class="trending-bar" id="trendingBar" style="display: none;">
         <div class="trending-bar-content">
             <div class="trending-bar-header">
-                <span class="trending-bar-label">Trending:</span>
+                <span class="trending-bar-label" data-i18n="trendingLabel">Trending:</span>
                 <button class="trending-info-btn" id="trendingInfoBtn" title="How are trending models calculated?">
                     <span class="info-icon">ⓘ</span>
                 </button>
@@ -59,49 +150,52 @@
             </button>
         </div>
         <div class="trending-criteria" id="trendingCriteria" style="display: none;">
-            <div class="criteria-title">Trending Algorithm</div>
+            <div class="criteria-title" data-i18n="trendingAlgorithm">Trending Algorithm</div>
             <div class="criteria-grid">
                 <div class="criteria-item">
-                    <div class="criteria-label">Time Window</div>
-                    <div class="criteria-value">Released in last 90 days</div>
+                    <div class="criteria-label" data-i18n="trendingTimeWindow">Time Window</div>
+                    <div class="criteria-value" data-i18n="trendingTimeValue">Released in last 90 days</div>
                 </div>
                 <div class="criteria-item">
-                    <div class="criteria-label">Min. Downloads</div>
-                    <div class="criteria-value">10,000+ in 3 months</div>
+                    <div class="criteria-label" data-i18n="trendingMinDownloads">Min. Downloads</div>
+                    <div class="criteria-value" data-i18n="trendingMinDownloadsValue">10,000+ in 3 months</div>
                 </div>
                 <div class="criteria-item">
-                    <div class="criteria-label">Min. Likes</div>
-                    <div class="criteria-value">1,000+ in 3 months</div>
+                    <div class="criteria-label" data-i18n="trendingMinLikes">Min. Likes</div>
+                    <div class="criteria-value" data-i18n="trendingMinLikesValue">1,000+ in 3 months</div>
                 </div>
             </div>
-            <div class="criteria-formula">
+            <div class="criteria-formula" data-i18n="trendingScoreFormula">
                 <strong>Score Formula:</strong> (Recency × 40%) + (Downloads × 40%) + (Engagement × 20%)
             </div>
         </div>
     </div>
     
-    <!-- Search & Filters -->
+    <!-- Search & Controls -->
     <div class="search-filter">
         <input 
             type="text" 
             id="searchBox" 
             class="search-box" 
             placeholder="Search: Qwen3, DeepSeek, moe, 70-100B..."
+            data-i18n="searchPlaceholder"
         >
         
-        <!-- View Toggle -->
-        <div class="view-toggle">
-            <button class="view-toggle-btn active" id="viewVendorBtn" data-view="vendor">
-                <span class="view-icon">🏢</span> By Vendor
-            </button>
-            <button class="view-toggle-btn" id="viewHardwareBtn" data-view="hardware">
-                <span class="view-icon">🖥️</span> By Hardware
+        <!-- View Controls Group -->
+        <div class="view-controls">
+            <div class="view-toggle">
+                <button class="view-toggle-btn active" id="viewVendorBtn" data-view="vendor">
+                    <span class="view-icon">🏢</span> <span data-i18n="viewVendor">By Vendor</span>
+                </button>
+                <button class="view-toggle-btn" id="viewHardwareBtn" data-view="hardware">
+                    <span class="view-icon">🖥️</span> <span data-i18n="viewHardware">By Hardware</span>
+                </button>
+            </div>
+            
+            <button class="filter-toggle-btn" id="filterToggleBtn">
+                <span class="filter-icon">⚙️</span> <span data-i18n="filtersBtn">Filters</span>
             </button>
         </div>
-        
-        <button class="filter-toggle-btn" id="filterToggleBtn">
-            <span class="filter-icon">⚙️</span> Filters
-        </button>
         
         <div class="filter-group" id="filterGroup" style="display: none;">
             <!-- Row 1: Recency -->
@@ -171,17 +265,17 @@
 
     <!-- Comparison UI -->
     <div id="compareBar" class="compare-bar">
-        <span>Selected <span id="compareCount" class="compare-count">0</span> models</span>
+        <span><span data-i18n="compareSelected">Selected</span> <span id="compareCount" class="compare-count">0</span> <span data-i18n="compareModels">models</span></span>
         <div style="display: flex; gap: 0.75rem;">
-            <button class="btn btn-secondary" onclick="clearComparison()">Clear</button>
-            <button class="btn btn-primary" onclick="showComparison()">Compare Side-by-Side</button>
+            <button class="btn btn-secondary" onclick="clearComparison()" data-i18n="compareClear">Clear</button>
+            <button class="btn btn-primary" onclick="showComparison()" data-i18n="compareAction">Compare Side-by-Side</button>
         </div>
     </div>
 
     <div id="compareModal" class="compare-modal">
         <div class="compare-content">
             <button class="close-compare" onclick="hideComparison()">×</button>
-            <h2 style="margin-bottom: 1rem;">Model Comparison</h2>
+            <h2 style="margin-bottom: 1rem;" data-i18n="compareModalTitle">Model Comparison</h2>
             <div id="compareTableContainer"></div>
         </div>
     </div>
@@ -201,6 +295,7 @@
     <!-- Backdrop for drawer -->
     <div id="drawerBackdrop" class="drawer-backdrop"></div>
     
+    <script src="js/i18n.js"></script>
     <script src="js/nav.js"></script>
     <script src="js/models.js"></script>
     <script src="js/calc.js"></script>

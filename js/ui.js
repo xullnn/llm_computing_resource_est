@@ -22,292 +22,10 @@ const SPEEDUP = {
   tops_int4: 3.5,
 };
 
-const I18N = {
-  en: {
-    eyebrow: "Offline · Serverless",
-    calculatorEyebrow: "Calculator",
-    backToTop: "Back to overview",
-    landingEyebrow: "Offline · Private · Open",
-    landingTitle: "Estimate LLM hardware in seconds",
-    landingSubhead: "Plan VRAM, FLOPs, bandwidth, and TTFT before you buy or deploy. Serverless, privacy-safe, tuned for Qwen, DeepSeek, Llama, and more.",
-    landingCtaPrimary: "Launch calculator",
-    landingCtaSecondary: "See how it works",
-    landingStatOffline: "100% offline. No telemetry.",
-    landingStatPresets: "16 presets incl. DeepSeek, Qwen, Llama.",
-    landingStatBilingual: "English / 中文 in one click.",
-    landingCallout: "Serverless physics-based calculator",
-    landingCalloutOffline: "Runs entirely in your browser.",
-    landingCalloutAccuracy: "Prefill + decode math for VRAM, FLOPs, bandwidth.",
-    landingCalloutUseCases: "Benchmark Llama, Qwen, DeepSeek, Phi and more.",
-    sectionLandingWhy: "Why this calculator",
-    sectionLandingFeatures: "Built for accuracy and privacy",
-    // Ecosystem Grid
-    ecosystemTitle: "🔍 Explore the Platform",
-    ecosystemSubtitle: "Not just a calculator — discover models, compare hardware, learn deployment strategies",
-    navModels: "Model Explorer",
-    ecoModelsDesc: "Browse 75+ open-source models (70B+) with specs and calculator integration.",
-    ecoDiscover: "Discover →",
-    navHardware: "Hardware Hub",
-    ecoHardwareDesc: "Compare NVIDIA & Huawei multi-GPU configurations for LLM deployment.",
-    ecoCompare: "Compare →",
-    navGuides: "Enterprise Guide",
-    ecoGuidesDesc: "Pre-configured deployment scenarios and capacity planning workflows.",
-    ecoLearn: "Learn →",
-    ecoDismiss: "↓ Just show me the calculator",
-    
-    featureOfflineTitle: "Offline & private",
-    featureOfflineDesc: "No sign-in, no telemetry, no servers. Your workload stays on your device.",
-    featurePhysicsTitle: "Physics-backed",
-    featurePhysicsDesc: "Transformer math for prefill and decode, including KV cache and bandwidth limits.",
-    featurePresetsTitle: "Model presets",
-    featurePresetsDesc: "16 curated presets (Qwen, DeepSeek, Llama, Phi, Gemma) with editable overrides.",
-    featureBilingualTitle: "Bilingual UI",
-    featureBilingualDesc: "English / 中文 translations for teams across regions.",
-    sectionHowEyebrow: "How it works",
-    sectionHowTitle: "From inputs to hardware sizing",
-    howStepInputTitle: "Set workload",
-    howStepInputDesc: "Pick a preset or enter params, prompt length, new tokens, batch size, and targets.",
-    howStepCalcTitle: "Apply transformer math",
-    howStepCalcDesc: "Prefill (O(seq²)) + decode FLOPs, KV cache, and bandwidth are combined with utilization.",
-    howStepResultTitle: "Read requirements",
-    howStepResultDesc: "See VRAM, compute, bandwidth, and TTFT targets to match your hardware budget.",
-    sectionUseCasesEyebrow: "Where it helps",
-    sectionUseCasesTitle: "Use cases we see most",
-    useCaseHobbyistTitle: "Builders & hobbyists",
-    useCaseHobbyistDesc: "Check if a single consumer GPU can host a chosen model at your target speed.",
-    useCaseResearchTitle: "Research & benchmarking",
-    useCaseResearchDesc: "Estimate FLOPs and KV cache pressure before running large sweeps.",
-    useCaseTeamsTitle: "Infra & product teams",
-    useCaseTeamsDesc: "Size hardware budgets for pilots and RFPs without exposing data to third parties.",
-    sectionModelsEyebrow: "Model coverage",
-    sectionModelsTitle: "Preset roster you can edit",
-    sectionModelsDesc: "Qwen, DeepSeek, Llama, Phi, Gemma, Yi, GLM, Mistral, Mixtral, StableLM, Command R, DBRX, OLMo, InternLM, Llama Guard, and Code models.",
-    heroTitle: "LLM Resource Calculator",
-    heroSubhead: "Find models and estimate hardware requirements.",
-    title: "LLM Resource Calculator",
-    lead: "Calculate hardware requirements for large language models.",
-    quickLlama: "Try Llama 3 8B",
-    quickQwen: "Try Qwen 32B",
-    quickDeepseek: "Try DeepSeek-V3",
-    browseModels: "Browse all",
-    compareHardware: "Compare all",
-    findHardware: "Find compatible hardware →",
-    gpuCount: "Number of GPUs",
-    gpuCountHelp: "Total VRAM = Count × Single GPU VRAM.",
-    langLabel: "Language",
-    reset: "Reset to defaults",
-    sectionModel: "Model",
-    sectionHardware: "Hardware (optional)",
-    showHardware: "+ Select GPU to test fit",
-    hideHardware: "− Hide hardware picker",
-    showAdvanced: "Advanced options",
-    hideAdvanced: "Advanced options",
-    selectGPU: "Select GPU",
-    gpuHelp: "Auto-fills specs to check if requirements fit.",
-    sectionWorkload: "Workload",
-    sectionResults: "Results",
-    modelPreset: "Preset",
-    modelPresetHelp: "You can edit any value after prefilling.",
-    hfLinkLabel: "Hugging Face repo",
-    modelParams: "Model params (B)",
-    activeParams: "Active params for MoE (B, optional)",
-    activeParamsHelp: "If MoE, set the activated parameters per token.",
-    weightPrecision: "Weight precision",
-    kvPrecision: "KV precision",
-    hiddenSize: "Hidden size (override, optional)",
-    layers: "Layers (override, optional)",
-    weightPrecisionHelp: "Lower = smaller & faster, but less accurate",
-    kvPrecisionHelp: "Usually matches weight precision",
-    promptTokens: "Input length (tokens)",
-    promptTokensHelp: "Short: 500 · Document: 8K · Long: 32K",
-    newTokens: "Output length (tokens)",
-    newTokensHelp: "Typical: 100-500 · Long: 1K-2K",
-    batchSize: "Simultaneous users",
-    batchSizeHelp: "Personal: 1 · Team: 4-8 · Production: 16+",
-    targetTps: "Speed (tokens/sec)",
-    targetTpsHelp: "Slow: 5 · Good: 15 · Fast: 30+",
-    ttftMs: "First response time (ms)",
-    ttftMsHelp: "Fast: 500 · Acceptable: 2000",
-    utilCompute: "Utilization (compute)",
-    utilComputeHelp: "Effective fraction of peak TFLOPS/TOPS.",
-    utilBw: "Utilization (bandwidth)",
-    utilBwHelp: "Effective fraction of peak memory bandwidth.",
-    computeUnit: "Compute unit",
-    computeUnitOptions: {
-      tflops: "TFLOPS",
-      gflops: "GFLOPS",
-      pflops: "PFLOPS",
-      tops_int8: "TOPS (INT8)",
-      tops_int4: "TOPS (INT4)",
-    },
-    requiredVram: "Required VRAM / HBM",
-    requiredCompute: "Required compute",
-    requiredBandwidth: "Required memory bandwidth",
-    bandwidthConservative: "Conservative (weights streamed per token + KV)",
-    bandwidthOptimistic: "Optimistic (weights resident; mostly KV)",
-    weightsLabel: "Weights",
-    promptLabel: "Prompt tokens",
-    budgetLabel: "Budget",
-    ttftLabel: "TTFT",
-    ttftNeedHardware: "Provide peak TFLOPS to estimate TTFT.",
-    ttftPrefillNote: "Prefill depends on hardware throughput.",
-    activeParamsLabel: "Active params",
-    totalParamsLabel: "Total params",
-    speedNote: "Assumes speedup x{speed} vs BF16/FP16. Raw: {raw} TFLOPS.",
-    assumptions: [
-      "Prefill FLOPs = 2 * active_params * prompt_tokens + attention ~ 4 * layers * prompt² * hidden_size;",
-      "Decode FLOPs/token ≈ 2 * active_params + 4 * layers * avg_seq * hidden_size (avg_seq ≈ prompt + new/2).",
-      "Bandwidth (conservative) = weight_bytes/batch + KV_read + KV_write per token; optimistic assumes weights stay resident and KV dominates.",
-      "KV cache = batch * seq * layers * hidden * 2 * bytes (K+V); workspace = 12% of weights.",
-    ],
-  },
-  zh: {
-    eyebrow: "离线 · 无服务器",
-    calculatorEyebrow: "计算器",
-    backToTop: "返回顶部",
-    landingEyebrow: "离线 · 隐私 · 开源",
-    landingTitle: "几秒估算 LLM 硬件需求",
-    landingSubhead: "在采购或部署前规划显存、FLOPs、带宽与 TTFT。完全本地，保护隐私，涵盖 Qwen、DeepSeek、Llama 等模型。",
-    landingCtaPrimary: "打开计算器",
-    landingCtaSecondary: "查看原理",
-    landingStatOffline: "100% 本地，无遥测。",
-    landingStatPresets: "16 个预设，覆盖 DeepSeek、Qwen、Llama。",
-    landingStatBilingual: "一键切换 English / 中文。",
-    landingCallout: "无服务器的物理建模计算器",
-    landingCalloutOffline: "完全在浏览器中运行。",
-    landingCalloutAccuracy: "基于 prefill + decode 数学模型估算显存、FLOPs、带宽。",
-    landingCalloutUseCases: "可对 Llama、Qwen、DeepSeek、Phi 等进行预估。",
-    sectionLandingWhy: "为何使用本工具",
-    sectionLandingFeatures: "准确且重视隐私",
-    // Ecosystem Grid
-    ecosystemTitle: "🔍 探索平台",
-    ecosystemSubtitle: "不仅仅是计算器 —— 探索模型、对比硬件、学习部署策略",
-    navModels: "模型库",
-    ecoModelsDesc: "浏览 75+ 个开源模型 (70B+)，查看规格并一键计算。",
-    ecoDiscover: "探索 →",
-    navHardware: "硬件中心",
-    ecoHardwareDesc: "对比 NVIDIA 和华为的多卡 GPU/NPU 配置。",
-    ecoCompare: "对比 →",
-    navGuides: "企业指南",
-    ecoGuidesDesc: "预设的部署场景和容量规划工作流。",
-    ecoLearn: "学习 →",
-    ecoDismiss: "↓ 直接显示计算器",
+// I18N system now loaded from shared js/i18n.js
+// Remove local dictionary and use shared I18N, currentLang, and t() function
 
-    featureOfflineTitle: "离线 & 隐私",
-    featureOfflineDesc: "无需登录、无遥测、无服务器。你的负载留在本地。",
-    featurePhysicsTitle: "物理模型支撑",
-    featurePhysicsDesc: "基于 Transformer 的 prefill / decode 数学模型，覆盖 KV Cache 与带宽瓶颈。",
-    featurePresetsTitle: "模型预设",
-    featurePresetsDesc: "16 个精选预设（Qwen、DeepSeek、Llama、Phi、Gemma），并可自定义参数。",
-    featureBilingualTitle: "双语界面",
-    featureBilingualDesc: "English / 中文 适用于跨地区团队。",
-    sectionHowEyebrow: "工作原理",
-    sectionHowTitle: "从输入到硬件测算",
-    howStepInputTitle: "设置负载",
-    howStepInputDesc: "选择预设或填写参数、提示长度、生成上限、批量与目标指标。",
-    howStepCalcTitle: "套用 Transformer 公式",
-    howStepCalcDesc: "综合 prefill（O(seq²)）与 decode FLOPs、KV Cache 与带宽，并考虑利用率。",
-    howStepResultTitle: "读取需求",
-    howStepResultDesc: "查看显存、算力、带宽与 TTFT 需求，对应你的硬件预算。",
-    sectionUseCasesEyebrow: "适用场景",
-    sectionUseCasesTitle: "常见使用方式",
-    useCaseHobbyistTitle: "个人 / 开发者",
-    useCaseHobbyistDesc: "评估单卡消费级 GPU 是否能以目标速度承载模型。",
-    useCaseResearchTitle: "科研 / Benchmark",
-    useCaseResearchDesc: "在大规模实验前预估 FLOPs 和 KV Cache 压力。",
-    useCaseTeamsTitle: "基础设施 / 产品团队",
-    useCaseTeamsDesc: "为试点或招标估算硬件预算，无需把数据交给第三方。",
-    sectionModelsEyebrow: "覆盖的模型",
-    sectionModelsTitle: "可编辑的预设清单",
-    sectionModelsDesc: "Qwen、DeepSeek、Llama、Phi、Gemma、Yi、GLM、Mistral、Mixtral、StableLM、Command R、DBRX、OLMo、InternLM、Llama Guard 与多款 Code 模型。",
-    heroTitle: "LLM 资源计算器",
-    heroSubhead: "查找模型并估算硬件需求。",
-    title: "LLM 资源计算器",
-    lead: "计算大型语言模型的硬件需求。",
-    quickLlama: "试试 Llama 3 8B",
-    quickQwen: "试试 Qwen 32B",
-    quickDeepseek: "试试 DeepSeek-V3",
-    browseModels: "浏览全部",
-    compareHardware: "对比全部",
-    findHardware: "查找兼容硬件 →",
-    gpuCount: "GPU 数量",
-    gpuCountHelp: "总显存 = 数量 × 单卡显存。",
-    langLabel: "语言",
-    reset: "恢复默认",
-    sectionModel: "模型",
-    sectionHardware: "硬件（可选）",
-    showHardware: "+ 选择 GPU 测试是否适配",
-    hideHardware: "− 隐藏硬件选择",
-    showAdvanced: "高级选项",
-    hideAdvanced: "高级选项",
-    selectGPU: "选择 GPU",
-    gpuHelp: "自动填充规格以检查需求是否满足。",
-    sectionWorkload: "负载",
-    sectionResults: "结果",
-    modelPreset: "预设",
-    modelPresetHelp: "预填后可修改任何数值。",
-    hfLinkLabel: "Hugging Face 仓库",
-    modelParams: "模型参数量 (B)",
-    activeParams: "MoE 激活参数量 (B，可选)",
-    activeParamsHelp: "MoE 模型可填写每 token 激活的参数量。",
-    weightPrecision: "权重量化",
-    kvPrecision: "KV 精度",
-    hiddenSize: "隐藏维度 (可选覆盖)",
-    layers: "层数 (可选覆盖)",
-    weightPrecisionHelp: "数值越小 = 体积更小、速度更快，但精度较低",
-    kvPrecisionHelp: "通常与权重精度保持一致",
-    promptTokens: "输入长度 (tokens)",
-    promptTokensHelp: "短文本：500 · 文档：8K · 长文本：32K",
-    newTokens: "输出长度 (tokens)",
-    newTokensHelp: "典型：100-500 · 长回复：1K-2K",
-    batchSize: "同时用户数",
-    batchSizeHelp: "个人：1 · 团队：4-8 · 生产：16+",
-    targetTps: "速度 (tokens/秒)",
-    targetTpsHelp: "慢：5 · 良好：15 · 快：30+",
-    ttftMs: "首次响应时间 (ms)",
-    ttftMsHelp: "快速：500 · 可接受：2000",
-    utilCompute: "算力利用率",
-    utilComputeHelp: "占峰值 TFLOPS/TOPS 的有效比例。",
-    utilBw: "带宽利用率",
-    utilBwHelp: "占峰值显存带宽的有效比例。",
-    computeUnit: "算力单位",
-    computeUnitOptions: {
-      tflops: "TFLOPS",
-      gflops: "GFLOPS",
-      pflops: "PFLOPS",
-      tops_int8: "TOPS（INT8）",
-      tops_int4: "TOPS（INT4）",
-    },
-    requiredVram: "显存 / HBM 需求",
-    requiredCompute: "算力需求",
-    requiredBandwidth: "带宽需求",
-    bandwidthConservative: "保守：每 token 读取权重 + KV",
-    bandwidthOptimistic: "乐观：权重常驻，主要是 KV 带宽",
-    weightsLabel: "权重",
-    promptLabel: "提示词",
-    budgetLabel: "预算",
-    ttftLabel: "TTFT",
-    ttftNeedHardware: "需要提供峰值 TFLOPS 才能估算 TTFT。",
-    ttftPrefillNote: "Prefill 取决于硬件吞吐。",
-    activeParamsLabel: "激活参数量",
-    totalParamsLabel: "总参数量",
-    speedNote: "假设较 BF16/FP16 加速 x{speed}。原始：{raw} TFLOPS。",
-    assumptions: [
-      "Prefill FLOPs = 2 * active_params * prompt_tokens + 注意力项 ~ 4 * layers * prompt² * hidden_size；",
-      "Decode FLOPs/token ≈ 2 * active_params + 4 * layers * avg_seq * hidden_size（avg_seq ≈ prompt + new/2）。",
-      "带宽（保守）= weight_bytes/batch + KV_read + KV_write 每 token；乐观假设权重常驻，KV 为主要带宽。",
-      "KV cache = batch * seq * layers * hidden * 2 * bytes (K+V)；workspace = 权重的 12%。",
-    ],
-  },
-};
-
-let currentLang = "en";
 let currentMode = null; // 'local', 'cloud', 'compare', or null
-
-function t(key) {
-  const dict = I18N[currentLang] || I18N.en;
-  return dict[key] || I18N.en[key] || key;
-}
 
 // URL Parameter handling for deep linking and persona pages
 function getURLParams() {
@@ -327,12 +45,7 @@ function getURLParams() {
 }
 
 function applyURLParams(params) {
-  // Apply language
-  if (params.lang && ['en', 'zh'].includes(params.lang)) {
-    currentLang = params.lang;
-    const langSelect = byId('langSelect');
-    if (langSelect) langSelect.value = currentLang;
-  }
+  // Language is now handled by js/i18n.js via URL params
   
   // Apply mode (for future use with persona-specific UI adjustments)
   if (params.mode) {
@@ -479,20 +192,7 @@ async function fetchDynamicData() {
   }
 }
 
-function applyStaticTranslations() {
-  const dict = I18N[currentLang] || I18N.en;
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const k = el.getAttribute("data-i18n");
-    if (dict[k]) el.textContent = dict[k];
-  });
-  const unitOptions = dict.computeUnitOptions || I18N.en.computeUnitOptions;
-  const sel = byId("computeUnit");
-  if (sel) {
-    Array.from(sel.options).forEach((opt) => {
-      if (unitOptions[opt.value]) opt.textContent = unitOptions[opt.value];
-    });
-  }
-}
+// applyStaticTranslations() now handled by shared js/i18n.js
 
 function populatePresetSelect() {
   const sel = byId("modelPreset");
@@ -1281,9 +981,9 @@ async function init() {
     el.addEventListener("change", computeAndRender);
   });
 
-  byId("langSelect").addEventListener("change", (e) => {
-    currentLang = e.target.value;
-    applyStaticTranslations();
+  // Language switching now handled by js/i18n.js
+  // Listen to languageChanged event to update dynamic content
+  window.addEventListener('languageChanged', () => {
     updatePresetLink(getSelectedPreset());
     computeAndRender();
   });
