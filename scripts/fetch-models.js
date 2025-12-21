@@ -139,6 +139,76 @@ function fetchText(url) {
 }
 
 /**
+ * Check if a URL exists via HTTP HEAD request
+ * Returns true if status is 200, 301, or 302
+ */
+function checkUrlExists(url) {
+  return new Promise((resolve) => {
+    const req = https.request(url, { method: 'HEAD', timeout: 3000 }, (res) => {
+      // 200 = exists, 301/302 = redirect to valid page
+      resolve([200, 301, 302].includes(res.statusCode));
+    });
+    req.on('error', () => resolve(false));
+    req.on('timeout', () => { req.destroy(); resolve(false); });
+    req.end();
+  });
+}
+
+/**
+ * Generate candidate Artificial Analysis slugs from HuggingFace model ID
+ * AA uses normalized slugs that differ from HF IDs
+ */
+function generateAASlugCandidates(modelId) {
+  const name = modelId.split('/').pop().toLowerCase();
+  
+  const candidates = [
+    // Pattern 1: Replace dots with dashes (DeepSeek-V3.2 → deepseek-v3-2)
+    name.replace(/\./g, '-'),
+    
+    // Pattern 2: Strip quantization suffixes (model-FP8 → model)
+    name.replace(/\./g, '-').replace(/-(fp8|int8|int4|fp16|bf16|awq|gptq|gguf)$/i, ''),
+    
+    // Pattern 3: Replace "thinking" with "reasoning" (AA common rename)
+    name.replace(/\./g, '-').replace(/thinking/i, 'reasoning'),
+    
+    // Pattern 4: Remove -instruct, -chat, -base, -hf, -it, -preview suffixes
+    name.replace(/\./g, '-').replace(/-(instruct|chat|base|hf|it|preview)$/i, ''),
+    
+    // Pattern 5: Remove multiple common suffixes in sequence
+    name.replace(/\./g, '-').replace(/-(instruct|chat|base|hf|it|preview)-?(hf)?$/i, ''),
+    
+    // Pattern 6: Normalize version numbers (2.5 → 2-5)
+    name.replace(/(\d+)\.(\d+)/g, '$1-$2'),
+    
+    // Pattern 7: Remove size and suffix (gemma-2-27b-it → gemma-2-27b)
+    name.replace(/\./g, '-').replace(/-(it|hf)$/i, ''),
+  ];
+  
+  // Deduplicate and filter out empty strings
+  return [...new Set(candidates)].filter(s => s.length > 3);
+}
+
+/**
+ * Find valid Artificial Analysis slug for a model
+ * Returns slug if found, null otherwise
+ */
+async function findAASlug(modelId) {
+  const candidates = generateAASlugCandidates(modelId);
+  
+  for (const slug of candidates) {
+    const url = `https://artificialanalysis.ai/models/${slug}`;
+    const exists = await checkUrlExists(url);
+    if (exists) {
+      return slug;
+    }
+    // Small delay to be polite to AA servers
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  
+  return null;
+}
+
+/**
  * STEP 1: Extract parameter count from model card (README.md)
  * This is the most reliable source as model authors state the official count
  */
@@ -370,6 +440,17 @@ async function fetchOpenSourceModels() {
       
       seenModels.add(model.id);
       
+      // Attempt to find valid Artificial Analysis slug
+      let aaSlug = null;
+      try {
+        aaSlug = await findAASlug(model.id);
+        if (aaSlug) {
+          console.log(`   🔗 AA benchmark found: artificialanalysis.ai/models/${aaSlug}`);
+        }
+      } catch (e) {
+        // Ignore AA lookup failures - not critical
+      }
+      
       const modelData = {
         id: model.id,
         name: formatModelName(model.id),
@@ -393,6 +474,7 @@ async function fetchOpenSourceModels() {
         last_modified: lastModified ? lastModified.toISOString() : null,
         huggingface_url: `https://huggingface.co/${model.id}`,
         param_source: paramSource, // Track whether we used stated or estimated value
+        artificial_analysis_slug: aaSlug, // Validated AA slug or null
       };
       
       models.push(modelData);

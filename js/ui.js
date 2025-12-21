@@ -1188,7 +1188,9 @@ async function initModelSpotlight() {
             <strong>INT8: ~${vramInt8} GB · BF16: ~${vramBf16} GB</strong>
           </div>
           <div class="card-actions-row" style="display: flex; gap: 8px; margin-top: 8px;">
-            <a href="https://artificialanalysis.ai/models/${model.id.split('/')[1]?.toLowerCase() || ''}" target="_blank" class="btn ghost btn-sm" style="padding: 6px 10px; font-size: 0.8rem;" onclick="event.stopPropagation();">Benchmarks</a>
+            ${model.artificial_analysis_slug ? `
+            <a href="https://artificialanalysis.ai/models/${model.artificial_analysis_slug}" target="_blank" class="btn ghost btn-sm" style="padding: 6px 10px; font-size: 0.8rem;" onclick="event.stopPropagation();">Benchmarks</a>
+            ` : ''}
             <div class="card-cta">Calculate →</div>
           </div>
         </div>

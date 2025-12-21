@@ -179,9 +179,11 @@ window.openCalculatorDrawer = function(modelId) {
                 <a href="${model.huggingface_url}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
                     View on Hugging Face →
                 </a>
-                <a href="https://artificialanalysis.ai/models/${model.id.split('/')[1]?.toLowerCase() || ''}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
+                ${model.artificial_analysis_slug ? `
+                <a href="https://artificialanalysis.ai/models/${model.artificial_analysis_slug}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
                     View Benchmarks →
                 </a>
+                ` : ''}
             </div>
         </div>
         
