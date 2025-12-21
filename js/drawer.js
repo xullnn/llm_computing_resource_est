@@ -98,90 +98,90 @@ window.openCalculatorDrawer = function(modelId) {
     // Build drawer content
     drawerContent.innerHTML = `
         <div class="drawer-result-card">
-            <h4>💾 VRAM Requirements</h4>
+            <h4>💾 ${t('drawerVramTitle')}</h4>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">INT8 (Recommended)</span>
+                <span class="drawer-metric-label">${t('drawerInt8Label')}</span>
                 <span class="drawer-metric-value">${Math.ceil(vramInt8)} GB</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">FP8</span>
+                <span class="drawer-metric-label">${t('drawerFp8Label')}</span>
                 <span class="drawer-metric-value">${Math.ceil(vramFp8)} GB</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">BF16 (Full Precision)</span>
+                <span class="drawer-metric-label">${t('drawerBf16Label')}</span>
                 <span class="drawer-metric-value">${Math.ceil(vramBf16)} GB</span>
             </div>
             <div style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255, 255, 255, 0.05);">
-                Includes weights + KV cache (8K context) + workspace overhead
+                ${t('drawerVramNote')}
             </div>
         </div>
         
         <div class="drawer-result-card">
-            <h4>🎯 GPU Recommendation</h4>
+            <h4>🎯 ${t('drawerGpuTitle')}</h4>
             <p style="margin: 0; font-size: 0.9rem; line-height: 1.5;">
                 ${gpuRecommendation}
             </p>
         </div>
         
         <div class="drawer-result-card">
-            <h4>⚡ Performance Estimate</h4>
+            <h4>⚡ ${t('drawerPerfTitle')}</h4>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Required Compute</span>
+                <span class="drawer-metric-label">${t('drawerComputeLabel')}</span>
                 <span class="drawer-metric-value">${Math.ceil(resultsInt8.requiredTflops)} TFLOPS</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Memory Bandwidth</span>
+                <span class="drawer-metric-label">${t('drawerBandwidthLabel')}</span>
                 <span class="drawer-metric-value">${Math.ceil(resultsInt8.requiredBwGbps)} GB/s</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Estimated TTFT</span>
+                <span class="drawer-metric-label">${t('drawerTtftLabel')}</span>
                 <span class="drawer-metric-value">${resultsInt8.ttftMs ? Math.ceil(resultsInt8.ttftMs) + ' ms' : 'N/A'}</span>
             </div>
         </div>
         
         <div class="drawer-section">
-            <h3>Model Specifications</h3>
+            <h3>${t('drawerSpecsTitle')}</h3>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Parameters</span>
+                <span class="drawer-metric-label">${t('drawerParamsLabel')}</span>
                 <span class="drawer-metric-value">${model.parameters_billion}B</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Architecture</span>
+                <span class="drawer-metric-label">${t('drawerArchLabel')}</span>
                 <span class="drawer-metric-value">${model.architecture.toUpperCase()}</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Layers</span>
+                <span class="drawer-metric-label">${t('drawerLayersLabel')}</span>
                 <span class="drawer-metric-value">${model.num_layers}</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Hidden Size</span>
+                <span class="drawer-metric-label">${t('drawerHiddenLabel')}</span>
                 <span class="drawer-metric-value">${model.hidden_size}</span>
             </div>
             <div class="drawer-metric">
-                <span class="drawer-metric-label">Context Length</span>
+                <span class="drawer-metric-label">${t('drawerContextLabel')}</span>
                 <span class="drawer-metric-value">${formatNumber(model.max_seq_length)}</span>
             </div>
             ${model.moe_num_experts ? `
             <div class="drawer-metric">
-                <span class="drawer-metric-label">MoE Experts</span>
+                <span class="drawer-metric-label">${t('drawerMoeLabel')}</span>
                 <span class="drawer-metric-value">${model.moe_num_experts} (top-${model.moe_top_k})</span>
             </div>
             ` : ''}
             <div class="drawer-metric">
-                <span class="drawer-metric-label">License</span>
+                <span class="drawer-metric-label">${t('drawerLicenseLabel')}</span>
                 <span class="drawer-metric-value">${model.license}</span>
             </div>
         </div>
         
         <div class="drawer-section">
-            <h3>External Resources</h3>
+            <h3>${t('drawerResourcesTitle')}</h3>
             <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                 <a href="${model.huggingface_url}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
-                    View on Hugging Face →
+                    ${t('drawerHfBtn')}
                 </a>
                 ${model.artificial_analysis_slug ? `
                 <a href="https://artificialanalysis.ai/models/${model.artificial_analysis_slug}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
-                    View Benchmarks →
+                    ${t('drawerAaBtn')}
                 </a>
                 ` : ''}
             </div>
@@ -189,10 +189,10 @@ window.openCalculatorDrawer = function(modelId) {
         
         <div style="margin-top: 2rem;">
             <a href="calculator.html?preset=${encodeURIComponent(modelId)}" class="btn btn-primary" style="width: 100%; text-decoration: none; justify-content: center; display: flex;">
-                Open Full Calculator →
+                ${t('drawerCalcBtn')}
             </a>
             <p style="font-size: 0.75rem; color: rgba(255, 255, 255, 0.5); text-align: center; margin-top: 0.75rem;">
-                Adjust workload, hardware, and advanced settings in the full calculator
+                ${t('drawerCalcNote')}
             </p>
         </div>
     `;

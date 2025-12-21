@@ -10,6 +10,7 @@ const I18N = {
     navCalculator: "Calculator",
     navHardware: "Hardware",
     navGuides: "Guides",
+    navAbout: "About",
     
     // Homepage - Hero Section
     landingHeroTitle: "Open-Source LLM Deployment Planner",
@@ -269,6 +270,31 @@ const I18N = {
     faqParameterSourceAnswer: "Priority order: (1) Safetensors metadata, (2) Model card statements, (3) Physics-based estimation from architecture, (4) Manual verification. Each model displays its data source.",
     faqPrivacy: "Is my data collected?",
     faqPrivacyAnswer: "No. All calculations run entirely in your browser using JavaScript. No data is sent to servers, no analytics, no tracking. The site is 100% client-side.",
+    
+    // Drawer
+    drawerVramTitle: "VRAM Requirements",
+    drawerInt8Label: "INT8 (Recommended)",
+    drawerFp8Label: "FP8",
+    drawerBf16Label: "BF16 (Full Precision)",
+    drawerVramNote: "Includes weights + KV cache (8K context) + workspace overhead",
+    drawerGpuTitle: "GPU Recommendation",
+    drawerPerfTitle: "Performance Estimate",
+    drawerComputeLabel: "Required Compute",
+    drawerBandwidthLabel: "Memory Bandwidth",
+    drawerTtftLabel: "Estimated TTFT",
+    drawerSpecsTitle: "Model Specifications",
+    drawerParamsLabel: "Parameters",
+    drawerArchLabel: "Architecture",
+    drawerLayersLabel: "Layers",
+    drawerHiddenLabel: "Hidden Size",
+    drawerContextLabel: "Context Length",
+    drawerMoeLabel: "MoE Experts",
+    drawerLicenseLabel: "License",
+    drawerResourcesTitle: "External Resources",
+    drawerHfBtn: "View on Hugging Face →",
+    drawerAaBtn: "View Benchmarks →",
+    drawerCalcBtn: "Open Full Calculator →",
+    drawerCalcNote: "Adjust workload, hardware, and advanced settings in the full calculator",
   },
   zh: {
     // Navigation
@@ -276,6 +302,7 @@ const I18N = {
     navCalculator: "计算器",
     navHardware: "硬件中心",
     navGuides: "企业指南",
+    navAbout: "关于",
     
     // Homepage - Hero Section
     landingHeroTitle: "开源大语言模型部署规划工具",
@@ -533,8 +560,32 @@ const I18N = {
     faqParameterSourceAnswer: "优先级顺序：(1) Safetensors 元数据，(2) 模型卡说明，(3) 基于架构的物理估算，(4) 人工验证。每个模型都显示其数据来源。",
     faqPrivacy: "是否收集我的数据？",
     faqPrivacyAnswer: "否。所有计算完全在您的浏览器中使用 JavaScript 运行。不向服务器发送数据，无分析，无跟踪。该网站 100% 客户端运行。",
+    
+    // Drawer
+    drawerVramTitle: "显存需求",
+    drawerInt8Label: "INT8 (推荐)",
+    drawerFp8Label: "FP8",
+    drawerBf16Label: "BF16 (全精度)",
+    drawerVramNote: "包含权重 + KV 缓存 (8K 上下文) + 工作空间开销",
+    drawerGpuTitle: "GPU 推荐",
+    drawerPerfTitle: "性能预估",
+    drawerComputeLabel: "算力需求",
+    drawerBandwidthLabel: "内存带宽",
+    drawerTtftLabel: "预计 TTFT",
+    drawerSpecsTitle: "模型规格",
+    drawerParamsLabel: "参数量",
+    drawerArchLabel: "架构",
+    drawerLayersLabel: "层数",
+    drawerHiddenLabel: "隐藏维度",
+    drawerContextLabel: "上下文长度",
+    drawerMoeLabel: "MoE 专家数",
+    drawerLicenseLabel: "许可证",
+    drawerResourcesTitle: "外部资源",
+    drawerHfBtn: "在 Hugging Face 查看 →",
+    drawerAaBtn: "查看基准测试 →",
+    drawerCalcBtn: "打开完整计算器 →",
+    drawerCalcNote: "在完整计算器中调整负载、硬件和高级设置",
   },
-};
 };
 
 // Global language state

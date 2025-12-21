@@ -4,6 +4,7 @@
  */
 
 let modelsData = [];
+let originalMetadata = null; // Store original metadata for re-renders
 let selectedModels = new Set();
 let trendingModels = [];
 let trendingExpanded = false;
@@ -165,7 +166,7 @@ function renderVendorGroups(models) {
         const maxParam = vendorModels[vendorModels.length - 1].parameters_billion;
         const isExpanded = expandedVendors.has(vendor) || expandedVendors.size === 0; // All expanded by default initially
         
-        // Show first 4 models (1 row) by default
+        // Show first 4 models (1 row) by default when expanded
         const visibleModels = isExpanded ? vendorModels.slice(0, 4) : [];
         const hasMore = vendorModels.length > 4;
         
@@ -339,6 +340,7 @@ fetch('data/models.json')
     .then(res => res.json())
     .then(data => {
         modelsData = data.models;
+        originalMetadata = data.metadata;
         populateOrgFilters();
         updateFilterCounts();
         populateTrendingModels();
@@ -347,8 +349,14 @@ fetch('data/models.json')
     })
     .catch(err => {
         console.error('Failed to load models:', err);
-        document.getElementById('modelsGrid').innerHTML = 
-            '<p style="text-align: center; opacity: 0.7;">Failed to load models data</p>';
+        const vendorGroups = document.getElementById('vendorGroups');
+        const modelsGrid = document.getElementById('modelsGrid');
+        if (vendorGroups) {
+            vendorGroups.innerHTML = '<p style="text-align: center; opacity: 0.7; padding: 2rem;">Failed to load models data</p>';
+        }
+        if (modelsGrid) {
+            modelsGrid.innerHTML = '<p style="text-align: center; opacity: 0.7;">Failed to load models data</p>';
+        }
     });
 
 // Filter toggle
@@ -896,10 +904,8 @@ document.getElementById('viewHardwareBtn')?.addEventListener('click', () => {
 // Listen to language change events and re-render
 window.addEventListener('languageChanged', () => {
     renderModels();
-    renderMetadata({ 
-        updated_at: new Date().toISOString(),
-        count: modelsData.length,
-        source: 'Hugging Face Hub API'
-    });
+    if (originalMetadata) {
+        renderMetadata(originalMetadata);
+    }
 });
 
