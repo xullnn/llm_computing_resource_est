@@ -165,9 +165,9 @@ function renderVendorGroups(models) {
         const maxParam = vendorModels[vendorModels.length - 1].parameters_billion;
         const isExpanded = expandedVendors.has(vendor) || expandedVendors.size === 0; // All expanded by default initially
         
-        // Show top 3 models (smallest first)
-        const visibleModels = isExpanded ? vendorModels.slice(0, 3) : [];
-        const hasMore = vendorModels.length > 3;
+        // Show first 4 models (1 row) by default
+        const visibleModels = isExpanded ? vendorModels.slice(0, 4) : [];
+        const hasMore = vendorModels.length > 4;
         
         return `
             <div class="vendor-group ${isExpanded ? '' : 'collapsed'}" data-vendor="${vendor}">
@@ -185,7 +185,7 @@ function renderVendorGroups(models) {
                     </div>
                     ${hasMore && isExpanded ? `
                         <button class="vendor-show-more" onclick="showAllVendorModels('${vendor}')">
-                            ▼ Show ${vendorModels.length - 3} more ${vendor} models
+                            ▼ Show ${vendorModels.length - 4} more ${vendor} models
                         </button>
                     ` : ''}
                 </div>
@@ -233,10 +233,10 @@ window.showAllVendorModels = function(vendor) {
 }
 
 /**
- * Extract model card HTML (for reuse)
+ * Extract model card HTML (for reuse) - COMPACT VERSION
  */
 function renderModelCardHTML(model) {
-    // Use real calculator for accurate tooltip estimates
+    // Calculate resource requirements with real math
     const quickCalcInt8 = calcRequirements({
         paramsB: model.parameters_billion,
         activeParamsB: model.active_parameters_billion || model.parameters_billion,
@@ -247,7 +247,8 @@ function renderModelCardHTML(model) {
         heads: model.num_heads,
         promptTokens: 8192,
         newTokens: 512,
-        batchSize: 1
+        batchSize: 1,
+        targetTps: 10  // Target 10 tokens/second
     });
     
     const quickCalcBf16 = calcRequirements({
@@ -260,93 +261,72 @@ function renderModelCardHTML(model) {
         heads: model.num_heads,
         promptTokens: 8192,
         newTokens: 512,
-        batchSize: 1
+        batchSize: 1,
+        targetTps: 10
     });
     
     const vramInt8 = quickCalcInt8.totalVramGb;
     const vramBf16 = quickCalcBf16.totalVramGb;
-    const minGpus = vramInt8 <= 24 ? '1× RTX 4090' : 
-                    vramInt8 <= 48 ? '1× A6000' :
-                    vramInt8 <= 80 ? '1× H100' :
-                    vramInt8 <= 160 ? '2× H100' :
-                    `${Math.ceil(vramInt8/80)}× H100`;
+    const bandwidthInt8 = quickCalcInt8.requiredBwGbps;
+    
+    // Estimate tokens/second on common GPUs based on bandwidth
+    // RTX 4090: ~1TB/s, H100: ~3.35TB/s
+    const tokensPerSecRTX4090 = Math.min(30, Math.floor(1000 / bandwidthInt8 * 10));
+    const tokensPerSecH100 = Math.min(100, Math.floor(3350 / bandwidthInt8 * 10));
     
     // Check if this model is trending
     const isTrending = trendingModels.some(tm => tm.id === model.id);
-    const trendingBadge = isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '';
+    const trendingBadge = isTrending ? '<span class="trending-badge">🔥</span>' : '';
     
     return `
-    <div class="model-card ${isTrending ? 'is-trending' : ''}" onclick="openCalculatorDrawer('${model.id}')">
-        ${trendingBadge}
-        <div class="model-tooltip">
-            <div class="tooltip-title">Quick Estimate (8K context)</div>
-            <div class="tooltip-row">
-                <span class="tooltip-label">INT8:</span>
-                <span class="tooltip-value">${vramInt8.toFixed(1)} GB</span>
-            </div>
-            <div class="tooltip-row">
-                <span class="tooltip-label">BF16:</span>
-                <span class="tooltip-value">${vramBf16.toFixed(1)} GB</span>
-            </div>
-            <div class="tooltip-row">
-                <span class="tooltip-label">Min GPU:</span>
-                <span class="tooltip-value">${minGpus}</span>
-            </div>
-        </div>
-        <div class="compare-checkbox-container">
+    <div class="model-card-compact ${isTrending ? 'is-trending' : ''}" onclick="openCalculatorDrawer('${model.id}')">
+        <!-- Compare toggle with label (top-left) -->
+        <label class="compare-toggle" onclick="event.stopPropagation();">
             <input type="checkbox" class="compare-checkbox" data-id="${model.id}" 
                 ${selectedModels.has(model.id) ? 'checked' : ''} 
-                onchange="toggleComparison('${model.id}')" onclick="event.stopPropagation();" title="Add to comparison">
-        </div>
-        <div class="model-card-header">
-            <h3 class="model-name">
-                <span class="freshness-indicator ${getFreshnessClass(model.created_at)}"></span>
-                ${model.name}
-            </h3>
-            <span class="model-badge badge-${model.architecture}">
-                ${model.architecture.toUpperCase()}
-            </span>
-        </div>
-
-        <div class="model-meta-row">
-            <span class="meta-item">📅 ${getRelativeTime(model.created_at)}</span>
-            <span class="provenance-badge">${getProvenanceLabel(model.param_source)}</span>
+                onchange="toggleComparison('${model.id}')">
+            <span class="compare-label">Compare</span>
+        </label>
+        
+        <!-- Header: Name + Badge + Trending -->
+        <div class="card-header-compact">
+            <h4 class="model-name-compact">${model.name}</h4>
+            <div class="card-badges">
+                ${trendingBadge}
+                <span class="arch-badge badge-${model.architecture}">
+                    ${model.architecture.toUpperCase()}
+                </span>
+            </div>
         </div>
         
-        <div class="model-params">
-            ${model.parameters_billion}B
+        <!-- Param size (prominent) -->
+        <div class="param-size-compact">${model.parameters_billion}B</div>
+        
+        <!-- Key metrics: VRAM + Bandwidth -->
+        <div class="resource-metrics">
+            <div class="metric-row vram-row">
+                <span class="metric-label">VRAM</span>
+                <span class="metric-value">${Math.ceil(vramInt8)}GB INT8 · ${Math.ceil(vramBf16)}GB BF16</span>
+            </div>
+            <div class="metric-row bandwidth-row">
+                <span class="metric-label">Speed</span>
+                <span class="metric-value">~${Math.ceil(bandwidthInt8)} GB/s</span>
+            </div>
+            <div class="metric-row perf-row">
+                <span class="metric-label">Est.</span>
+                <span class="metric-value">${tokensPerSecRTX4090} tok/s (4090) · ${tokensPerSecH100} tok/s (H100)</span>
+            </div>
         </div>
         
-        <div class="model-stats">
-            <div class="model-stat">
-                <div class="model-stat-label">Context</div>
-                <div class="model-stat-value">${formatNumber(model.max_seq_length)}</div>
-            </div>
-            <div class="model-stat">
-                <div class="model-stat-label">Hidden Size</div>
-                <div class="model-stat-value">${formatNumber(model.hidden_size)}</div>
-            </div>
-            <div class="model-stat">
-                <div class="model-stat-label">Layers</div>
-                <div class="model-stat-value">${model.num_layers}</div>
-            </div>
-            <div class="model-stat">
-                <div class="model-stat-label">License</div>
-                <div class="model-stat-value">${model.license}</div>
-            </div>
-            ${model.moe_num_experts ? `
-            <div class="model-stat" style="grid-column: span 2; margin-top: 0.25rem;">
-                <div class="model-stat-label">MoE Routing</div>
-                <div class="model-stat-value">${model.moe_num_experts} experts (top-${model.moe_top_k})</div>
-            </div>
-            ` : ''}
-        </div>
-        
-        <div class="model-actions">
-            <a href="calculator.html?preset=${encodeURIComponent(model.id)}" class="btn btn-primary" style="flex: 1; text-decoration: none; justify-content: center; display: flex;" onclick="event.stopPropagation();">
+        <!-- Actions -->
+        <div class="model-actions-compact">
+            <a href="calculator.html?preset=${encodeURIComponent(model.id)}" 
+               class="btn btn-primary btn-sm" 
+               onclick="event.stopPropagation();">
                 Calculate
             </a>
-            <button class="btn btn-secondary" style="flex: 1;" onclick="event.stopPropagation(); openCalculatorDrawer('${model.id}');">
+            <button class="btn btn-secondary btn-sm" 
+                    onclick="event.stopPropagation(); openCalculatorDrawer('${model.id}');">
                 Details
             </button>
         </div>

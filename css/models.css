@@ -20,7 +20,7 @@
 
 /* Trending Bar */
 .trending-bar {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto 1.5rem;
     padding: 0 1rem;
 }
@@ -214,7 +214,7 @@
 }
 
 .search-filter {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto 2rem;
     padding: 0 1rem;
 }
@@ -337,9 +337,9 @@
 
 .models-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.25rem;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 1rem 3rem;
 }
@@ -813,7 +813,7 @@
 
 /* Vendor Groups */
 .vendor-groups {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 2rem auto;
     padding: 0 1rem;
     display: flex;
@@ -902,7 +902,7 @@
 
 .vendor-models-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.25rem;
     padding: 1.5rem;
 }
@@ -974,6 +974,235 @@
     /* Hide tooltips on mobile (tap instead) */
     .model-tooltip {
         display: none;
+    }
+}
+
+/* ============================================
+   COMPACT CARD STYLES
+   ============================================ */
+
+.model-card-compact {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    cursor: pointer;
+    min-height: auto;
+}
+
+.model-card-compact:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.model-card-compact.is-trending {
+    border-color: rgba(255, 107, 107, 0.3);
+    background: rgba(255, 107, 107, 0.03);
+}
+
+.model-card-compact.is-trending:hover {
+    border-color: rgba(255, 107, 107, 0.5);
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.2);
+}
+
+/* Compare Toggle (Top-Left) */
+.compare-toggle {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+}
+
+.compare-toggle:hover {
+    background: rgba(0, 0, 0, 0.8);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.compare-checkbox {
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.compare-label {
+    user-select: none;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* Header */
+.card-header-compact {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-top: 1.3rem; /* Space for compare toggle */
+}
+
+.model-name-compact {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    max-height: 2.8em;
+}
+
+.card-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.trending-badge {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.arch-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.badge-dense {
+    background: rgba(74, 158, 255, 0.15);
+    color: rgb(74, 158, 255);
+    border: 1px solid rgba(74, 158, 255, 0.3);
+}
+
+.badge-moe {
+    background: rgba(168, 85, 247, 0.15);
+    color: rgb(168, 85, 247);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Param Size */
+.param-size-compact {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-align: center;
+    margin: 0.3rem 0;
+    line-height: 1;
+}
+
+/* Resource Metrics */
+.resource-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0.4rem 0;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+}
+
+.metric-label {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    min-width: 50px;
+}
+
+.metric-value {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    text-align: right;
+    flex: 1;
+    font-size: 0.8rem;
+}
+
+.vram-row {
+    background: rgba(74, 158, 255, 0.08);
+    border: 1px solid rgba(74, 158, 255, 0.15);
+}
+
+.bandwidth-row {
+    background: rgba(168, 85, 247, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.perf-row {
+    background: rgba(34, 197, 94, 0.08);
+    border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+/* Actions */
+.model-actions-compact {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.model-actions-compact .btn-sm {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments for compact cards */
+@media (max-width: 768px) {
+    .model-card-compact {
+        padding: 0.875rem;
+    }
+    
+    .model-name-compact {
+        font-size: 0.9rem;
+    }
+    
+    .param-size-compact {
+        font-size: 1.75rem;
+    }
+    
+    .metric-row {
+        font-size: 0.75rem;
+    }
+    
+    .metric-value {
+        font-size: 0.75rem;
     }
 }
 
