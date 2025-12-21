@@ -1,56 +1,53 @@
 ---
 name: System Overview
-description: High-level architecture of the LLM Resource Decision Hub
-last_updated: 2025-12-19
+description: Architecture of the Deployment Planning Platform
+last_updated: 2025-12-21
 ---
 
 # System Overview
 
-## 🏢 Multi-Page Ecosystem (The "Virtuous Loop")
+## 🏢 Platform Topology (The 5 Pillars)
 
-The project has evolved from a single-page calculator into an interconnected platform designed for Enterprise PMs. Navigation follows a circular discovery/validation pattern:
+The tool is an interconnected platform where data flows seamlessly between model specs and hardware requirements.
 
 ```mermaid
-graph LR
-    Discover[Model Explorer] --> Calculate[Calculator Hub]
-    Calculate --> Compare[Hardware Hub]
-    Compare --> Validate[Vendor Specifics]
-    Validate --> Discover
-    Guides[Persona Guides] --> Calculate
+graph TD
+    A[index.html: Model Browser] --> B[calculator.html: Sizing Engine]
+    A --> C[hardware/: Hardware Hub]
+    B --> C
+    D[for/: Deployment Guides] --> B
+    E[about.html: Methodology] --> B
 ```
 
-## 🛠️ Module Map
+### Pillar Definitions
+*   **Model Browser (`index.html`)**: High-density discovery with **Vendor Grouping** and **Hardware Tiering**.
+*   **Sizing Engine (`calculator.html`)**: Physics-based estimation for VRAM, FLOPs, and Bandwidth.
+*   **Hardware Hub (`hardware/`)**: Comparative specs for **NVIDIA** and **Huawei** infrastructure.
+*   **Deployment Guides (`for/`)**: Persona-specific scenarios (Enterprise, Research, Teams, Hobbyist).
+*   **Methodology (`about.html`)**: Transparency on calculation formulas and inclusion criteria.
 
-| Module | Location | Responsibility |
+## 🛠️ Service Layer Map
+
+| Service | File Reference | Responsibility |
 | :--- | :--- | :--- |
-| **Configuration** | `scripts/config.json` | Vendor whitelist, param range (70-700B), time window. |
-| **Pipeline** | `scripts/fetch-models.js` | Two-stage fetch: list → individual (safetensors). |
-| **Data Hub** | `data/models.json` | 75 vendor-exclusive models (70-700B, 8 vendors). |
-| **Overrides** | `data/overrides.json` | Manual metadata for gated repos (Llama 3.1 405B). |
-| **Calculator** | `js/calc.js` | Pure logic for VRAM, FLOPs, Bandwidth, and TTFT. |
-| **UI/i18n** | `js/ui.js` | Real-time rendering, multi-GPU selector, bilingual support. |
-| **Model Explorer** | `models/index.html` | Multi-row filters, comparison mode, provenance display. |
-| **Navigation** | `js/nav.js` | Global sticky nav and persona-based deep linking. |
+| **i18n Engine** | `js/i18n.js` | Shared dictionary, persistence, and `languageChanged` events. |
+| **Sizing Logic** | `js/calc.js` | Core math for prefill/decode phases and KV cache pressure. |
+| **Data Pipeline** | `scripts/fetch-models.js` | Automated enrichment from HF API + AA Slug Probe. |
+| **View Engine** | `js/models-page.js` | Dynamic rendering of compact cards and tiered sections. |
+| **Navigation** | `js/nav.js` | Global sticky nav using absolute paths for site-wide consistency. |
 
-## 🔄 Dynamic Data Architecture
+## 🔄 Data Lifecycle
 
-The tool uses a **Vendor-Exclusive Discovery Pipeline** with two-stage enrichment:
+1.  **Automation Phase (GitHub Actions)**: 
+    *   Fetches from HF API based on `scripts/config.json`.
+    *   Validates Artificial Analysis slugs via HTTP HEAD requests.
+    *   Generates `data/models.json`.
+2.  **Runtime Phase (Browser)**:
+    *   `js/i18n.js` initializes language (Priority: URL Param > LocalStorage).
+    *   `js/models-page.js` fetches `models.json` and renders views.
+    *   User selections trigger `js/calc.js` for real-time resource estimation.
 
-1.  **Build-Time (Manual Execution)**:
-    *   Load `config.json` (vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo).
-    *   Query HF list API for each vendor (8 queries).
-    *   For each candidate: fetch individual model API (safetensors), fetch config.json (architecture).
-    *   Merge with `overrides.json`, validate parameter range (70-700B), detect anomalies.
-    *   Write to `data/models.json` (75 models).
-2.  **Runtime (Client Browser)**:
-    *   `js/ui.js` fetches JSON data on page load.
-    *   `models/index.html` provides multi-row discovery filters.
-    *   Calculator initializes "Number of GPUs" selector (1-72 cards).
-    *   Calculates aggregate capacity (VRAM × Count) in real-time.
-
-## 🛡️ Key Principles
-
-*   **Offline-Capable**: Works on `file://` protocols after data is fetched.
-*   **Privacy-First**: No telemetry, no user data sent to servers.
-*   **Multi-GPU Centric**: Designed for server bundle sales, not just consumer cards.
-*   **Physics-Backed**: Estimates based on Transformer hardware constraints.
+## 🛡️ Architectural Principles
+*   **Decoupled UI/Logic**: Calculation math is pure JS, independent of the DOM.
+*   **Zero External Dependencies**: Vanilla JS only (no frameworks) for maximum performance and portability.
+*   **Absolute Routing**: All internal links use absolute paths to prevent navigation breaks in sub-directories.

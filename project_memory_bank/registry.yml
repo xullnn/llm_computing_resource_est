@@ -1,44 +1,33 @@
 ---
-last_updated: 2025-12-20
-project: LLM Resource Sizer
-type: Enterprise AI Infrastructure Decision Hub
-stack: Vanilla JavaScript, GitHub Actions, Node.js (Build-time), HTML5, CSS3
+last_updated: 2025-12-21
+project: LLM Deployment Planner
+type: Strategic Infrastructure Decision Hub
+stack: Vanilla JavaScript, GitHub Actions, Node.js (Fetch Pipeline), CSS3
 
-core_files:
-  - index.html: Main calculator entry point
-  - models/index.html: Model Explorer with multi-row filters and comparison mode
-  - hardware/index.html: Hardware Hub overview
-  - js/ui.js: Core UI logic, i18n, and dynamic data binding
-  - js/calc.js: Physics-based calculation engine (VRAM, FLOPs, Bandwidth, TTFT)
-  - scripts/fetch-models.js: Automated HF data pipeline with two-stage fetch
-  - scripts/config.json: Centralized configuration (vendors, param range, time window)
-  - data/models.json: Auto-updated model specifications (75 vendor-exclusive models)
-  - data/overrides.json: Manual model metadata for gated/auth-required repos
-  - data/hardware/*.json: Verified NVIDIA and Huawei hardware specs
+pillar_files:
+  - index.html: Model Browser (Vendor/Tier views)
+  - calculator.html: Sizing Engine (Physics-backed)
+  - hardware/index.html: Comparative Hardware Hub
+  - for/*.html: Persona-specific Deployment Guides
+  - about.html: Methodology & Transparency documentation
+
+service_layer:
+  - js/i18n.js: Central translation & persistence engine
+  - js/calc.js: Core resource calculation math
+  - js/models-page.js: Dynamic rendering & view management
+  - js/nav.js: Absolute path navigation controller
+  - js/drawer.js: High-density spec disclosure
 
 data_schema:
   models:
-    source: scripts/fetch-models.js (driven by scripts/config.json)
-    storage: data/models.json
-    count: 75 models
-    filters: 
-      - vendors: [google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo]
-      - param_range: 70-700B
-      - time_window: 2 years (730 days)
-    fields: [id, name, parameters_billion, architecture, hidden_size, num_layers, moe_num_experts, moe_top_k, param_source, created_at, last_modified]
-    param_source_types: [safetensors, manual_override, stated, estimated]
-  
+    storage: data/models.json (Auto-enriched)
+    filters: [Vendor, Parameter Size (70B-700B), Architecture, Recency]
+    tiers: [Consumer <24G, Workstation 24-80G, Infrastructure >80G]
   hardware:
-    source: Manual curation (verified datasheets)
     storage: data/hardware/{vendor}.json
-    fields: [id, name, vram_gb, bandwidth_gbps, fp16_tflops, bf16_tflops, int8_tops, max_cards_per_node, interconnect]
-
-interconnected_pages:
-  - persona_guides: [/for/enterprise.html, /for/teams.html, /for/researchers.html, /for/hobbyists.html]
-  - vendor_pages: [/hardware/nvidia.html, /hardware/huawei.html]
+    vendors: [NVIDIA, Huawei]
 
 pipeline:
-  trigger: Manual execution (node scripts/fetch-models.js)
-  config: scripts/config.json
-  logic: Load Config -> Query 8 Vendors -> Individual Fetch (safetensors) -> Merge Overrides -> Validate -> Output JSON
-  api_calls: 8 list queries + N individual model fetches + N config.json fetches
+  trigger: Scheduled (Mon/Wed/Fri 02:00 UTC) via GH Actions
+  probe: HTTP HEAD probe for Artificial Analysis slug verification
+  merge: config.json + overrides.json + HF Hub API

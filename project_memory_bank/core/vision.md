@@ -1,28 +1,33 @@
 ---
 name: Project Vision
-description: Evolution from a simple calculator to an Enterprise Decision Hub
-last_updated: 2025-12-19
+description: Evolution into a Strategic Deployment Planner for high-density models
+last_updated: 2025-12-21
 ---
 
 # Project Vision
 
 ## 🎯 The Mission
-To empower AI Product Managers and Infrastructure Teams to transition from "Experimental AI" to "Production Deployment" by providing physics-backed hardware estimations for massive open-source models (70B+).
+To transform LLM resource estimation into a professional **Strategic Deployment Planner**. We empower Infrastructure Teams and AI Architects to transition from experimental models to production-grade deployments by providing high-density, physics-backed hardware sizing for massive open-source models (70B+).
 
-## 🏢 Target Persona: The Enterprise PM
-The tool is specifically tuned for PMs who sell **Server + AI App Bundles**.
-*   **Business Goal**: Match the right model tier (e.g., 80B vs 400B) to the right hardware configuration (e.g., 2× vs 8× H100).
-*   **The Problem**: "Can I run DeepSeek-V3 on this server?" is a complex question involving VRAM, interconnect bandwidth, and multi-GPU overhead.
-*   **The Solution**: An interconnected "Decision Hub" that links model specifications to hardware capacity.
+## 🚀 The Strategic Inflection Point: 70B+ Parameters
+The tool focuses exclusively on the **70B to 700B parameter range**.
+*   **Why 70B?**: This is the threshold where deployment shifts from "hobbyist/single-GPU" to "enterprise/infrastructure challenge."
+*   **Why Cap at 700B?**: To maintain production focus, excluding experimental ultra-large models that aren't yet viable for standard enterprise infrastructure.
 
-## 🔄 The "Virtuous Loop" UX Pattern
-Our goal is to create a circular navigation flow that answers three fundamental questions:
-1.  **Discovery**: "What models are available and what are their specs?" → **Model Explorer**
-2.  **Estimation**: "What resources do these models actually need?" → **Calculator Hub**
-3.  **Validation**: "Does my specific hardware meet these needs?" → **Hardware Hub**
+## 🏢 Target Personas
+1.  **The Enterprise Architect**: Planning multi-node clusters for sovereign AI deployments (DeepSeek-V3, Llama 405B).
+2.  **The AI Product Manager**: Matching model capabilities to viable hardware pricing for server + software bundles.
+3.  **The ML Researcher**: Analyzing architectural efficiency (MoE vs Dense) and memory bandwidth bottlenecks.
+
+## 🔄 The "Deployment Journey" UX Pattern
+Our navigation flow mirrors the real-world procurement cycle:
+1.  **Discovery**: "What models are viable?" → **Model Browser** (Vendor & Tiered views).
+2.  **Estimation**: "What specific resources are required?" → **Sizing Engine** (Calculator).
+3.  **Validation**: "Will this specific hardware configuration work?" → **Hardware Hub**.
+4.  **Persona Scenarios**: "How does this look for my team?" → **Deployment Guides**.
 
 ## 🛡️ Non-Negotiable Pillars
-*   **Open-Source Only**: Focus on models that can be deployed on private infrastructure (Qwen, Llama, DeepSeek).
-*   **Privacy-First**: Zero-telemetry, zero-API architecture. User workloads never leave the browser.
-*   **Multi-GPU by Default**: Moving away from "single-GPU thinking" to realistic "cluster/node thinking" (1-72 GPUs).
-*   **Automation-Driven**: Automated model specification fetching to keep pace with the rapidly evolving LLM landscape.
+*   **Open-Source Only**: Focus on models deployable on private infrastructure.
+*   **Privacy-First**: Zero-telemetry, 100% browser-local computation.
+*   **High-Density Metrics**: Prioritizing **Memory Bandwidth (GB/s)** and **Tokens/Second** over raw TFLOPS.
+*   **Bilingual by Default**: Full English/Chinese support for global infrastructure teams.

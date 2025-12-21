@@ -1,64 +1,27 @@
 ---
 name: Insights Index
-description: Navigation for patterns, architecture, and lessons
-last_updated: 2025-12-10
+description: Knowledge hierarchy for Resource Physics and Architecture
+last_updated: 2025-12-21
 ---
 
 # Insights Index
 
-This directory contains higher-level knowledge: design patterns, architectural decisions, 
-and lessons learned from development and validation.
+This directory contains the intellectual property of the project: the mathematical rationale and design choices that differentiate this Deployment Planner from simple calculators.
 
-## Available Categories
+## 📚 Knowledge Areas
 
-### `architecture.md`
-**Key architectural decisions and rationale**
-- Why serverless/offline?
-- Why vanilla JS (no framework)?
-- Why no build system?
-- Data flow pattern choices
+### 1. [Resource Physics](physics.md)
+**The "Why" behind the numbers.**
+*   VRAM vs Bandwidth vs Compute bottlenecks.
+*   The math of the **70B Inflection Point**.
+*   Hardware tiering logic (<24G, 24-80G, >80G).
 
-**Load when**: Considering major refactors, explaining design to new contributors
+### 2. [Architecture Decisions](architecture.md)
+**The rationale for technology choices.**
+*   Vanilla JS vs Frameworks (Portability and Longevity).
+*   Shared Logic Engines (Syncing Drawer, Browser, and Calculator).
+*   State Persistence via URL and LocalStorage.
 
----
-
-### `physics.md`
-**LLM inference physics and formula validation**
-- Transformer forward pass math (FLOPs, memory, bandwidth)
-- Prefill vs decode bottlenecks
-- MoE optimization patterns
-- Validation examples (Llama 70B, DeepSeek-V3)
-- Known limitations and assumptions
-
-**Load when**: Updating calculation formulas, debugging estimates, understanding bottlenecks
-
----
-
-### `patterns.md` (Future)
-**Reusable code patterns established in project**
-- Event-driven reactive updates
-- Preset override pattern
-- Translation system pattern
-- Pure function calculator pattern
-
-**Load when**: Implementing similar patterns elsewhere, refactoring
-
----
-
-### `lessons.md` (Future)
-**Debugging lessons and anti-patterns**
-- Common pitfalls
-- Performance gotchas
-- Browser compatibility issues
-- Edge cases discovered
-
-**Load when**: Troubleshooting, onboarding new developers
-
-## Usage Pattern
-
-**Quick lookup**: Read this index to find relevant category
-
-**Deep dive**: Load specific insight file for detailed knowledge
-
-**Cross-reference**: Insight files link to relevant module/integration docs
-
+## 🎯 Usage Pattern
+*   **Engineering**: Consult `architecture.md` before adding new pages or heavy libraries.
+*   **Methodology**: Consult `physics.md` when refining estimation formulas for new architectures (e.g., MoE scaling).

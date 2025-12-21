@@ -1,129 +1,38 @@
 ---
 name: Configuration System
-description: Centralized config for data pipeline and vendor management
-last_updated: 2025-12-20
+description: Whitelist strategy and pipeline constraints
+last_updated: 2025-12-21
 ---
 
 # Configuration System
 
-## 📋 Purpose
+## 📋 Strategic Alignment
 
-The `scripts/config.json` file serves as the **single source of truth** for data pipeline parameters, eliminating hardcoded values scattered across the codebase.
+The `scripts/config.json` file is the **governance layer** of the platform. It ensures that the model browser remains professional by enforcing strict exclusivity for Tier-1 vendors.
 
-## 🎛️ Configuration Schema
+## 🎛️ Governance Schema
 
-### File Location
-`scripts/config.json`
+| Key | Strategic Logic |
+| :--- | :--- |
+| `vendors` | Exclusive whitelist of 8 organizations (Google, Anthropic, OpenAI, Qwen, DeepSeek, NVIDIA, Apple, XiaomiMiMo). |
+| `params.min` (70) | The "Enterprise Threshold": Where deployment requires specialized infrastructure. |
+| `params.max` (700) | The "Viability Limit": Excludes experimental models that lack production hardware targets. |
+| `cutoffDays` (730) | The "Stability Window": Limits models to the last 24 months to ensure architecture relevance. |
 
-### Structure
-```yaml
-params:
-  min: 70    # Minimum model size (billions)
-  max: 700   # Maximum model size (billions)
+## 🏢 Exclusivity Rationale
+*   **Quality Control**: Community fine-tunes are intentionally excluded to maintain a dataset of models with "stated" performance benchmarks.
+*   **Clean Discovery**: Eliminates noise from 1000+ low-volume repos, focusing only on what global teams actually procurement.
 
-cutoffDays: 730  # Time window for model releases
+## 🔄 Integration Workflow
 
-vendors: [...]   # Exclusive vendor whitelist
+### 1. The Build-Time Probe
+The `fetch-models.js` script uses the config to drive a two-stage enrichment process:
+1.  **Stage 1**: Query HF list API for organizations in the whitelist.
+2.  **Stage 2**: Perform individual probes for architecture (config.json) and weight metadata (safetensors).
 
-vendorQueryLimits:
-  Qwen: 200      # Per-vendor API query limit overrides
-  default: 100   # Default for vendors not specified
-```
+### 2. Manual Overrides (`data/overrides.json`)
+Used as a **Corrective Layer** for gated models (e.g., Llama 405B) or cases where HF metadata is missing layers/hidden size.
 
-## 🏢 Vendor Whitelist Strategy
-
-### Current Vendors (8 Tier-1 Only)
-```
-google
-anthropic
-openai
-Qwen
-deepseek-ai
-nvidia
-apple
-XiaomiMiMo
-```
-
-### Rationale for Exclusivity
-- **Quality Control**: Only tier-1 enterprise vendors with verified track records
-- **Clean Dataset**: No community fine-tunes or experimental forks
-- **Procurement Focus**: These are the vendors enterprise teams actually evaluate
-- **Reduced Noise**: Eliminates 30+ low-volume organizations
-
-### Adding a New Vendor
-1. Add to `vendors` array in `config.json`
-2. Optionally set query limit in `vendorQueryLimits`
-3. Run `node scripts/fetch-models.js`
-
-## 📊 Parameter Range Logic
-
-### Why 70-700B?
-
-**Lower Bound (70B)**:
-- Captures flagship 72B models (Qwen 2.5, Llama 3)
-- Industry standard for "large enterprise models"
-- Practical threshold for multi-GPU deployment
-
-**Upper Bound (700B)**:
-- Excludes experimental massive MoE (>1000B total params)
-- Focuses on production-ready models
-- Avoids models with impractical resource requirements
-
-### Adjusting the Range
-Edit `params.min` and `params.max` in `config.json` based on:
-- Target hardware capacity (e.g., lower to 60B for smaller clusters)
-- Use case focus (e.g., raise to 100B for datacenter-only planning)
-
-## 🔄 Pipeline Integration
-
-### How fetch-models.js Uses Config
-
-```mermaid
-graph TD
-    A[Load scripts/config.json] --> B{Validate Config}
-    B -->|Valid| C[Extract vendors array]
-    B -->|Invalid| Z[Exit with error]
-    C --> D[Generate API queries for each vendor]
-    D --> E[Fetch model lists]
-    E --> F[Filter by param_range + time_window]
-    F --> G[Individual fetch for safetensors]
-    G --> H[Merge with overrides.json]
-    H --> I[Write data/models.json]
-```
-
-### Key Interfaces
-
-**Input Contract**:
-- `config.vendors`: Array of strings (organization names on HF)
-- `config.params.min`: Number (in billions)
-- `config.params.max`: Number (in billions)
-- `config.cutoffDays`: Number (days to look back)
-
-**Output Impact**:
-- `data/models.json` → metadata.vendors reflects config
-- `data/models.json` → metadata.paramRange reflects config
-- `data/models.json` → metadata.filter human-readable summary
-
-## 🛡️ Override System Integration
-
-### When to Use Overrides
-- **Gated Models**: Meta's Llama 3.1 405B requires HF authentication
-- **API Failures**: Temporary HF outages for specific repos
-- **Manual Corrections**: Models with incorrect safetensors metadata
-
-### Override Priority
-The pipeline prioritizes overrides:
-```
-1. data/overrides.json (manual_override)
-2. HF safetensors API (safetensors)
-3. README.md parsing (stated)
-4. Physics calculation (estimated)
-```
-
-## 📝 Configuration Best Practices
-
-1. **Document Vendor Choices**: Add comments explaining why each vendor is included
-2. **Version Control**: Commit config.json changes with explanation
-3. **Regular Review**: Audit vendor list quarterly to add/remove based on market changes
-4. **Test Before Commit**: Run fetch script locally to verify changes don't break pipeline
-
+## 🛡️ Best Practices
+1.  **Vendor Audits**: Review the `vendors` list quarterly to add emerging Tier-1 players (e.g., recent additions of Apple and Xiaomi).
+2.  **Range Stability**: Changing the `params.min` threshold significantly impacts the **Hardware Tiering** view on the homepage.

@@ -40,6 +40,6 @@ last_updated: 2025-12-10
 - **Peak TFLOPS**: Maximum theoretical compute throughput
 
 ## 📚 Go Deeper
-- **Inference physics**: See `../insights/physics.md`
-- **Calculation formulas**: See `../modules/calculator/interface.md`
+- **Resource Physics**: See `../insights/physics.md`
+- **Site Navigation**: See `system_overview.md`
 

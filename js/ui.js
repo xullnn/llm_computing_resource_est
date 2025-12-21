@@ -196,14 +196,58 @@ async function fetchDynamicData() {
 
 function populatePresetSelect() {
   const sel = byId("modelPreset");
+  if (!sel) return;
+  const currentVal = sel.value;
   sel.innerHTML = "";
-  MODEL_PRESETS.forEach((m, idx) => {
-    const opt = document.createElement("option");
-    opt.value = m.id;
-    opt.textContent = `${m.provider} · ${m.name}`;
-    sel.appendChild(opt);
-    if (idx === 0) sel.value = m.id;
+  
+  // 1. Group models by provider
+  const groups = {};
+  MODEL_PRESETS.forEach(m => {
+    const provider = m.provider || "Other";
+    if (!groups[provider]) groups[provider] = [];
+    groups[provider].push(m);
   });
+  
+  // 2. Sort providers alphabetically
+  const sortedProviders = Object.keys(groups).sort();
+  const activeText = t("activeLabel") || "active";
+  
+  sortedProviders.forEach(provider => {
+    const optgroup = document.createElement("optgroup");
+    // Normalize vendor names for professional display
+    optgroup.label = provider.replace('-ai', '').replace('Meta-', '').toUpperCase();
+    
+    // 3. Sort models within provider by size (descending for flagships first)
+    const models = groups[provider].sort((a, b) => b.paramsB - a.paramsB);
+    
+    models.forEach(m => {
+      const opt = document.createElement("option");
+      opt.value = m.id;
+      
+      // 4. Create High-Density Label: Name (Total B / Active B)
+      const total = m.paramsB < 1 ? m.paramsB.toFixed(1) : Math.round(m.paramsB);
+      let label = `${m.name} (${total}B`;
+      
+      // Show MoE active params if they differ from total
+      if (m.activeParamsB && Math.round(m.activeParamsB) !== Math.round(m.paramsB)) {
+        const active = m.activeParamsB < 1 ? m.activeParamsB.toFixed(1) : Math.round(m.activeParamsB);
+        label += ` / ${active}B ${activeText}`;
+      }
+      label += `)`;
+      
+      opt.textContent = label;
+      optgroup.appendChild(opt);
+    });
+    
+    sel.appendChild(optgroup);
+  });
+
+  // 5. Restore selection or set default
+  if (currentVal && MODEL_PRESETS.some(m => m.id === currentVal)) {
+    sel.value = currentVal;
+  } else if (MODEL_PRESETS.length > 0) {
+    sel.value = MODEL_PRESETS[0].id;
+  }
 }
 
 function applyPreset(preset) {
@@ -929,6 +973,36 @@ function initAdvancedToggles() {
   }
 }
 
+function initWorkloadPresets() {
+  const presets = {
+    low: { prompt: 1000, new: 200, users: 1, tps: 10, ttft: 1000 },
+    medium: { prompt: 5000, new: 1000, users: 1, tps: 20, ttft: 1500 },
+    high: { prompt: 32000, new: 2000, users: 8, tps: 30, ttft: 2000 }
+  };
+
+  document.querySelectorAll('.workload-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const presetKey = btn.getAttribute('data-preset');
+      const data = presets[presetKey];
+      if (!data) return;
+
+      // Update inputs
+      byId('promptTokens').value = data.prompt;
+      byId('newTokens').value = data.new;
+      byId('batchSize').value = data.users;
+      byId('targetTps').value = data.tps;
+      byId('ttftMs').value = data.ttft;
+
+      // Update UI state
+      document.querySelectorAll('.workload-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Re-calculate
+      computeAndRender();
+    });
+  });
+}
+
 async function init() {
   // Check for URL parameters first
   const urlParams = getURLParams();
@@ -977,7 +1051,13 @@ async function init() {
   byId("modelPreset").addEventListener("change", handlePresetSelect);
 
   document.querySelectorAll("input, select").forEach((el) => {
-    el.addEventListener("input", computeAndRender);
+    el.addEventListener("input", () => {
+      // Clear workload preset active state if a workload input is changed
+      if (['promptTokens', 'newTokens', 'batchSize', 'targetTps', 'ttftMs'].includes(el.id)) {
+        document.querySelectorAll('.workload-btn').forEach(b => b.classList.remove('active'));
+      }
+      computeAndRender();
+    });
     el.addEventListener("change", computeAndRender);
   });
 
@@ -993,6 +1073,9 @@ async function init() {
   
   // Initialize advanced toggles
   initAdvancedToggles();
+  
+  // Initialize workload presets
+  initWorkloadPresets();
   
   // Initialize hardware picker
   initHardwarePicker();
