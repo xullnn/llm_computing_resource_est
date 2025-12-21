@@ -853,7 +853,8 @@ function renderMetadata(metadata) {
         ${t('metadataLastUpdated')} ${date.toLocaleDateString()} | 
         ${metadata.count} ${t('metadataModels')} | 
         ${trendingInfo} | 
-        ${t('metadataSource')} ${t('metadataSourceValue')}
+        ${t('metadataSource')} ${t('metadataSourceValue')} | 
+        <a href="about.html" style="color: var(--accent); text-decoration: none;">About</a>
     `;
 }
 

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | LLM Deployment Planner</title>
+    <meta name="description" content="Data sources, inclusion criteria, and methodology for the LLM deployment planning tool.">
+    <link rel="canonical" href="https://llmrunnable.com/about.html">
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .about-page {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem;
+        }
+        
+        .about-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .about-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .about-lead {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.6;
+        }
+        
+        /* Data Specs Grid */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0 3rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .spec-item dt {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+        
+        .spec-item dd {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+        
+        /* FAQ Section */
+        .about-faq {
+            margin-top: 3rem;
+        }
+        
+        .about-faq h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .faq-item {
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .faq-item summary {
+            padding: 1.25rem 1.5rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+        
+        .faq-item summary::before {
+            content: '▸';
+            display: inline-block;
+            margin-right: 0.75rem;
+            transition: transform 0.2s ease;
+            color: var(--accent);
+        }
+        
+        .faq-item[open] summary::before {
+            transform: rotate(90deg);
+        }
+        
+        .faq-item summary:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem 3.25rem;
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1.7;
+        }
+        
+        .faq-answer p {
+            margin: 0 0 1rem 0;
+        }
+        
+        .faq-answer p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .faq-answer ul {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+        
+        .faq-answer li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .faq-answer strong {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .faq-answer code {
+            background: rgba(124, 58, 237, 0.15);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.95);
+        }
+        
+        @media (max-width: 768px) {
+            .about-hero h1 {
+                font-size: 1.875rem;
+            }
+            
+            .spec-grid {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 1rem;
+            }
+            
+            .faq-answer {
+                padding-left: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="global-nav">
+        <a href="/" class="nav-brand">
+            <span class="nav-icon">🧮</span>
+            <span class="nav-logo">LLM Sizer</span>
+        </a>
+        <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="/" class="nav-item" data-i18n="navModels">Models</a>
+            <a href="calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+            <a href="hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+            <a href="for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
+        </div>
+        <div class="nav-actions">
+            <label class="field compact language-switch" style="margin-bottom: 0;">
+                <select id="langSelect">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                </select>
+            </label>
+        </div>
+    </nav>
+
+    <div class="about-page">
+        <div class="about-hero">
+            <h1 data-i18n="aboutTitle">About</h1>
+            <p class="about-lead" data-i18n="aboutLead">
+                Technical documentation for the model database and calculation engine.
+            </p>
+        </div>
+
+        <!-- Data Specifications -->
+        <section class="spec-grid">
+            <div class="spec-item">
+                <dt data-i18n="specModelCount">Model Count</dt>
+                <dd>75</dd>
+            </div>
+            <div class="spec-item">
+                <dt data-i18n="specParamRange">Parameter Range</dt>
+                <dd>70B - 700B</dd>
+            </div>
+            <div class="spec-item">
+                <dt data-i18n="specVendors">Vendors</dt>
+                <dd>8</dd>
+            </div>
+            <div class="spec-item">
+                <dt data-i18n="specUpdateFreq">Update Frequency</dt>
+                <dd data-i18n="specUpdateFreqValue">Mon/Wed/Fri</dd>
+            </div>
+            <div class="spec-item">
+                <dt data-i18n="specDataSource">Data Source</dt>
+                <dd>Hugging Face</dd>
+            </div>
+            <div class="spec-item">
+                <dt data-i18n="specTimeWindow">Time Window</dt>
+                <dd data-i18n="specTimeWindowValue">24 months</dd>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="about-faq">
+            <h2 data-i18n="faqTitle">Frequently Asked Questions</h2>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqWhyParamRange">Why only 70B-700B models?</summary>
+                <div class="faq-answer">
+                    <p data-i18n="faqWhyParamRangeAnswer">
+                        70B is the threshold where deployment becomes an infrastructure challenge, 
+                        requiring multiple consumer GPUs or datacenter hardware. 700B excludes 
+                        experimental ultra-large MoE models that aren't production-ready.
+                    </p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqWhyVendors">Why only 8 vendors?</summary>
+                <div class="faq-answer">
+                    <p data-i18n="faqWhyVendorsAnswer">
+                        We focus on tier-1 organizations (Google, Anthropic, OpenAI, Qwen, 
+                        DeepSeek, NVIDIA, Apple, XiaomiMiMo) with proven track records. This 
+                        excludes community fine-tunes and smaller research labs to maintain 
+                        quality standards.
+                    </p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqUpdateFrequency">How often is data updated?</summary>
+                <div class="faq-answer">
+                    <p data-i18n="faqUpdateFrequencyAnswer">
+                        Automatically 3 times per week (Monday, Wednesday, Friday at 02:00 UTC) 
+                        via GitHub Actions. Data is fetched from Hugging Face Hub API and 
+                        benchmarks are validated against Artificial Analysis.
+                    </p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqHowCalculated">How are requirements calculated?</summary>
+                <div class="faq-answer">
+                    <p><strong data-i18n="faqCalcVRAM">VRAM:</strong> <span data-i18n="faqCalcVRAMDesc">Model weights + KV cache + workspace overhead</span></p>
+                    <p><strong data-i18n="faqCalcBandwidth">Bandwidth:</strong> <span data-i18n="faqCalcBandwidthDesc">Memory read/write per token (decode phase is memory-bound)</span></p>
+                    <p><strong data-i18n="faqCalcPerformance">Performance:</strong> <span data-i18n="faqCalcPerformanceDesc">Based on GPU memory bandwidth and model size</span></p>
+                    <p><strong data-i18n="faqCalcDefaults">Default scenario:</strong> <span data-i18n="faqCalcDefaultsDesc">8K context, batch size 1, INT8/BF16 precision</span></p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqWhatExcluded">What's NOT included?</summary>
+                <div class="faq-answer">
+                    <ul>
+                        <li data-i18n="faqExcludeSmall">Models below 70B (different deployment profile)</li>
+                        <li data-i18n="faqExcludeQuant">Pre-quantized variants (GPTQ, AWQ, GGUF - we calculate quantization)</li>
+                        <li data-i18n="faqExcludeFinetunes">Community fine-tunes (quality varies)</li>
+                        <li data-i18n="faqExcludeTraining">Training costs (inference only)</li>
+                        <li data-i18n="faqExcludeOld">Models older than 24 months (superseded by newer versions)</li>
+                    </ul>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqAccuracy">How accurate are the calculations?</summary>
+                <div class="faq-answer">
+                    <p data-i18n="faqAccuracyAnswer">
+                        Calculations are physics-based estimates using transformer architecture 
+                        formulas, not empirical benchmarks. Actual performance varies based on 
+                        inference framework, kernel optimizations, and hardware configuration. 
+                        Typical accuracy: ±10-15% for VRAM, ±20-30% for performance.
+                    </p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqParameterSource">How are parameter counts determined?</summary>
+                <div class="faq-answer">
+                    <p data-i18n="faqParameterSourceAnswer">
+                        Priority order: (1) Safetensors metadata, (2) Model card statements, 
+                        (3) Physics-based estimation from architecture, (4) Manual verification. 
+                        Each model displays its data source.
+                    </p>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary data-i18n="faqPrivacy">Is my data collected?</summary>
+                <div class="faq-answer">
+                    <p data-i18n="faqPrivacyAnswer">
+                        No. All calculations run entirely in your browser using JavaScript. 
+                        No data is sent to servers, no analytics, no tracking. The site is 
+                        100% client-side.
+                    </p>
+                </div>
+            </details>
+        </section>
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/nav.js"></script>
+</body>
+</html>
+
