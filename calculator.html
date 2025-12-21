@@ -35,10 +35,10 @@
     <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
     <div class="nav-links" id="navLinks">
       <a href="/" class="nav-item" data-i18n="navModels">Models</a>
-      <a href="calculator.html" class="nav-item active" data-i18n="navCalculator">Calculator</a>
-      <a href="hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
-      <a href="for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
-      <a href="about.html" class="nav-item" data-i18n="navAbout">About</a>
+      <a href="/calculator.html" class="nav-item active" data-i18n="navCalculator">Calculator</a>
+      <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+      <a href="/for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
+      <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
     </div>
     <div class="nav-actions">
       <label class="field compact language-switch" style="margin-bottom: 0;">
@@ -212,16 +212,19 @@
     <section class="panel results">
       <div class="results-header">
         <h2 data-i18n="sectionResults">Results</h2>
-        <label class="field compact">
-          <span data-i18n="computeUnit">Compute unit</span>
-          <select id="computeUnit">
-            <option value="tflops">TFLOPS</option>
-            <option value="gflops">GFLOPS</option>
-            <option value="pflops">PFLOPS</option>
-            <option value="tops_int8">TOPS (INT8)</option>
-            <option value="tops_int4">TOPS (INT4)</option>
-          </select>
-        </label>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+          <a href="about.html" class="inline-link" style="font-size: 0.85rem; opacity: 0.7;">View Methodology</a>
+          <label class="field compact">
+            <span data-i18n="computeUnit">Compute unit</span>
+            <select id="computeUnit">
+              <option value="tflops">TFLOPS</option>
+              <option value="gflops">GFLOPS</option>
+              <option value="pflops">PFLOPS</option>
+              <option value="tops_int8">TOPS (INT8)</option>
+              <option value="tops_int4">TOPS (INT4)</option>
+            </select>
+          </label>
+        </div>
       </div>
       
       <div class="verdict-card" id="verdictCard"></div>
@@ -234,6 +237,11 @@
       </div>
       <div class="hardware-recommendations" id="hardwareRecommendations"></div>
       <div class="assumptions" id="assumptions"></div>
+      <div style="text-align: center; margin-top: 1rem;">
+        <p style="font-size: 0.8rem; opacity: 0.5;">
+          Calculations are physics-based estimates. See our <a href="about.html" style="color: inherit; text-decoration: underline;">Data Inclusion Policy</a> for details.
+        </p>
+      </div>
     </section>
   </main>
 

@@ -27,7 +27,15 @@ const I18N = {
     
     // Models Page - View Toggle
     viewVendor: "By Vendor",
-    viewHardware: "By Hardware",
+    viewHardware: "By Hardware Tier",
+    
+    // Hardware Tiers
+    tierConsumerTitle: "Consumer Tier",
+    tierConsumerDesc: "Fits on common consumer GPUs (< 24GB VRAM)",
+    tierWorkstationTitle: "Workstation Tier",
+    tierWorkstationDesc: "Professional GPUs or single-node workstation (24GB - 80GB)",
+    tierInfrastructureTitle: "Infrastructure Tier",
+    tierInfrastructureDesc: "Multi-GPU clusters or datacenter scale (> 80GB)",
     
     // Models Page - Filters
     filtersBtn: "Filters",
@@ -45,6 +53,10 @@ const I18N = {
     filterAllOrgs: "All Orgs",
     filterSize: "Size",
     filterAnySize: "Any Size",
+    "70-100": "70-100B",
+    "100-200": "100-200B",
+    "200-400": "200-400B",
+    "400+": "400B+",
     filterSortBy: "Sort By",
     sortNewest: "Newest First",
     sortLargest: "Largest First",
@@ -232,7 +244,7 @@ const I18N = {
     ],
     
     // About Page
-    aboutTitle: "About",
+    aboutTitle: "About & Methodology",
     aboutLead: "Technical documentation for the model database and calculation engine.",
     specModelCount: "Model Count",
     specParamRange: "Parameter Range",
@@ -319,7 +331,15 @@ const I18N = {
     
     // Models Page - View Toggle
     viewVendor: "按厂商",
-    viewHardware: "按硬件",
+    viewHardware: "按硬件等级",
+    
+    // Hardware Tiers
+    tierConsumerTitle: "消费级 (Consumer)",
+    tierConsumerDesc: "适用于常见消费级 GPU (< 24GB 显存)",
+    tierWorkstationTitle: "工作站级 (Workstation)",
+    tierWorkstationDesc: "专业级 GPU 或单节点工作站 (24GB - 80GB)",
+    tierInfrastructureTitle: "基础设施级 (Infrastructure)",
+    tierInfrastructureDesc: "多卡集群或数据中心规模 (> 80GB)",
     
     // Models Page - Filters
     filtersBtn: "筛选器",
@@ -337,6 +357,10 @@ const I18N = {
     filterAllOrgs: "所有厂商",
     filterSize: "模型大小",
     filterAnySize: "任意大小",
+    "70-100": "70-100B",
+    "100-200": "100-200B",
+    "200-400": "200-400B",
+    "400+": "400B+",
     filterSortBy: "排序方式",
     sortNewest: "最新优先",
     sortLargest: "最大优先",
@@ -522,7 +546,7 @@ const I18N = {
     ],
     
     // About Page
-    aboutTitle: "关于",
+    aboutTitle: "关于 & 方法论",
     aboutLead: "模型数据库和计算引擎的技术文档。",
     specModelCount: "模型数量",
     specParamRange: "参数范围",
@@ -589,7 +613,15 @@ const I18N = {
 };
 
 // Global language state
-let currentLang = localStorage.getItem('preferred_lang') || 'en';
+window.currentLang = 'en';
+try {
+  window.currentLang = localStorage.getItem('preferred_lang') || 'en';
+} catch (e) {
+  console.warn('Failed to read language preference:', e);
+}
+
+// Shortcut for the global state
+let currentLang = window.currentLang;
 
 /**
  * Translation function with placeholder replacement
@@ -598,7 +630,7 @@ let currentLang = localStorage.getItem('preferred_lang') || 'en';
  * @returns {string} Translated text
  */
 function t(key, replacements = {}) {
-  const dict = I18N[currentLang] || I18N.en;
+  const dict = I18N[window.currentLang] || I18N.en;
   let text = dict[key] || I18N.en[key] || key;
   
   // Replace placeholders like {n}, {vendor}, {speed}, {raw}
@@ -622,7 +654,18 @@ function applyStaticTranslations() {
       if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
         el.placeholder = translation;
       } else {
-        el.textContent = translation;
+        // If element has dynamic children (like the count span), 
+        // we should only update the text node to avoid wiping children.
+        // For simplicity, we check if there's a .count span.
+        const countSpan = el.querySelector('.count');
+        if (countSpan) {
+          // Preserve the count span
+          const temp = countSpan.cloneNode(true);
+          el.textContent = translation + ' '; // Space for separation
+          el.appendChild(temp);
+        } else {
+          el.textContent = translation;
+        }
       }
     }
   });
@@ -630,7 +673,7 @@ function applyStaticTranslations() {
   // Update compute unit dropdown options (calculator page specific)
   const computeUnitSelect = document.getElementById('computeUnit');
   if (computeUnitSelect) {
-    const unitOptions = (I18N[currentLang]?.computeUnitOptions || I18N.en.computeUnitOptions);
+    const unitOptions = (I18N[window.currentLang]?.computeUnitOptions || I18N.en.computeUnitOptions);
     Array.from(computeUnitSelect.options).forEach((opt) => {
       if (unitOptions[opt.value]) {
         opt.textContent = unitOptions[opt.value];
@@ -641,7 +684,7 @@ function applyStaticTranslations() {
   // Update language selector value
   const langSelects = document.querySelectorAll('#langSelect');
   langSelects.forEach(select => {
-    select.value = currentLang;
+    select.value = window.currentLang;
   });
 }
 
@@ -655,8 +698,13 @@ function setLanguage(lang) {
     lang = 'en';
   }
   
-  currentLang = lang;
-  localStorage.setItem('preferred_lang', lang);
+  window.currentLang = lang;
+  currentLang = lang; // Update local shortcut too
+  try {
+    localStorage.setItem('preferred_lang', lang);
+  } catch (e) {
+    console.warn('Failed to save language preference:', e);
+  }
   
   // Update static elements
   applyStaticTranslations();
@@ -673,8 +721,13 @@ function initI18n() {
   const params = new URLSearchParams(window.location.search);
   const langParam = params.get('lang');
   if (langParam && I18N[langParam]) {
+    window.currentLang = langParam;
     currentLang = langParam;
-    localStorage.setItem('preferred_lang', currentLang);
+    try {
+      localStorage.setItem('preferred_lang', window.currentLang);
+    } catch (e) {
+      // ignore
+    }
   }
   
   // Apply initial translations
@@ -697,12 +750,15 @@ function initI18n() {
     }
     
     // Set current language
-    select.value = currentLang;
+    select.value = window.currentLang;
     
-    // Add change listener
-    select.addEventListener('change', (e) => {
-      setLanguage(e.target.value);
-    });
+    // Add change listener (only once)
+    if (!select.dataset.hasListener) {
+      select.addEventListener('change', (e) => {
+        setLanguage(e.target.value);
+      });
+      select.dataset.hasListener = "true";
+    }
   });
 }
 

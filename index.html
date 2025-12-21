@@ -92,10 +92,10 @@
         <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
         <div class="nav-links" id="navLinks">
             <a href="/" class="nav-item active" data-i18n="navModels">Models</a>
-            <a href="calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
-            <a href="hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
-            <a href="for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
-            <a href="about.html" class="nav-item" data-i18n="navAbout">About</a>
+            <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+            <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+            <a href="/for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
+            <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
         </div>
         <div class="nav-actions">
             <label class="field compact language-switch" style="margin-bottom: 0;">
@@ -201,53 +201,53 @@
         <div class="filter-group" id="filterGroup" style="display: none;">
             <!-- Row 1: Recency -->
             <div class="filter-row">
-                <span class="filter-label">Recency</span>
+                <span class="filter-label" data-i18n="filterRecency">Recency</span>
                 <div class="filter-tags" data-group="recency">
-                    <button class="filter-tag active" data-val="all">All Time</button>
-                    <button class="filter-tag" data-val="1">Last Month</button>
-                    <button class="filter-tag" data-val="3">Last 3 Months</button>
-                    <button class="filter-tag" data-val="6">Last 6 Months</button>
-                    <button class="filter-tag" data-val="12">Last Year</button>
+                    <button class="filter-tag active" data-val="all" data-i18n="filterAllTime">All Time</button>
+                    <button class="filter-tag" data-val="1" data-i18n="filterLastMonth">Last Month</button>
+                    <button class="filter-tag" data-val="3" data-i18n="filterLast3Months">Last 3 Months</button>
+                    <button class="filter-tag" data-val="6" data-i18n="filterLast6Months">Last 6 Months</button>
+                    <button class="filter-tag" data-val="12" data-i18n="filterLastYear">Last Year</button>
                 </div>
             </div>
 
             <!-- Row 2: Architecture -->
             <div class="filter-row">
-                <span class="filter-label">Architecture</span>
+                <span class="filter-label" data-i18n="filterArchitecture">Architecture</span>
                 <div class="filter-tags" data-group="architecture">
-                    <button class="filter-tag active" data-val="all">All Types</button>
-                    <button class="filter-tag" data-val="dense">Dense</button>
-                    <button class="filter-tag" data-val="moe">MoE</button>
+                    <button class="filter-tag active" data-val="all" data-i18n="filterAllTypes">All Types</button>
+                    <button class="filter-tag" data-val="dense" data-i18n="filterDense">Dense</button>
+                    <button class="filter-tag" data-val="moe" data-i18n="filterMoe">MoE</button>
                 </div>
             </div>
 
             <!-- Row 3: Organization -->
             <div class="filter-row" id="orgFilterRow">
-                <span class="filter-label">Organization</span>
+                <span class="filter-label" data-i18n="filterOrganization">Organization</span>
                 <div class="filter-tags" data-group="org" id="orgFilterTags">
-                    <button class="filter-tag active" data-val="all">All Orgs</button>
+                    <button class="filter-tag active" data-val="all" data-i18n="filterAllOrgs">All Orgs</button>
                 </div>
             </div>
 
             <!-- Row 4: Size -->
             <div class="filter-row">
-                <span class="filter-label">Size</span>
+                <span class="filter-label" data-i18n="filterSize">Size</span>
                 <div class="filter-tags" data-group="size">
-                    <button class="filter-tag active" data-val="all">Any Size</button>
-                    <button class="filter-tag" data-val="70-100">70-100B</button>
-                    <button class="filter-tag" data-val="100-200">100-200B</button>
-                    <button class="filter-tag" data-val="200-400">200-400B</button>
-                    <button class="filter-tag" data-val="400+">400B+</button>
+                    <button class="filter-tag active" data-val="all" data-i18n="filterAnySize">Any Size</button>
+                    <button class="filter-tag" data-val="70-100" data-i18n="70-100">70-100B</button>
+                    <button class="filter-tag" data-val="100-200" data-i18n="100-200">100-200B</button>
+                    <button class="filter-tag" data-val="200-400" data-i18n="200-400">200-400B</button>
+                    <button class="filter-tag" data-val="400+" data-i18n="400+">400B+</button>
                 </div>
             </div>
 
             <!-- Row 5: Sort -->
             <div class="filter-row">
-                <span class="filter-label">Sort By</span>
+                <span class="filter-label" data-i18n="filterSortBy">Sort By</span>
                 <div class="filter-tags" data-group="sort">
-                    <button class="filter-tag active" data-val="newest">Newest First</button>
-                    <button class="filter-tag" data-val="largest">Largest First</button>
-                    <button class="filter-tag" data-val="popular">Most Popular</button>
+                    <button class="filter-tag active" data-val="newest" data-i18n="sortNewest">Newest First</button>
+                    <button class="filter-tag" data-val="largest" data-i18n="sortLargest">Largest First</button>
+                    <button class="filter-tag" data-val="popular" data-i18n="sortPopular">Most Popular</button>
                 </div>
             </div>
         </div>

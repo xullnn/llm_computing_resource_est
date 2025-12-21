@@ -3,32 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Compare model efficiency, estimate FLOPs, and plan compute budgets for LLM research. Physics-based calculator for ML researchers and engineers.">
-  <meta name="keywords" content="LLM FLOPs calculation, model efficiency, compute budget, transformer math, research planning">
-  <meta property="og:title" content="LLM Research & Efficiency Calculator">
-  <meta property="og:description" content="Compare models by FLOPs, KV cache, and bandwidth. Plan experiments before burning compute.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://llmrunnable.com/for/researchers">
-  <title>LLM Research & Efficiency Calculator | LLM Resource Sizer</title>
+  <meta name="description" content="Strategic research planning for LLM architecture efficiency and compute budgeting. Physics-based analysis for ML engineers.">
+  <title>Strategic Research Planner | LLM Resource Tool</title>
   <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
   <nav class="global-nav">
-    <a href="../" class="nav-brand">
+    <a href="/" class="nav-brand">
       <span class="nav-icon">🧮</span>
       <span class="nav-logo">LLM Sizer</span>
     </a>
     <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
     <div class="nav-links" id="navLinks">
-      <a href="../" class="nav-item">Models</a>
-      <a href="../calculator.html" class="nav-item">Calculator</a>
-      <a href="../hardware/" class="nav-item">Hardware</a>
-      <a href="../for/enterprise.html" class="nav-item active">Guides</a>
+      <a href="/" class="nav-item" data-i18n="navModels">Models</a>
+      <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+      <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+      <a href="/for/enterprise.html" class="nav-item active" data-i18n="navGuides">Guides</a>
+      <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
     </div>
     <div class="nav-actions">
       <label class="field compact language-switch" style="margin-bottom: 0;">
-        <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+        <select id="langSelect">
           <option value="en">English</option>
+          <option value="zh">中文</option>
         </select>
       </label>
     </div>
@@ -36,8 +33,8 @@
 
   <header class="hero" style="border-bottom: none;">
     <div class="header-content">
-      <h1 class="hero-title">Research comparisons</h1>
-      <p class="lede">Pre-configured scenarios for ML research</p>
+      <h1 class="hero-title">Strategic Research Planning</h1>
+      <p class="lede">Analyze architectural efficiency and model scaling bottlenecks</p>
     </div>
   </header>
   
@@ -71,9 +68,10 @@
   </section>
 
   <footer style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
-    <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to calculator</a>
+    <a href="../" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to models</a>
   </footer>
 
+  <script src="../js/i18n.js"></script>
   <script src="../js/nav.js"></script>
 </body>
 </html>

@@ -3,32 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Check if your RTX 4090, 3090, or Mac can run Llama, Mistral, Qwen, or other open LLMs locally. Free offline calculator for gamers and hobbyists.">
-  <meta name="keywords" content="run LLM locally, GPU requirements, RTX 4090 LLM, Mac LLM, gaming GPU AI">
-  <meta property="og:title" content="Can Your GPU Run This LLM? | LLM Resource Sizer">
-  <meta property="og:description" content="Find out if your gaming GPU or Mac can run the latest open-source LLMs—before you download.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://llmrunnable.com/for/hobbyists">
-  <title>Can Your GPU Run This LLM? | LLM Resource Sizer</title>
+  <meta name="description" content="Hardware sizing and deployment planning for running Llama, Qwen, and DeepSeek on consumer GPUs and Macs.">
+  <title>Consumer Deployment Planner | LLM Resource Tool</title>
   <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
   <nav class="global-nav">
-    <a href="../" class="nav-brand">
+    <a href="/" class="nav-brand">
       <span class="nav-icon">🧮</span>
       <span class="nav-logo">LLM Sizer</span>
     </a>
     <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
     <div class="nav-links" id="navLinks">
-      <a href="../" class="nav-item">Models</a>
-      <a href="../calculator.html" class="nav-item">Calculator</a>
-      <a href="../hardware/" class="nav-item">Hardware</a>
-      <a href="../for/enterprise.html" class="nav-item active">Guides</a>
+      <a href="/" class="nav-item" data-i18n="navModels">Models</a>
+      <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+      <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+      <a href="/for/enterprise.html" class="nav-item active" data-i18n="navGuides">Guides</a>
+      <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
     </div>
     <div class="nav-actions">
       <label class="field compact language-switch" style="margin-bottom: 0;">
-        <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+        <select id="langSelect">
           <option value="en">English</option>
+          <option value="zh">中文</option>
         </select>
       </label>
     </div>
@@ -36,16 +33,16 @@
 
   <header class="hero" style="border-bottom: none;">
     <div class="header-content">
-      <h1 class="hero-title">Can your GPU run it?</h1>
-      <p class="lede">Quick checks for common models on consumer hardware</p>
+      <h1 class="hero-title">Consumer Deployment Planning</h1>
+      <p class="lede">Verify hardware viability for 70B+ models on local infrastructure</p>
     </div>
   </header>
   
   <section class="landing-section">
     <div class="landing-grid">
-      <a href="/?preset=llama-3-8b&mode=local&prompt=8000&new=1000#calculator" class="card-landing">
-        <h3>Llama 3.1 8B on RTX 4090</h3>
-        <p>Can a single 4090 run Meta's 8B model with long context?</p>
+      <a href="/?preset=llama-3-70b&weight=int4#calculator" class="card-landing">
+        <h3>Llama 3 70B (Quantized)</h3>
+        <p>Determine if dual-RTX 3090/4090 setups can host 70B models for private use.</p>
       </a>
       <a href="/?preset=qwen-2.5-32b&mode=local&prompt=10000#calculator" class="card-landing">
         <h3>Qwen 2.5 32B on Mac Studio</h3>
@@ -71,10 +68,10 @@
   </section>
 
   <footer style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
-    <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to calculator</a>
+    <a href="../" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to models</a>
   </footer>
 
+  <script src="../js/i18n.js"></script>
   <script src="../js/nav.js"></script>
 </body>
 </html>
-

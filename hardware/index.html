@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Compare data center GPU and NPU specifications for LLM deployment. NVIDIA H100, Huawei Ascend, and more.">
-  <title>Hardware Hub — LLM Resource Sizer</title>
+  <title>Hardware Hub | LLM Resource Tool</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
     .hardware-hub {
@@ -211,20 +211,20 @@
 </head>
 <body>
   <nav class="global-nav">
-    <a href="../" class="nav-brand">
+    <a href="/" class="nav-brand">
       <span class="nav-icon">🧮</span>
       <span class="nav-logo">LLM Sizer</span>
     </a>
     <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
     <div class="nav-links" id="navLinks">
-      <a href="../" class="nav-item">Models</a>
-      <a href="../calculator.html" class="nav-item">Calculator</a>
-      <a href="../hardware/" class="nav-item active">Hardware</a>
-      <a href="../for/enterprise.html" class="nav-item">Guides</a>
+      <a href="/" class="nav-item" data-i18n="navModels">Models</a>
+      <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+      <a href="/hardware/" class="nav-item active" data-i18n="navHardware">Hardware</a>
+      <a href="/for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
+      <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
     </div>
     <div class="nav-actions">
       <label class="field compact language-switch" style="margin-bottom: 0;">
-        <span id="langLabel" style="display: none;">Language</span>
         <select id="langSelect">
           <option value="en">English</option>
           <option value="zh">中文</option>
@@ -235,24 +235,20 @@
   
   <div class="hardware-hub">
     <div class="hub-header">
-      <h1 id="pageTitle">Hardware Hub</h1>
+      <h1 id="pageTitle" data-i18n="navHardware">Hardware Hub</h1>
       <p id="pageDesc">Compare data center GPUs and NPUs for LLM deployment</p>
     </div>
     
     <div id="content" class="loading">Loading hardware data...</div>
   </div>
   
+  <script src="../js/i18n.js"></script>
   <script src="../js/nav.js"></script>
   <script>
-    let currentLang = 'en';
     let hardwareData = { nvidia: [], huawei: [] };
     
-    const I18N = {
+    const LOCAL_I18N = {
       en: {
-        langLabel: 'Language',
-        backLink: 'Back to Calculator',
-        pageTitle: 'Hardware Hub',
-        pageDesc: 'Compare data center GPUs and NPUs for LLM deployment',
         nvidiaTitle: 'NVIDIA Data Center GPUs',
         huaweiTitle: 'Huawei Ascend NPUs',
         testWithModel: 'Test with Model',
@@ -279,10 +275,6 @@
         statusDraft: '⚠️ Draft',
       },
       zh: {
-        langLabel: '语言',
-        backLink: '返回计算器',
-        pageTitle: '硬件中心',
-        pageDesc: '对比用于LLM部署的数据中心GPU和NPU',
         nvidiaTitle: 'NVIDIA 数据中心 GPU',
         huaweiTitle: '华为昇腾 NPU',
         testWithModel: '测试模型',
@@ -310,14 +302,15 @@
       }
     };
     
-    function t(key) {
-      return I18N[currentLang][key] || I18N.en[key] || key;
+    function lt(key) {
+      const lang = window.currentLang || 'en';
+      return LOCAL_I18N[lang]?.[key] || LOCAL_I18N.en[key] || key;
     }
     
-    function applyTranslations() {
-      // document.getElementById('langLabel').textContent = t('langLabel');
-      document.getElementById('pageTitle').textContent = t('pageTitle');
-      document.getElementById('pageDesc').textContent = t('pageDesc');
+    function applyLocalTranslations() {
+      const lang = window.currentLang || 'en';
+      const desc = lang === 'zh' ? '对比用于LLM部署的数据中心GPU和NPU' : 'Compare data center GPUs and NPUs for LLM deployment';
+      document.getElementById('pageDesc').textContent = desc;
     }
     
     let minVramFilter = null;
@@ -342,7 +335,6 @@
         hardwareData.nvidia = nvidiaData.hardware || [];
         hardwareData.huawei = huaweiData.hardware || [];
         
-        // Check for query parameters
         const params = getQueryParams();
         if (params.min_vram) {
           minVramFilter = params.min_vram;
@@ -370,12 +362,12 @@
       const content = `
         ${filterBanner}
         <div class="vendor-sections">
-          ${renderVendorSection('nvidia', t('nvidiaTitle'), hardwareData.nvidia)}
-          ${renderVendorSection('huawei', t('huaweiTitle'), hardwareData.huawei)}
+          ${renderVendorSection('nvidia', lt('nvidiaTitle'), hardwareData.nvidia)}
+          ${renderVendorSection('huawei', lt('huaweiTitle'), hardwareData.huawei)}
         </div>
         
         <div class="comparison-table">
-          <h2>${t('comparisonTitle')}</h2>
+          <h2>${lt('comparisonTitle')}</h2>
           ${renderComparisonTable()}
         </div>
       `;
@@ -406,7 +398,6 @@
       const isDraft = hw.verified_date === null || hw.notes?.includes('PLACEHOLDER');
       const status = isDraft ? 'draft' : hw.status;
       
-      // Check if hardware meets VRAM filter
       const meetsFilter = minVramFilter ? hw.vram_gb >= minVramFilter : true;
       const filterStyle = minVramFilter ? 
         (meetsFilter ? 'border-color: var(--success); box-shadow: 0 0 0 2px rgba(16,185,129,0.2);' : 'opacity: 0.4;') : '';
@@ -420,36 +411,36 @@
           </div>
           <div class="hw-card-specs">
             <div class="hw-spec">
-              <span class="hw-spec-label">${t('vram')}</span>
+              <span class="hw-spec-label">${lt('vram')}</span>
               <span class="hw-spec-value">${hw.vram_gb} GB</span>
             </div>
             <div class="hw-spec">
-              <span class="hw-spec-label">${t('bandwidth')}</span>
+              <span class="hw-spec-label">${lt('bandwidth')}</span>
               <span class="hw-spec-value">${hw.bandwidth_gbps} GB/s</span>
             </div>
             <div class="hw-spec">
-              <span class="hw-spec-label">${t('compute')}</span>
+              <span class="hw-spec-label">${lt('compute')}</span>
               <span class="hw-spec-value">${hw.bf16_tflops} TFLOPS</span>
             </div>
             <div class="hw-spec">
-              <span class="hw-spec-label">${t('tdp')}</span>
+              <span class="hw-spec-label">${lt('tdp')}</span>
               <span class="hw-spec-value">${hw.tdp_watts}W</span>
             </div>
             <div class="hw-spec">
-              <span class="hw-spec-label">${t('interconnect')}</span>
+              <span class="hw-spec-label">${lt('interconnect')}</span>
               <span class="hw-spec-value">${hw.interconnect}</span>
             </div>
             <div class="hw-spec">
-              <span class="hw-spec-label">${t('maxCards')}</span>
+              <span class="hw-spec-label">${lt('maxCards')}</span>
               <span class="hw-spec-value">${hw.max_cards_per_node}</span>
             </div>
           </div>
           <div class="hw-card-actions">
-            <button class="btn-calc" data-gpu="${hw.id}">${t('testWithModel')}</button>
-            <button class="btn-details" data-vendor="${vendor}" data-gpu="${hw.id}">${t('viewDetails')}</button>
+            <button class="btn-calc" data-gpu="${hw.id}">${lt('testWithModel')}</button>
+            <button class="btn-details" data-vendor="${vendor}" data-gpu="${hw.id}">${lt('viewDetails')}</button>
           </div>
           ${filterBadge}
-          ${isDraft ? '<div style="margin-top: 0.5rem; font-size: 0.8rem; color: #ef4444;">⚠️ ' + t('statusDraft') + '</div>' : ''}
+          ${isDraft ? '<div style="margin-top: 0.5rem; font-size: 0.8rem; color: #ef4444;">⚠️ ' + lt('statusDraft') + '</div>' : ''}
         </div>
       `;
     }
@@ -460,23 +451,22 @@
         ...hardwareData.huawei.map(hw => ({ ...hw, vendor: 'Huawei' }))
       ];
       
-      // Sort by VRAM descending
       allHardware.sort((a, b) => b.vram_gb - a.vram_gb);
       
       return `
         <table>
           <thead>
             <tr>
-              <th>${t('colVendor')}</th>
-              <th>${t('colName')}</th>
-              <th>${t('colVRAM')}</th>
-              <th>${t('colBandwidth')}</th>
-              <th>${t('colComputeBF16')}</th>
-              <th>${t('colComputeFP8')}</th>
-              <th>${t('colTDP')}</th>
-              <th>${t('colInterconnect')}</th>
-              <th>${t('colMaxCards')}</th>
-              <th>${t('colStatus')}</th>
+              <th>${lt('colVendor')}</th>
+              <th>${lt('colName')}</th>
+              <th>${lt('colVRAM')}</th>
+              <th>${lt('colBandwidth')}</th>
+              <th>${lt('colComputeBF16')}</th>
+              <th>${lt('colComputeFP8')}</th>
+              <th>${lt('colTDP')}</th>
+              <th>${lt('colInterconnect')}</th>
+              <th>${lt('colMaxCards')}</th>
+              <th>${lt('colStatus')}</th>
             </tr>
           </thead>
           <tbody>
@@ -484,14 +474,14 @@
               const isDraft = hw.verified_date === null || hw.notes?.includes('PLACEHOLDER');
               const status = isDraft ? 'draft' : hw.status;
               let statusClass = 'status-available';
-              let statusText = t('statusAvailable');
+              let statusText = lt('statusAvailable');
               
               if (status === 'announced') {
                 statusClass = 'status-announced';
-                statusText = t('statusAnnounced');
+                statusText = lt('statusAnnounced');
               } else if (status === 'draft') {
                 statusClass = 'status-draft';
-                statusText = t('statusDraft');
+                statusText = lt('statusDraft');
               }
               
               return `
@@ -515,7 +505,6 @@
     }
     
     function attachEventListeners() {
-      // Test with Model buttons
       document.querySelectorAll('.btn-calc').forEach(btn => {
         btn.addEventListener('click', () => {
           const gpuId = btn.getAttribute('data-gpu');
@@ -523,7 +512,6 @@
         });
       });
       
-      // View Details buttons
       document.querySelectorAll('.btn-details').forEach(btn => {
         btn.addEventListener('click', () => {
           const vendor = btn.getAttribute('data-vendor');
@@ -533,17 +521,12 @@
       });
     }
     
-    // Language switching
-    document.getElementById('langSelect').addEventListener('change', (e) => {
-      currentLang = e.target.value;
-      applyTranslations();
+    window.addEventListener('languageChanged', () => {
+      applyLocalTranslations();
       renderContent();
     });
     
-    // Initialize
-    applyTranslations();
     loadHardwareData();
   </script>
 </body>
 </html>
-

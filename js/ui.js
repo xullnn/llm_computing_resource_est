@@ -1006,19 +1006,6 @@ async function init() {
 document.addEventListener("DOMContentLoaded", init);
 
 function initNavigation() {
-  // Mobile menu toggle
-  const mobileToggle = document.querySelector('.mobile-menu-toggle');
-  const navLinks = document.getElementById('navLinks');
-  
-  if (mobileToggle && navLinks) {
-    mobileToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
-      const isOpen = navLinks.classList.contains('open');
-      mobileToggle.setAttribute('aria-expanded', isOpen);
-      mobileToggle.textContent = isOpen ? '✕' : '☰';
-    });
-  }
-  
   // Ecosystem grid dismissal
   const ecosystemGrid = byId('ecosystemGrid');
   const dismissBtn = byId('dismissEcosystem');

@@ -3,13 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Plan on-premise LLM infrastructure for selling server+AI app bundles. Estimate multi-GPU requirements, capacity, and throughput for enterprise deployments.">
-  <meta name="keywords" content="LLM infrastructure planning, on-premise deployment, multi-GPU configuration, H100, Ascend, enterprise AI">
-  <meta property="og:title" content="Enterprise PM Guide | LLM Resource Sizer">
-  <meta property="og:description" content="Plan infrastructure for selling LLM-powered applications. Multi-tier deployment scenarios, capacity planning, and hardware requirements.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://llmrunnable.com/for/enterprise">
-  <title>Enterprise PM Guide | LLM Resource Sizer</title>
+  <meta name="description" content="Strategic deployment planning for enterprise LLM infrastructure. Multi-GPU clusters, H100/H200 capacity planning, and sovereign AI solutions.">
+  <title>Enterprise Infrastructure Planner | LLM Resource Tool</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
     .guide-intro {
@@ -190,21 +185,23 @@
 </head>
 <body>
   <nav class="global-nav">
-    <a href="../" class="nav-brand">
+    <a href="/" class="nav-brand">
       <span class="nav-icon">🧮</span>
       <span class="nav-logo">LLM Sizer</span>
     </a>
     <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
     <div class="nav-links" id="navLinks">
-      <a href="../" class="nav-item">Models</a>
-      <a href="../calculator.html" class="nav-item">Calculator</a>
-      <a href="../hardware/" class="nav-item">Hardware</a>
-      <a href="../for/enterprise.html" class="nav-item active">Guides</a>
+      <a href="/" class="nav-item" data-i18n="navModels">Models</a>
+      <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+      <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+      <a href="/for/enterprise.html" class="nav-item active" data-i18n="navGuides">Guides</a>
+      <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
     </div>
     <div class="nav-actions">
       <label class="field compact language-switch" style="margin-bottom: 0;">
-        <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+        <select id="langSelect">
           <option value="en">English</option>
+          <option value="zh">中文</option>
         </select>
       </label>
     </div>
@@ -212,8 +209,8 @@
 
   <header class="hero" style="border-bottom: none;">
     <div class="header-content">
-      <h1 class="hero-title">Enterprise PM Guide</h1>
-      <p class="lede">Plan infrastructure for selling LLM-powered applications</p>
+      <h1 class="hero-title">Enterprise Infrastructure Planning</h1>
+      <p class="lede">Plan sovereign AI deployments and validate hardware for business-critical workloads</p>
     </div>
   </header>
   
@@ -379,10 +376,10 @@
   </div>
 
   <footer style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
-    <a href="/" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to calculator</a>
+    <a href="../" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to models</a>
   </footer>
 
+  <script src="../js/i18n.js"></script>
   <script src="../js/nav.js"></script>
 </body>
 </html>
-
