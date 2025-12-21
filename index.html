@@ -89,6 +89,16 @@
             placeholder="Search: Qwen3, DeepSeek, moe, 70-100B..."
         >
         
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="view-toggle-btn active" id="viewVendorBtn" data-view="vendor">
+                <span class="view-icon">🏢</span> By Vendor
+            </button>
+            <button class="view-toggle-btn" id="viewHardwareBtn" data-view="hardware">
+                <span class="view-icon">🖥️</span> By Hardware
+            </button>
+        </div>
+        
         <button class="filter-toggle-btn" id="filterToggleBtn">
             <span class="filter-icon">⚙️</span> Filters
         </button>
@@ -150,8 +160,11 @@
         <div id="activeFilterChips" class="active-filters" style="display: none;"></div>
     </div>
     
-    <!-- Models Grid -->
-    <div class="models-grid" id="modelsGrid"></div>
+    <!-- Vendor Groups View (Default) -->
+    <div class="vendor-groups" id="vendorGroups"></div>
+    
+    <!-- Models Grid (Hardware Tier View) -->
+    <div class="models-grid" id="modelsGrid" style="display: none;"></div>
     
     <!-- Metadata -->
     <div class="metadata" id="metadata"></div>

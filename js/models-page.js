@@ -7,6 +7,8 @@ let modelsData = [];
 let selectedModels = new Set();
 let trendingModels = [];
 let trendingExpanded = false;
+let currentView = 'vendor'; // 'vendor' or 'hardware'
+let expandedVendors = new Set(); // Track which vendor groups are expanded
 let filters = {
     recency: 'all',
     architecture: 'all',
@@ -124,6 +126,233 @@ document.getElementById('trendingInfoBtn')?.addEventListener('click', () => {
     const isVisible = criteriaPanel.style.display !== 'none';
     criteriaPanel.style.display = isVisible ? 'none' : 'block';
 });
+
+/**
+ * Group models by vendor
+ */
+function groupModelsByVendor(models) {
+    const grouped = {};
+    
+    models.forEach(model => {
+        const vendor = model.id.split('/')[0];
+        if (!grouped[vendor]) {
+            grouped[vendor] = [];
+        }
+        grouped[vendor].push(model);
+    });
+    
+    // Sort models within each vendor group (small to large)
+    Object.keys(grouped).forEach(vendor => {
+        grouped[vendor].sort((a, b) => a.parameters_billion - b.parameters_billion);
+    });
+    
+    return grouped;
+}
+
+/**
+ * Render vendor groups view
+ */
+function renderVendorGroups(models) {
+    const grouped = groupModelsByVendor(models);
+    const container = document.getElementById('vendorGroups');
+    
+    // Sort vendors by name
+    const sortedVendors = Object.keys(grouped).sort();
+    
+    container.innerHTML = sortedVendors.map(vendor => {
+        const vendorModels = grouped[vendor];
+        const minParam = vendorModels[0].parameters_billion;
+        const maxParam = vendorModels[vendorModels.length - 1].parameters_billion;
+        const isExpanded = expandedVendors.has(vendor) || expandedVendors.size === 0; // All expanded by default initially
+        
+        // Show top 3 models (smallest first)
+        const visibleModels = isExpanded ? vendorModels.slice(0, 3) : [];
+        const hasMore = vendorModels.length > 3;
+        
+        return `
+            <div class="vendor-group ${isExpanded ? '' : 'collapsed'}" data-vendor="${vendor}">
+                <div class="vendor-header" onclick="toggleVendor('${vendor}')">
+                    <button class="vendor-toggle">${isExpanded ? '🔽' : '▷'}</button>
+                    <h3 class="vendor-title">
+                        ${vendor}
+                        <span class="vendor-count">(${vendorModels.length} models)</span>
+                    </h3>
+                    <span class="vendor-param-range">${minParam}B ◄─► ${maxParam}B</span>
+                </div>
+                <div class="vendor-content ${isExpanded ? 'expanded' : ''}">
+                    <div class="vendor-models-grid">
+                        ${visibleModels.map(model => renderModelCardHTML(model)).join('')}
+                    </div>
+                    ${hasMore && isExpanded ? `
+                        <button class="vendor-show-more" onclick="showAllVendorModels('${vendor}')">
+                            ▼ Show ${vendorModels.length - 3} more ${vendor} models
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+/**
+ * Toggle vendor group expansion
+ */
+window.toggleVendor = function(vendor) {
+    const group = document.querySelector(`[data-vendor="${vendor}"]`);
+    const isExpanded = !group.classList.contains('collapsed');
+    
+    if (isExpanded) {
+        group.classList.add('collapsed');
+        expandedVendors.delete(vendor);
+    } else {
+        group.classList.remove('collapsed');
+        expandedVendors.add(vendor);
+    }
+    
+    // Re-render this vendor group
+    renderModels();
+}
+
+/**
+ * Show all models for a vendor
+ */
+window.showAllVendorModels = function(vendor) {
+    const models = modelsData.filter(m => m.id.split('/')[0] === vendor);
+    const filtered = applyFilters(models);
+    const sorted = filtered.sort((a, b) => a.parameters_billion - b.parameters_billion);
+    
+    const group = document.querySelector(`[data-vendor="${vendor}"]`);
+    const grid = group.querySelector('.vendor-models-grid');
+    const button = group.querySelector('.vendor-show-more');
+    
+    // Render all models
+    grid.innerHTML = sorted.map(model => renderModelCardHTML(model)).join('');
+    
+    // Hide the "show more" button
+    if (button) button.style.display = 'none';
+}
+
+/**
+ * Extract model card HTML (for reuse)
+ */
+function renderModelCardHTML(model) {
+    // Use real calculator for accurate tooltip estimates
+    const quickCalcInt8 = calcRequirements({
+        paramsB: model.parameters_billion,
+        activeParamsB: model.active_parameters_billion || model.parameters_billion,
+        weightPrecision: 'int8',
+        kvPrecision: 'int8',
+        layers: model.num_layers,
+        hiddenSize: model.hidden_size,
+        heads: model.num_heads,
+        promptTokens: 8192,
+        newTokens: 512,
+        batchSize: 1
+    });
+    
+    const quickCalcBf16 = calcRequirements({
+        paramsB: model.parameters_billion,
+        activeParamsB: model.active_parameters_billion || model.parameters_billion,
+        weightPrecision: 'bf16',
+        kvPrecision: 'bf16',
+        layers: model.num_layers,
+        hiddenSize: model.hidden_size,
+        heads: model.num_heads,
+        promptTokens: 8192,
+        newTokens: 512,
+        batchSize: 1
+    });
+    
+    const vramInt8 = quickCalcInt8.totalVramGb;
+    const vramBf16 = quickCalcBf16.totalVramGb;
+    const minGpus = vramInt8 <= 24 ? '1× RTX 4090' : 
+                    vramInt8 <= 48 ? '1× A6000' :
+                    vramInt8 <= 80 ? '1× H100' :
+                    vramInt8 <= 160 ? '2× H100' :
+                    `${Math.ceil(vramInt8/80)}× H100`;
+    
+    // Check if this model is trending
+    const isTrending = trendingModels.some(tm => tm.id === model.id);
+    const trendingBadge = isTrending ? '<span class="trending-badge">🔥 Trending</span>' : '';
+    
+    return `
+    <div class="model-card ${isTrending ? 'is-trending' : ''}" onclick="openCalculatorDrawer('${model.id}')">
+        ${trendingBadge}
+        <div class="model-tooltip">
+            <div class="tooltip-title">Quick Estimate (8K context)</div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">INT8:</span>
+                <span class="tooltip-value">${vramInt8.toFixed(1)} GB</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">BF16:</span>
+                <span class="tooltip-value">${vramBf16.toFixed(1)} GB</span>
+            </div>
+            <div class="tooltip-row">
+                <span class="tooltip-label">Min GPU:</span>
+                <span class="tooltip-value">${minGpus}</span>
+            </div>
+        </div>
+        <div class="compare-checkbox-container">
+            <input type="checkbox" class="compare-checkbox" data-id="${model.id}" 
+                ${selectedModels.has(model.id) ? 'checked' : ''} 
+                onchange="toggleComparison('${model.id}')" onclick="event.stopPropagation();" title="Add to comparison">
+        </div>
+        <div class="model-card-header">
+            <h3 class="model-name">
+                <span class="freshness-indicator ${getFreshnessClass(model.created_at)}"></span>
+                ${model.name}
+            </h3>
+            <span class="model-badge badge-${model.architecture}">
+                ${model.architecture.toUpperCase()}
+            </span>
+        </div>
+
+        <div class="model-meta-row">
+            <span class="meta-item">📅 ${getRelativeTime(model.created_at)}</span>
+            <span class="provenance-badge">${getProvenanceLabel(model.param_source)}</span>
+        </div>
+        
+        <div class="model-params">
+            ${model.parameters_billion}B
+        </div>
+        
+        <div class="model-stats">
+            <div class="model-stat">
+                <div class="model-stat-label">Context</div>
+                <div class="model-stat-value">${formatNumber(model.max_seq_length)}</div>
+            </div>
+            <div class="model-stat">
+                <div class="model-stat-label">Hidden Size</div>
+                <div class="model-stat-value">${formatNumber(model.hidden_size)}</div>
+            </div>
+            <div class="model-stat">
+                <div class="model-stat-label">Layers</div>
+                <div class="model-stat-value">${model.num_layers}</div>
+            </div>
+            <div class="model-stat">
+                <div class="model-stat-label">License</div>
+                <div class="model-stat-value">${model.license}</div>
+            </div>
+            ${model.moe_num_experts ? `
+            <div class="model-stat" style="grid-column: span 2; margin-top: 0.25rem;">
+                <div class="model-stat-label">MoE Routing</div>
+                <div class="model-stat-value">${model.moe_num_experts} experts (top-${model.moe_top_k})</div>
+            </div>
+            ` : ''}
+        </div>
+        
+        <div class="model-actions">
+            <a href="calculator.html?preset=${encodeURIComponent(model.id)}" class="btn btn-primary" style="flex: 1; text-decoration: none; justify-content: center; display: flex;" onclick="event.stopPropagation();">
+                Calculate
+            </a>
+            <button class="btn btn-secondary" style="flex: 1;" onclick="event.stopPropagation(); openCalculatorDrawer('${model.id}');">
+                Details
+            </button>
+        </div>
+    </div>
+`;
+}
 
 // Load models data
 fetch('data/models.json')
@@ -415,11 +644,13 @@ function hideComparison() {
     document.body.style.overflow = 'auto';
 }
 
-// Render models
-function renderModels() {
+/**
+ * Apply filters to models (reusable)
+ */
+function applyFilters(models) {
     const searchTerm = document.getElementById('searchBox').value.toLowerCase();
     
-    let filtered = modelsData.filter(model => {
+    return models.filter(model => {
         // Search filter - support tags like "moe", "70b", "qwen"
         const matchesSearch = 
             model.name.toLowerCase().includes(searchTerm) ||
@@ -455,23 +686,62 @@ function renderModels() {
         
         return true;
     });
+}
 
-    // Sorting
-    filtered.sort((a, b) => {
+// Render models
+function renderModels() {
+    const filtered = applyFilters(modelsData);
+
+    // Sorting (for hardware view)
+    const sorted = [...filtered].sort((a, b) => {
         if (filters.sort === 'newest') return new Date(b.created_at) - new Date(a.created_at);
         if (filters.sort === 'largest') return b.parameters_billion - a.parameters_billion;
         if (filters.sort === 'popular') return (b.downloads + b.likes) - (a.downloads + a.likes);
         return 0;
     });
     
+    // Toggle visibility based on current view
+    const vendorContainer = document.getElementById('vendorGroups');
+    const gridContainer = document.getElementById('modelsGrid');
+    
+    if (currentView === 'vendor') {
+        vendorContainer.style.display = 'flex';
+        gridContainer.style.display = 'none';
+        
+        if (filtered.length === 0) {
+            vendorContainer.innerHTML = '<p style="text-align: center; opacity: 0.7; padding: 2rem;">No models found matching your criteria</p>';
+            return;
+        }
+        
+        renderVendorGroups(filtered);
+    } else {
+        // Hardware view (existing grid)
+        vendorContainer.style.display = 'none';
+        gridContainer.style.display = 'grid';
+        
+        const grid = gridContainer;
+        
+        if (sorted.length === 0) {
+            grid.innerHTML = '<p style="text-align: center; opacity: 0.7; grid-column: 1/-1;">No models found matching your criteria</p>';
+            return;
+        }
+        
+        renderHardwareGrid(sorted);
+    }
+}
+
+/**
+ * Render hardware tier grid (existing grid view)
+ */
+function renderHardwareGrid(models) {
     const grid = document.getElementById('modelsGrid');
     
-    if (filtered.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; opacity: 0.7; grid-column: 1/-1;">No models found matching your criteria</p>';
-        return;
-    }
-    
-    grid.innerHTML = filtered.map(model => {
+    grid.innerHTML = models.map(model => renderModelCardHTML(model)).join('');
+}
+
+// Legacy function - can be removed later (keeping for backwards compatibility)
+function _oldRenderGrid(models) {
+    return models.map(model => {
         // Use real calculator for accurate tooltip estimates
         const quickCalcInt8 = calcRequirements({
             paramsB: model.parameters_billion,
@@ -625,5 +895,20 @@ document.querySelectorAll('.filter-tag').forEach(tag => {
         const val = tag.dataset.val;
         setFilter(group, val);
     });
+});
+
+// View toggle functionality
+document.getElementById('viewVendorBtn')?.addEventListener('click', () => {
+    currentView = 'vendor';
+    document.getElementById('viewVendorBtn').classList.add('active');
+    document.getElementById('viewHardwareBtn').classList.remove('active');
+    renderModels();
+});
+
+document.getElementById('viewHardwareBtn')?.addEventListener('click', () => {
+    currentView = 'hardware';
+    document.getElementById('viewHardwareBtn').classList.add('active');
+    document.getElementById('viewVendorBtn').classList.remove('active');
+    renderModels();
 });
 
