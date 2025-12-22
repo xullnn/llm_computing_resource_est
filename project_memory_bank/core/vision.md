@@ -21,10 +21,16 @@ The tool focuses exclusively on the **70B to 700B parameter range**.
 
 ## 🔄 The "Deployment Journey" UX Pattern
 Our navigation flow mirrors the real-world procurement cycle:
-1.  **Discovery**: "What models are viable?" → **Model Browser** (Vendor & Tiered views).
-2.  **Estimation**: "What specific resources are required?" → **Sizing Engine** (Calculator).
+1.  **Discovery**: "What models are viable?" → **Model Browser** (Vendor Grouping & Hardware Tiering).
+2.  **Estimation**: "What specific resources are required?" → **Sizing Engine** (Calculator with Command-Override layout).
 3.  **Validation**: "Will this specific hardware configuration work?" → **Hardware Hub**.
 4.  **Persona Scenarios**: "How does this look for my team?" → **Deployment Guides**.
+
+## 🎨 High-Density UI Architecture
+The platform adheres to a "Professional Tooling" aesthetic:
+*   **Reduced Vertical Footprint**: Cards and controls are 50% more compact than standard web apps to maximize information density.
+*   **Command-Override Layout**: The Calculator uses a primary selection bar (Command) followed by technical specification groups (Overrides).
+*   **Progressive Disclosure**: Detailed specs are moved to side-drawers, keeping the main workspace clean for comparison.
 
 ## 🛡️ Non-Negotiable Pillars
 *   **Open-Source Only**: Focus on models deployable on private infrastructure.

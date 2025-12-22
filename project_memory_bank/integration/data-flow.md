@@ -32,13 +32,19 @@ graph TD
 ## 📂 Consumption Logic
 
 ### 1. View Engine (`js/models-page.js`)
-*   **Default View**: Grouped by Vendor, sorted by parameter count (Small → Large).
+*   **Default View**: Grouped by Vendor, sorted by parameter count (**Large → Small**) to surface flagships.
+*   **Persistence**: Selection state (for side-by-side comparison) is stored in a `Set` and survives filter/view changes.
 *   **Tiered View**: Groups models into three strategic buckets based on **INT8 VRAM requirements**:
     *   **Consumer**: < 24GB (Fits on single RTX 3090/4090).
     *   **Workstation**: 24GB - 80GB (Fits on single A6000/H100).
     *   **Infrastructure**: > 80GB (Requires multi-node or cluster setups).
 
-### 2. Sizing Engine (`js/calc.js`)
+### 2. Workspace Orchestrator (`js/ui.js`)
+*   **Preset Loader**: Groups models by clean vendor names using `<optgroup>`.
+*   **High-Density Labels**: Displays `Name (TotalB / ActiveB)` to provide MoE context during selection.
+*   **Workload Scenarios**: Provides quick-select buttons for **Low / Medium / High** archetypes, auto-deselecting on manual input.
+
+### 3. Sizing Engine (`js/calc.js`)
 *   Takes model architecture (layers, heads, hidden size) + workload (context, batch).
 *   Outputs real-time resource pressure (VRAM, FLOPs, Bandwidth).
 *   **Aggregator**: If multiple GPUs are selected, it validates the model footprint against the *aggregate* capacity.

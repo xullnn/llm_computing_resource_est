@@ -383,6 +383,60 @@ function updateFilterCounts() {
     });
 }
 
+function updateFilterChips() {
+    const container = document.getElementById('activeFilterChips');
+    if (!container) return;
+    
+    let chips = [];
+    
+    if (filters.recency !== 'all') {
+        const el = document.querySelector(`[data-group="recency"] [data-val="${filters.recency}"]`);
+        const label = el ? el.textContent.split('\n')[0].trim() : filters.recency;
+        chips.push(`<div class="filter-chip">📅 ${label} <button onclick="setFilter('recency', 'all')">×</button></div>`);
+    }
+    if (filters.architecture !== 'all') {
+        const label = filters.architecture === 'moe' ? 'MoE' : 'Dense';
+        chips.push(`<div class="filter-chip">🏗️ ${label} <button onclick="setFilter('architecture', 'all')">×</button></div>`);
+    }
+    if (filters.org !== 'all') {
+        chips.push(`<div class="filter-chip">🏢 ${filters.org} <button onclick="setFilter('org', 'all')">×</button></div>`);
+    }
+    if (filters.size !== 'all') {
+        chips.push(`<div class="filter-chip">📊 ${filters.size}B <button onclick="setFilter('size', 'all')">×</button></div>`);
+    }
+
+    if (chips.length > 0) {
+        container.innerHTML = chips.join('') + `<button class="clear-filters" onclick="clearAllFilters()">Clear All</button>`;
+        container.style.display = 'flex';
+    } else {
+        container.style.display = 'none';
+    }
+}
+
+window.setFilter = function(group, val) {
+    filters[group] = val;
+    
+    // Update UI tags
+    document.querySelectorAll(`[data-group="${group}"] .filter-tag`).forEach(tag => {
+        tag.classList.toggle('active', tag.dataset.val === val);
+    });
+
+    updateFilterChips();
+    renderModels();
+};
+
+window.clearAllFilters = function() {
+    filters = { recency: 'all', architecture: 'all', org: 'all', size: 'all', sort: 'newest' };
+    document.querySelectorAll('.filter-tag').forEach(tag => {
+        const group = tag.parentElement.dataset.group;
+        if (group) {
+            tag.classList.toggle('active', tag.dataset.val === filters[group]);
+        }
+    });
+    updateFilterChips();
+    renderModels();
+};
+
 // Initialize
 fetch('data/models.json')
     .then(res => res.ok ? res.json() : Promise.reject(res))
@@ -397,11 +451,7 @@ fetch('data/models.json')
             orgs.forEach(org => {
                 const btn = document.createElement('button');
                 btn.className = 'filter-tag'; btn.dataset.val = org; btn.textContent = org;
-                btn.onclick = () => { 
-                    filters.org = org;
-                    document.querySelectorAll('[data-group="org"] .filter-tag').forEach(t => t.classList.toggle('active', t.dataset.val === org));
-                    renderModels();
-                };
+                btn.onclick = () => setFilter('org', org);
                 orgContainer.appendChild(btn);
             });
         }
@@ -438,4 +488,192 @@ window.addEventListener('languageChanged', () => {
     renderModels();
     updateFilterCounts();
     if (originalMetadata) renderMetadata(originalMetadata);
+});
+
+// Initialize filter listeners
+document.querySelectorAll('.filter-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+        const group = tag.parentElement.dataset.group;
+        if (group) {
+            setFilter(group, tag.dataset.val);
+        }
+    });
+});
+
+// Utility functions
+function formatNumber(num) {
+    if (!num) return 'N/A';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+}
+
+function getRelativeTime(dateString) {
+    if (!dateString) return 'Unknown date';
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 1) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 30) return `${diffDays} days ago`;
+    if (diffDays < 365) {
+        const months = Math.floor(diffDays / 30.44);
+        return months === 1 ? '1 month ago' : `${months} months ago`;
+    }
+    const years = Math.floor(diffDays / 365.25);
+    return years === 1 ? '1 year ago' : `${years} years ago`;
+}
+
+function getProvenanceLabel(source) {
+    const labels = {
+        'safetensors': '⚡ Safetensors',
+        'stated': '📄 README',
+        'estimated': '🧮 Physics',
+        'manual_override': '🛠️ Manual'
+    };
+    return labels[source] || 'Unknown';
+}
+
+// Comparison Logic
+window.toggleComparison = function(modelId) {
+    if (selectedModels.has(modelId)) {
+        selectedModels.delete(modelId);
+    } else {
+        if (selectedModels.size >= 4) {
+            alert('You can compare up to 4 models at once.');
+            // Uncheck the checkbox
+            const cb = document.querySelector(`.compare-checkbox[data-id="${modelId}"]`);
+            if (cb) cb.checked = false;
+            return;
+        }
+        selectedModels.add(modelId);
+    }
+    updateCompareBar();
+};
+
+function updateCompareBar() {
+    const bar = document.getElementById('compareBar');
+    const count = document.getElementById('compareCount');
+    if (!bar || !count) return;
+    
+    count.textContent = selectedModels.size;
+    
+    if (selectedModels.size > 0) {
+        bar.classList.add('visible');
+    } else {
+        bar.classList.remove('visible');
+    }
+}
+
+window.clearComparison = function() {
+    selectedModels.clear();
+    document.querySelectorAll('.compare-checkbox').forEach(cb => cb.checked = false);
+    updateCompareBar();
+};
+
+window.showComparison = function() {
+    const container = document.getElementById('compareTableContainer');
+    const selected = Array.from(selectedModels).map(id => modelsData.find(m => m.id === id));
+    
+    let html = `<table class="compare-table">
+        <thead>
+            <tr>
+                <th>${t('compareSpecLabel') || 'Spec'}</th>
+                ${selected.map(m => `<th class="compare-header-cell">${m.name}</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>${t('compareParametersLabel') || 'Parameters'}</th>
+                ${selected.map(m => `<td>${m.parameters_billion}B</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareArchitectureLabel') || 'Architecture'}</th>
+                ${selected.map(m => `<td>${m.architecture.toUpperCase()}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareContextLabel') || 'Context Length'}</th>
+                ${selected.map(m => `<td>${formatNumber(m.max_seq_length)}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareHiddenSizeLabel') || 'Hidden Size'}</th>
+                ${selected.map(m => `<td>${formatNumber(m.hidden_size)}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareLayersLabel') || 'Layers'}</th>
+                ${selected.map(m => `<td>${m.num_layers}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareLicenseLabel') || 'License'}</th>
+                ${selected.map(m => `<td>${m.license}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareReleaseLabel') || 'Release'}</th>
+                ${selected.map(m => `<td>${getRelativeTime(m.created_at)}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareMoeLabel') || 'MoE Experts'}</th>
+                ${selected.map(m => `<td>${m.moe_num_experts || 'N/A'}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareDataSourceLabel') || 'Data Source'}</th>
+                ${selected.map(m => `<td>${getProvenanceLabel(m.param_source)}</td>`).join('')}
+            </tr>
+            <tr>
+                <th>${t('compareActionsLabel') || 'Actions'}</th>
+                ${selected.map(m => `<td><button class="btn btn-primary btn-sm" onclick="window.useInCalculator('${m.id}')">${t('calculateBtn') || 'Size'}</button></td>`).join('')}
+            </tr>
+        </tbody>
+    </table>`;
+    
+    container.innerHTML = html;
+    document.getElementById('compareModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+};
+
+window.hideComparison = function() {
+    document.getElementById('compareModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+};
+
+window.useInCalculator = function(modelId) {
+    // In index.html context, we want to open the calculator drawer
+    if (window.openCalculatorDrawer) {
+        window.hideComparison();
+        window.openCalculatorDrawer(modelId);
+    } else {
+        // Fallback to calculator.html page
+        window.location.href = `calculator.html?preset=${encodeURIComponent(modelId)}`;
+    }
+};
+
+// Toggle filter group
+document.getElementById('filterToggleBtn')?.addEventListener('click', () => {
+    const group = document.getElementById('filterGroup');
+    if (group) {
+        const isHidden = group.style.display === 'none';
+        group.style.display = isHidden ? 'block' : 'none';
+        document.getElementById('filterToggleBtn').classList.toggle('active', isHidden);
+    }
+});
+
+// Trending info tooltip toggle
+document.getElementById('trendingInfoBtn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const criteria = document.getElementById('trendingCriteria');
+    if (criteria) {
+        criteria.style.display = criteria.style.display === 'none' ? 'block' : 'none';
+    }
+});
+
+document.addEventListener('click', () => {
+    const criteria = document.getElementById('trendingCriteria');
+    if (criteria) criteria.style.display = 'none';
+});
+
+document.getElementById('trendingExpandBtn')?.addEventListener('click', () => {
+    trendingExpanded = !trendingExpanded;
+    renderTrendingBar();
 });

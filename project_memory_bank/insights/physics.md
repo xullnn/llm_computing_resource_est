@@ -37,10 +37,16 @@ To simplify deployment decisions, models are automatically classified into three
 | **Infrastructure** | > 80GB | Multi-GPU Clusters (8× H100) | Enterprise-scale API serving, heavy RAG. |
 
 ## 3. MoE Efficiency Correction
-For models like **DeepSeek-V3** or **Mixtral**, we distinguish between:
-*   **Total Parameters**: Determines the VRAM required to load the model.
+For models like **DeepSeek-V3** or **Qwen3**, we distinguish between:
+*   **Total Parameters**: Determines the HBM (VRAM) required to load the model.
 *   **Active Parameters**: Determines the compute (FLOPs) and bandwidth required per token.
-*   **Strategic Advantage**: MoE allows models to have "Enterprise Tier" intelligence with "Workstation Tier" latency.
+*   **UI Surfacing**: The Strategic Planner displays both (e.g., `671B / 37B active`) to help architects understand that while they need massive VRAM, the inference speed (tok/s) will be comparable to a much smaller dense model.
+
+## 4. Workload Archetypes
+The platform simplifies deployment planning by mapping raw numbers to strategic scenarios:
+*   **Low**: Single-user, short-context interactions (Hobbyist/Dev).
+*   **Medium (The Standard)**: Document-heavy RAG (5K input, 1K output).
+*   **High**: Enterprise-scale, long-context concurrency (32K input, 8 simultaneous users).
 
 ## 📚 Core Principles
 *   **Arithmetic Intensity**: The platform identifies where a model shifts from being memory-bound (decode) to compute-bound (prefill).

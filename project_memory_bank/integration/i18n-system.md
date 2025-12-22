@@ -34,8 +34,9 @@ Elements in the HTML use the `data-i18n` attribute. The engine maps these keys t
 *   **Constraint**: The engine is "child-aware" and preserves nested elements like `<span class="count">` when updating labels.
 
 ### 2. Dynamic Translation (`t()` helper)
-JavaScript components (like the Model Card or Calculator Results) use the global `t(key, replacements)` function.
+JavaScript components (like the Model Card, Comparison Table, or Calculator Results) use the global `t(key, replacements)` function.
 *   **Placeholders**: Supports dynamic replacement (e.g., `t('showMoreBtn', { n: 5 })`).
+*   **Inline Qualifiers**: Short labels like `activeLabel` are used for high-density UI elements (e.g., `(671B / 37B active)`).
 
 ### 3. Site-Wide Synchronization
 Since the platform is multi-page, the engine ensures a consistent experience:
