@@ -1,9 +1,11 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Calculate VRAM, compute, and bandwidth requirements for large language models. Offline calculator with 70B+ model database.">
+  <meta name="description"
+    content="Calculate VRAM, compute, and bandwidth requirements for large language models. Offline calculator with 70B+ model database.">
   <meta name="keywords" content="LLM calculator, VRAM estimator, GPU requirements, transformer inference, model sizing">
   <meta property="og:title" content="LLM Resource Calculator">
   <meta property="og:description" content="Calculate hardware requirements for large language models.">
@@ -26,6 +28,7 @@
     }
   </script>
 </head>
+
 <body>
   <nav class="global-nav">
     <a href="/" class="nav-brand">
@@ -50,207 +53,232 @@
     </div>
   </nav>
 
-  <main style="margin-top: 2rem;">
-    <section class="panel">
-      <h2 data-i18n="sectionModel">Model</h2>
-      <div class="grid three">
-        <label class="field span-all">
-          <span data-i18n="modelPreset">Preset</span>
-          <div class="field-with-action">
-            <select id="modelPreset"></select>
-            <a href="/" class="inline-link" data-i18n="browseModels">Browse all</a>
-          </div>
-          <small data-i18n="modelPresetHelp">You can edit any value after prefilling.</small>
-          <div class="preset-meta">
-            <a id="hfLink" class="hf-link" href="#" target="_blank" rel="noreferrer noopener">
-              <svg class="hf-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-                <circle cx="16" cy="16" r="14" fill="currentColor" />
-                <path d="M11 14h2M19 14h2" stroke="#0b1423" stroke-width="2" stroke-linecap="round" />
-                <path d="M12 20c1.2 1.8 3 2.7 4 2.7s2.8-.6 4-2.7" fill="none" stroke="#0b1423" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <span class="hf-link-text" data-i18n="hfLinkLabel">Hugging Face</span>
-            </a>
-          </div>
-        </label>
-        <label class="field">
-          <span data-i18n="modelParams">Model params (B)</span>
-          <input id="paramsB" type="number" min="0" step="0.1" value="80">
-        </label>
-        <label class="field">
-          <span data-i18n="weightPrecision">Quality / Size tradeoff</span>
-          <select id="weightPrecision">
-            <option value="bf16">Full quality (largest) — BF16</option>
-            <option value="fp16">Full quality — FP16</option>
-            <option value="fp8">Good quality — FP8</option>
-            <option value="int8">Balanced (recommended) — INT8</option>
-            <option value="int4">Compact (smallest) — INT4</option>
-          </select>
-          <small data-i18n="weightPrecisionHelp">Lower = smaller & faster, but less accurate</small>
-        </label>
-        <label class="field">
-          <span data-i18n="kvPrecision">Cache precision</span>
-          <select id="kvPrecision">
-            <option value="bf16">Full (BF16)</option>
-            <option value="fp16">Full (FP16)</option>
-            <option value="fp8">Compact (FP8)</option>
-          </select>
-          <small data-i18n="kvPrecisionHelp">Usually matches weight precision</small>
-        </label>
-      </div>
-      
-      <button type="button" class="toggle-advanced" id="toggleAdvanced" aria-expanded="false">
-        <span data-i18n="showAdvanced">▸ Advanced options</span>
-      </button>
-      
-      <div class="advanced-options" id="advancedOptions" style="display: none;">
-        <div class="grid two">
-          <label class="field">
-            <span data-i18n="activeParams">Active params for MoE (B, optional)</span>
-            <input id="activeParamsB" type="number" min="0" step="0.1" placeholder="defaults to params">
-            <small data-i18n="activeParamsHelp">If MoE, set the activated parameters per token.</small>
-          </label>
-          <label class="field">
-            <span data-i18n="hiddenSize">Hidden size (override, optional)</span>
-            <input id="hiddenSize" type="number" min="0" step="1" placeholder="auto">
-          </label>
-          <label class="field">
-            <span data-i18n="layers">Layers (override, optional)</span>
-            <input id="numLayers" type="number" min="0" step="1" placeholder="auto">
-          </label>
-        </div>
-      </div>
-    </section>
+  <main style="margin-top: 1rem;">
+    <!-- Sticky Verdict Bar (hardware-agnostic) -->
+    <div class="verdict-bar" id="verdictBar">
+      <span class="verdict-tier" data-i18n="verdictCalculating">Calculating...</span>
+      <span class="verdict-stat" id="barVram"></span>
+      <span class="verdict-stat" id="barCompute"></span>
+      <span class="verdict-stat" id="barBandwidth"></span>
+      <a href="/hardware/" class="verdict-link" data-i18n="findHardware">Find hardware →</a>
+    </div>
 
-    <section class="panel hardware-section">
-      <h2>
-        <span data-i18n="sectionHardware">Hardware (optional)</span>
-        <button type="button" class="toggle-hardware btn ghost" id="toggleHardware" aria-expanded="false">
-          <span data-i18n="showHardware">+ Select GPU to test fit</span>
-        </button>
-      </h2>
-      <div class="hardware-picker" id="hardwarePicker" style="display: none;">
-        <div class="grid three">
-          <label class="field">
-            <span data-i18n="selectGPU">Select GPU</span>
-            <div class="field-with-action">
-              <select id="gpuSelect">
-                <option value="">None (manual entry)</option>
+    <div class="calculator-layout">
+      <!-- Left Column: Inputs -->
+      <div class="calculator-inputs">
+        <section class="panel">
+          <h2 data-i18n="sectionModel">Model</h2>
+          <div class="grid three">
+            <label class="field span-all">
+              <span data-i18n="modelPreset">Preset</span>
+              <div class="field-with-action">
+                <select id="modelPreset"></select>
+                <a href="/" class="inline-link" data-i18n="browseModels">Browse all</a>
+              </div>
+              <small data-i18n="modelPresetHelp">You can edit any value after prefilling.</small>
+              <div class="preset-meta">
+                <a id="hfLink" class="hf-link" href="#" target="_blank" rel="noreferrer noopener">
+                  <svg class="hf-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                    <circle cx="16" cy="16" r="14" fill="currentColor" />
+                    <path d="M11 14h2M19 14h2" stroke="#0b1423" stroke-width="2" stroke-linecap="round" />
+                    <path d="M12 20c1.2 1.8 3 2.7 4 2.7s2.8-.6 4-2.7" fill="none" stroke="#0b1423" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span class="hf-link-text" data-i18n="hfLinkLabel">Hugging Face</span>
+                </a>
+              </div>
+            </label>
+            <label class="field">
+              <span data-i18n="modelParams">Model params (B)</span>
+              <input id="paramsB" type="number" min="0" step="0.1" value="80">
+            </label>
+            <label class="field">
+              <span data-i18n="weightPrecision">Quality / Size tradeoff</span>
+              <select id="weightPrecision">
+                <option value="bf16">Full quality (largest) — BF16</option>
+                <option value="fp16">Full quality — FP16</option>
+                <option value="fp8">Good quality — FP8</option>
+                <option value="int8">Balanced (recommended) — INT8</option>
+                <option value="int4">Compact (smallest) — INT4</option>
               </select>
-              <a href="hardware/" class="inline-link" data-i18n="compareHardware">Compare all</a>
+              <small data-i18n="weightPrecisionHelp">Lower = smaller & faster, but less accurate</small>
+            </label>
+            <label class="field">
+              <span data-i18n="kvPrecision">Cache precision</span>
+              <select id="kvPrecision">
+                <option value="bf16">Full (BF16)</option>
+                <option value="fp16">Full (FP16)</option>
+                <option value="fp8">Compact (FP8)</option>
+              </select>
+              <small data-i18n="kvPrecisionHelp">Usually matches weight precision</small>
+            </label>
+          </div>
+
+          <button type="button" class="toggle-advanced" id="toggleAdvanced" aria-expanded="false">
+            <span data-i18n="showAdvanced">▸ Advanced options</span>
+          </button>
+
+          <div class="advanced-options" id="advancedOptions" style="display: none;">
+            <div class="grid two">
+              <label class="field">
+                <span data-i18n="activeParams">Active params for MoE (B, optional)</span>
+                <input id="activeParamsB" type="number" min="0" step="0.1" placeholder="defaults to params">
+                <small data-i18n="activeParamsHelp">If MoE, set the activated parameters per token.</small>
+              </label>
+              <label class="field">
+                <span data-i18n="hiddenSize">Hidden size (override, optional)</span>
+                <input id="hiddenSize" type="number" min="0" step="1" placeholder="auto">
+              </label>
+              <label class="field">
+                <span data-i18n="layers">Layers (override, optional)</span>
+                <input id="numLayers" type="number" min="0" step="1" placeholder="auto">
+              </label>
             </div>
-            <small data-i18n="gpuHelp">Auto-fills specs to check if requirements fit.</small>
-          </label>
-          <label class="field">
-            <span data-i18n="gpuCount">Number of GPUs</span>
-            <select id="gpuCount">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="16">16</option>
-              <option value="32">32</option>
-              <option value="64">64</option>
-              <option value="72">72</option>
-            </select>
-            <small data-i18n="gpuCountHelp">Total VRAM = Count × Single GPU VRAM.</small>
-          </label>
-          <div class="gpu-info" id="gpuInfo" style="grid-column: span 1;"></div>
-        </div>
-      </div>
-    </section>
+          </div>
+        </section>
 
-    <section class="panel">
-      <h2 data-i18n="sectionWorkload">Workload</h2>
-      
-      <div class="workload-presets" style="margin-bottom: 1rem; display: flex; gap: 8px; align-items: center;">
-        <span style="font-size: 0.85rem; font-weight: 600; color: var(--muted);" data-i18n="workloadPreset">Workload Preset</span>
-        <button type="button" class="btn ghost btn-sm workload-btn" data-preset="low" data-i18n="workloadLow">Low</button>
-        <button type="button" class="btn ghost btn-sm workload-btn active" data-preset="medium" data-i18n="workloadMedium">Medium</button>
-        <button type="button" class="btn ghost btn-sm workload-btn" data-preset="high" data-i18n="workloadHigh">High</button>
+        <section class="panel">
+          <h2 data-i18n="sectionWorkload">Workload</h2>
+
+          <div class="workload-presets" style="margin-bottom: 1rem; display: flex; gap: 8px; align-items: center;">
+            <span style="font-size: 0.85rem; font-weight: 600; color: var(--muted);" data-i18n="workloadPreset">Workload
+              Preset</span>
+            <button type="button" class="btn ghost btn-sm workload-btn" data-preset="low"
+              data-i18n="workloadLow">Low</button>
+            <button type="button" class="btn ghost btn-sm workload-btn active" data-preset="medium"
+              data-i18n="workloadMedium">Medium</button>
+            <button type="button" class="btn ghost btn-sm workload-btn" data-preset="high"
+              data-i18n="workloadHigh">High</button>
+          </div>
+
+          <div class="grid three">
+            <label class="field">
+              <span data-i18n="promptTokens">Input length (tokens)</span>
+              <input id="promptTokens" type="number" min="1" step="50" value="5000">
+              <small data-i18n="promptTokensHelp">Short: 500 · Document: 8K · Long: 32K</small>
+            </label>
+            <label class="field">
+              <span data-i18n="newTokens">Output length (tokens)</span>
+              <input id="newTokens" type="number" min="1" step="10" value="1000">
+              <small data-i18n="newTokensHelp">Typical: 100-500 · Long: 1K-2K</small>
+            </label>
+            <label class="field">
+              <span data-i18n="batchSize">Simultaneous users</span>
+              <input id="batchSize" type="number" min="1" step="1" value="1">
+              <small data-i18n="batchSizeHelp">Personal: 1 · Team: 4-8 · Production: 16+</small>
+            </label>
+            <label class="field">
+              <span data-i18n="targetTps">Speed (tokens/sec)</span>
+              <input id="targetTps" type="number" min="0.1" step="0.5" value="20">
+              <small data-i18n="targetTpsHelp">Slow: 5 · Good: 15 · Fast: 30+</small>
+            </label>
+            <label class="field">
+              <span data-i18n="ttftMs">First response time (ms)</span>
+              <input id="ttftMs" type="number" min="1" step="10" value="1500">
+              <small data-i18n="ttftMsHelp">Fast: 500 · Acceptable: 2000</small>
+            </label>
+          </div>
+
+          <button type="button" class="toggle-advanced" id="toggleAdvancedWorkload" aria-expanded="false">
+            <span data-i18n="showAdvanced">▸ Advanced options</span>
+          </button>
+
+          <div class="advanced-options" id="advancedWorkloadOptions" style="display: none;">
+            <div class="grid two">
+              <label class="field">
+                <span data-i18n="utilCompute">Utilization (compute)</span>
+                <input id="utilCompute" type="number" min="0.05" max="1" step="0.05" value="0.45">
+                <small data-i18n="utilComputeHelp">Effective fraction of peak TFLOPS/TOPS.</small>
+              </label>
+              <label class="field">
+                <span data-i18n="utilBw">Utilization (bandwidth)</span>
+                <input id="utilBandwidth" type="number" min="0.05" max="1" step="0.05" value="0.6">
+                <small data-i18n="utilBwHelp">Effective fraction of peak memory bandwidth.</small>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel hardware-section">
+          <h2>
+            <span data-i18n="sectionHardware">Hardware (optional)</span>
+            <button type="button" class="toggle-hardware btn ghost" id="toggleHardware" aria-expanded="false">
+              <span data-i18n="showHardware">+ Select GPU to test fit</span>
+            </button>
+          </h2>
+          <div class="hardware-picker" id="hardwarePicker" style="display: none;">
+            <div class="grid three">
+              <label class="field">
+                <span data-i18n="selectGPU">Select GPU</span>
+                <div class="field-with-action">
+                  <select id="gpuSelect">
+                    <option value="">None (manual entry)</option>
+                  </select>
+                  <a href="hardware/" class="inline-link" data-i18n="compareHardware">Compare all</a>
+                </div>
+                <small data-i18n="gpuHelp">Auto-fills specs to check if requirements fit.</small>
+              </label>
+              <label class="field">
+                <span data-i18n="gpuCount">Number of GPUs</span>
+                <select id="gpuCount">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="4">4</option>
+                  <option value="8">8</option>
+                  <option value="16">16</option>
+                  <option value="32">32</option>
+                  <option value="64">64</option>
+                  <option value="72">72</option>
+                </select>
+                <small data-i18n="gpuCountHelp">Total VRAM = Count × Single GPU VRAM.</small>
+              </label>
+              <div class="gpu-info" id="gpuInfo" style="grid-column: span 1;"></div>
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div class="grid three">
-        <label class="field">
-          <span data-i18n="promptTokens">Input length (tokens)</span>
-          <input id="promptTokens" type="number" min="1" step="50" value="5000">
-          <small data-i18n="promptTokensHelp">Short: 500 · Document: 8K · Long: 32K</small>
-        </label>
-        <label class="field">
-          <span data-i18n="newTokens">Output length (tokens)</span>
-          <input id="newTokens" type="number" min="1" step="10" value="1000">
-          <small data-i18n="newTokensHelp">Typical: 100-500 · Long: 1K-2K</small>
-        </label>
-        <label class="field">
-          <span data-i18n="batchSize">Simultaneous users</span>
-          <input id="batchSize" type="number" min="1" step="1" value="1">
-          <small data-i18n="batchSizeHelp">Personal: 1 · Team: 4-8 · Production: 16+</small>
-        </label>
-        <label class="field">
-          <span data-i18n="targetTps">Speed (tokens/sec)</span>
-          <input id="targetTps" type="number" min="0.1" step="0.5" value="20">
-          <small data-i18n="targetTpsHelp">Slow: 5 · Good: 15 · Fast: 30+</small>
-        </label>
-        <label class="field">
-          <span data-i18n="ttftMs">First response time (ms)</span>
-          <input id="ttftMs" type="number" min="1" step="10" value="1500">
-          <small data-i18n="ttftMsHelp">Fast: 500 · Acceptable: 2000</small>
-        </label>
-      </div>
-      
-      <button type="button" class="toggle-advanced" id="toggleAdvancedWorkload" aria-expanded="false">
-        <span data-i18n="showAdvanced">▸ Advanced options</span>
-      </button>
-      
-      <div class="advanced-options" id="advancedWorkloadOptions" style="display: none;">
-        <div class="grid two">
-          <label class="field">
-            <span data-i18n="utilCompute">Utilization (compute)</span>
-            <input id="utilCompute" type="number" min="0.05" max="1" step="0.05" value="0.45">
-            <small data-i18n="utilComputeHelp">Effective fraction of peak TFLOPS/TOPS.</small>
-          </label>
-          <label class="field">
-            <span data-i18n="utilBw">Utilization (bandwidth)</span>
-            <input id="utilBandwidth" type="number" min="0.05" max="1" step="0.05" value="0.6">
-            <small data-i18n="utilBwHelp">Effective fraction of peak memory bandwidth.</small>
-          </label>
-        </div>
-      </div>
-    </section>
+      <!-- Right Column: Results (Sticky) -->
+      <div class="calculator-results">
+        <section class="panel results">
+          <div class="results-header">
+            <h2 data-i18n="sectionResults">Results</h2>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <a href="about.html" class="inline-link" style="font-size: 0.85rem; opacity: 0.7;"
+                data-i18n="viewMethodology">View Methodology</a>
+              <label class="field compact">
+                <span data-i18n="computeUnit">Compute unit</span>
+                <select id="computeUnit">
+                  <option value="tflops">TFLOPS</option>
+                  <option value="gflops">GFLOPS</option>
+                  <option value="pflops">PFLOPS</option>
+                  <option value="tops_int8">TOPS (INT8)</option>
+                  <option value="tops_int4">TOPS (INT4)</option>
+                </select>
+              </label>
+            </div>
+          </div>
 
-    <section class="panel results">
-      <div class="results-header">
-        <h2 data-i18n="sectionResults">Results</h2>
-        <div style="display: flex; gap: 1rem; align-items: center;">
-          <a href="about.html" class="inline-link" style="font-size: 0.85rem; opacity: 0.7;">View Methodology</a>
-          <label class="field compact">
-            <span data-i18n="computeUnit">Compute unit</span>
-            <select id="computeUnit">
-              <option value="tflops">TFLOPS</option>
-              <option value="gflops">GFLOPS</option>
-              <option value="pflops">PFLOPS</option>
-              <option value="tops_int8">TOPS (INT8)</option>
-              <option value="tops_int4">TOPS (INT4)</option>
-            </select>
-          </label>
-        </div>
+          <div class="grid">
+            <div class="card" id="vramCard"></div>
+            <div class="card" id="computeCard"></div>
+            <div class="card" id="bandwidthCard"></div>
+            <div class="card" id="ttftCard"></div>
+          </div>
+
+          <div class="verdict-card" id="verdictCard"></div>
+
+          <div class="assumptions" id="assumptions"></div>
+
+          <div style="text-align: center; margin-top: 1.5rem;">
+            <p style="font-size: 0.8rem; opacity: 0.5;">
+              Calculations are physics-based estimates. See our <a href="about.html"
+                style="color: inherit; text-decoration: underline;">Data Inclusion Policy</a> for details.
+            </p>
+          </div>
+        </section>
       </div>
-      
-      <div class="verdict-card" id="verdictCard"></div>
-      
-      <div class="grid two">
-        <div class="card" id="vramCard"></div>
-        <div class="card" id="computeCard"></div>
-        <div class="card" id="bandwidthCard"></div>
-        <div class="card" id="ttftCard"></div>
-      </div>
-      <div class="hardware-recommendations" id="hardwareRecommendations"></div>
-      <div class="assumptions" id="assumptions"></div>
-      <div style="text-align: center; margin-top: 1rem;">
-        <p style="font-size: 0.8rem; opacity: 0.5;">
-          Calculations are physics-based estimates. See our <a href="about.html" style="color: inherit; text-decoration: underline;">Data Inclusion Policy</a> for details.
-        </p>
-      </div>
-    </section>
+    </div>
   </main>
 
   <script src="js/i18n.js"></script>
@@ -259,5 +287,5 @@
   <script src="js/gpus.js"></script>
   <script src="js/ui.js"></script>
 </body>
-</html>
 
+</html>

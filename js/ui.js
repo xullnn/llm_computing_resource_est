@@ -46,13 +46,13 @@ function getURLParams() {
 
 function applyURLParams(params) {
   // Language is now handled by js/i18n.js via URL params
-  
+
   // Apply mode (for future use with persona-specific UI adjustments)
   if (params.mode) {
     currentMode = params.mode;
     document.body.setAttribute('data-mode', currentMode);
   }
-  
+
   // Apply preset
   if (params.preset) {
     const presetSelect = byId('modelPreset');
@@ -67,14 +67,14 @@ function applyURLParams(params) {
       }
     }
   }
-  
+
   // Apply workload parameters
   if (params.promptTokens) byId('promptTokens').value = params.promptTokens;
   if (params.newTokens) byId('newTokens').value = params.newTokens;
   if (params.batchSize) byId('batchSize').value = params.batchSize;
   if (params.targetTps) byId('targetTps').value = params.targetTps;
   if (params.ttftMs) byId('ttftMs').value = params.ttftMs;
-  
+
   // Apply GPU if provided
   if (params.gpu) {
     document.body.setAttribute('data-preset-gpu', params.gpu);
@@ -87,13 +87,13 @@ function applyURLParams(params) {
 
 function generateShareableURL(includeResults = false) {
   const params = new URLSearchParams();
-  
+
   const preset = byId('modelPreset').value;
   if (preset) params.set('preset', preset);
-  
+
   if (currentMode) params.set('mode', currentMode);
   if (currentLang !== 'en') params.set('lang', currentLang);
-  
+
   const gpu = byId('gpuSelect')?.value;
   if (gpu) {
     params.set('gpu', gpu);
@@ -108,7 +108,7 @@ function generateShareableURL(includeResults = false) {
     params.set('tps', byId('targetTps').value);
     params.set('ttft', byId('ttftMs').value);
   }
-  
+
   const url = new URL(window.location);
   url.search = params.toString();
   url.hash = '#calculator';
@@ -127,23 +127,23 @@ async function fetchDynamicData() {
         // Our MODEL_PRESETS structure:
         // { id, provider, name, repo, hfUrl, paramsB, hiddenSize, layers, heads, weightPrecision, kvPrecision }
         const mappedModels = modelsData.models.map(m => {
-            const provider = m.id.split('/')[0];
-            return {
-                id: m.id,
-                provider: provider.charAt(0).toUpperCase() + provider.slice(1),
-                name: m.name,
-                repo: m.id,
-                hfUrl: m.huggingface_url,
-                paramsB: m.parameters_billion,
-                activeParamsB: m.active_parameters_billion || (m.moe_num_experts ? (m.parameters_billion / m.moe_num_experts * (m.moe_top_k || 1)) : m.parameters_billion),
-                hiddenSize: m.hidden_size,
-                layers: m.num_layers,
-                heads: m.num_heads,
-                weightPrecision: "bf16",
-                kvPrecision: "bf16"
-            };
+          const provider = m.id.split('/')[0];
+          return {
+            id: m.id,
+            provider: provider.charAt(0).toUpperCase() + provider.slice(1),
+            name: m.name,
+            repo: m.id,
+            hfUrl: m.huggingface_url,
+            paramsB: m.parameters_billion,
+            activeParamsB: m.active_parameters_billion || (m.moe_num_experts ? (m.parameters_billion / m.moe_num_experts * (m.moe_top_k || 1)) : m.parameters_billion),
+            hiddenSize: m.hidden_size,
+            layers: m.num_layers,
+            heads: m.num_heads,
+            weightPrecision: "bf16",
+            kvPrecision: "bf16"
+          };
         });
-        
+
         // Merge or replace? User says "Replace hardcoded presets"
         MODEL_PRESETS = mappedModels;
         populatePresetSelect();
@@ -199,7 +199,7 @@ function populatePresetSelect() {
   if (!sel) return;
   const currentVal = sel.value;
   sel.innerHTML = "";
-  
+
   // 1. Group models by provider
   const groups = {};
   MODEL_PRESETS.forEach(m => {
@@ -207,38 +207,38 @@ function populatePresetSelect() {
     if (!groups[provider]) groups[provider] = [];
     groups[provider].push(m);
   });
-  
+
   // 2. Sort providers alphabetically
   const sortedProviders = Object.keys(groups).sort();
   const activeText = t("activeLabel") || "active";
-  
+
   sortedProviders.forEach(provider => {
     const optgroup = document.createElement("optgroup");
     // Normalize vendor names for professional display
     optgroup.label = provider.replace('-ai', '').replace('Meta-', '').toUpperCase();
-    
+
     // 3. Sort models within provider by size (descending for flagships first)
     const models = groups[provider].sort((a, b) => b.paramsB - a.paramsB);
-    
+
     models.forEach(m => {
       const opt = document.createElement("option");
       opt.value = m.id;
-      
+
       // 4. Create High-Density Label: Name (Total B / Active B)
       const total = m.paramsB < 1 ? m.paramsB.toFixed(1) : Math.round(m.paramsB);
       let label = `${m.name} (${total}B`;
-      
+
       // Show MoE active params if they differ from total
       if (m.activeParamsB && Math.round(m.activeParamsB) !== Math.round(m.paramsB)) {
         const active = m.activeParamsB < 1 ? m.activeParamsB.toFixed(1) : Math.round(m.activeParamsB);
         label += ` / ${active}B ${activeText}`;
       }
       label += `)`;
-      
+
       opt.textContent = label;
       optgroup.appendChild(opt);
     });
-    
+
     sel.appendChild(optgroup);
   });
 
@@ -346,15 +346,15 @@ function getGPUFitStatus(required, available) {
 
 function renderProgressBar(required, available, label) {
   if (!available || !Number.isFinite(available)) return '';
-  
+
   const ratio = Math.min(required / available, 1.5);
   const percentage = Math.min(ratio * 100, 100);
   const status = getGPUFitStatus(required, available);
-  
-  const statusText = status === 'fit' ? '✓ Fits' : 
-                     status === 'warn' ? '~ Close' : 
-                     '✗ Insufficient';
-  
+
+  const statusText = status === 'fit' ? '✓ Fits' :
+    status === 'warn' ? '~ Close' :
+      '✗ Insufficient';
+
   return `
     <div class="result-bar">
       <div class="result-bar-fill ${status}" style="width: ${percentage}%"></div>
@@ -392,15 +392,37 @@ function getBandwidthSummary(gbps) {
   return 'Extreme bandwidth required';
 }
 
+function getHardwareTier(vramGb) {
+  if (vramGb > 192) return { icon: '🔴', label: t('verdictTier4') };
+  if (vramGb > 48) return { icon: '🟠', label: t('verdictTier3') };
+  if (vramGb > 24) return { icon: '🟡', label: t('verdictTier2') };
+  return { icon: '🟢', label: t('verdictTier1') };
+}
+
+function renderVerdictBar(results) {
+  const bar = byId('verdictBar');
+  if (!bar) return;
+
+  const vram = results.totalVramGb;
+  const tflops = results.requiredTflops;
+  const bw = results.requiredBwGbpsConservative;
+  const tier = getHardwareTier(vram);
+
+  byId('verdictBar').querySelector('.verdict-tier').textContent = `${tier.label}`;
+  byId('barVram').innerHTML = `💾 <strong>${fmt(vram, 1)} GB</strong>`;
+  byId('barCompute').innerHTML = `⚡ <strong>${fmtCompute(tflops)}</strong>`;
+  byId('barBandwidth').innerHTML = `📡 <strong>${fmt(bw, 0)} GB/s</strong>`;
+}
+
 function renderVerdictCard(results) {
   const verdictCard = byId('verdictCard');
   if (!verdictCard) return;
-  
+
   const vram = results.totalVramGb;
-  
+
   // Determine GPU tier based on VRAM requirements
   let emoji, title, message, status, gpuExamples;
-  
+
   if (vram <= 12) {
     emoji = '🎮';
     title = 'Consumer GPU friendly';
@@ -432,13 +454,14 @@ function renderVerdictCard(results) {
     status = 'danger';
     gpuExamples = 'MI300X (192GB), 2× H100, multi-GPU cluster';
   }
-  
-  verdictCard.className = `verdict-card ${status}`;
+
+  verdictCard.className = `verdict-card ${status} compact`;
   verdictCard.innerHTML = `
-    <div class="verdict-emoji">${emoji}</div>
-    <h3 class="verdict-title">${title}</h3>
-    <p class="verdict-message">${message}</p>
-    <div class="verdict-gpus">
+    <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+      <h3 class="verdict-title" style="margin: 0; font-size: 1rem;">${emoji} ${title}</h3>
+      <p class="verdict-message" style="margin: 0; font-size: 0.9rem; opacity: 0.8;">${message}</p>
+    </div>
+    <div class="verdict-gpus" style="margin-top: 4px; font-size: 0.8rem; opacity: 0.7;">
       <strong>Examples:</strong> ${gpuExamples}
     </div>
   `;
@@ -459,7 +482,7 @@ function render(results) {
   const gpuId = byId('gpuSelect')?.value;
   const gpu = gpuId ? getGPUById(gpuId) : null;
   const gpuCount = parseInt(byId('gpuCount')?.value || "1");
-  
+
   const totalVramAvailable = gpu ? gpu.vram_gb * gpuCount : 0;
   const totalComputeAvailable = gpu ? (gpu.tflops_bf16 || gpu.tflops_fp16) * gpuCount : 0;
   const totalBwAvailable = gpu ? gpu.bandwidth_gbps * gpuCount : 0;
@@ -515,7 +538,7 @@ function render(results) {
     else if (results.ttftMs <= 5000) ttftSummary = 'Slow response';
     else ttftSummary = 'Very slow response';
   }
-  
+
   byId("ttftCard").innerHTML = ttftKnown
     ? `
       <strong>⏱️ First Response Time</strong>
@@ -531,112 +554,18 @@ function render(results) {
 
   const assumptionLines = I18N[currentLang]?.assumptions || I18N.en.assumptions;
   byId("assumptions").textContent = assumptionLines.join(" ");
-  
+
   // Render verdict card
   renderVerdictCard(results);
-  
-  // Render hardware recommendations
-  renderHardwareRecommendations(results);
 }
 
-async function renderHardwareRecommendations(results) {
-  const container = byId('hardwareRecommendations');
-  if (!container) return;
-  
-  // Wait for GPU database to load
-  if (!gpuDatabase) {
-    await loadGPUDatabase();
-  }
-  
-  if (!gpuDatabase || gpuDatabase.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-  
-  const recommendations = getHardwareRecommendations({
-    totalVramGb: results.totalVramGb,
-    requiredTflops: results.requiredTflops,
-    requiredBwGbps: results.requiredBwGbps,
-    weightPrecision: results.weightBytes === 2 ? 'bf16' : 
-                     results.weightBytes === 1 ? 'int8' : 
-                     results.weightBytes === 0.5 ? 'int4' : 'bf16'
-  });
-  
-  if (!recommendations || 
-      (recommendations.consumer.length === 0 && 
-       recommendations.professional.length === 0 && 
-       recommendations.datacenter.length === 0)) {
-    container.innerHTML = `
-      <div class="recommendation-section">
-        <h3>💡 Hardware Recommendations</h3>
-        <p class="no-recommendations">No single GPU in our database meets all requirements. Consider multi-GPU setup or cloud providers with custom configurations.</p>
-      </div>
-    `;
-    return;
-  }
-  
-  let html = '<div class="recommendation-section"><h3>💡 Recommended GPUs</h3>';
-  
-  // Consumer GPUs
-  if (recommendations.consumer.length > 0) {
-    html += '<div class="rec-category"><h4>🏠 Consumer / Gaming</h4><div class="rec-grid">';
-    recommendations.consumer.forEach(gpu => {
-      html += renderGPUCard(gpu);
-    });
-    html += '</div></div>';
-  }
-  
-  // Professional GPUs
-  if (recommendations.professional.length > 0) {
-    html += '<div class="rec-category"><h4>💼 Professional / Workstation</h4><div class="rec-grid">';
-    recommendations.professional.forEach(gpu => {
-      html += renderGPUCard(gpu);
-    });
-    html += '</div></div>';
-  }
-  
-  // Datacenter GPUs
-  if (recommendations.datacenter.length > 0) {
-    html += '<div class="rec-category"><h4>☁️ Datacenter / Cloud</h4><div class="rec-grid">';
-    recommendations.datacenter.forEach(gpu => {
-      html += renderGPUCard(gpu);
-    });
-    html += '</div></div>';
-  }
-  
-  html += '</div>';
-  container.innerHTML = html;
-}
 
-function renderGPUCard(gpu) {
-  const count = gpu.count > 1 ? `${gpu.count}×` : '';
-  const cloudCost = gpu.cloud_hourly ? 
-    `<div class="cloud-cost">☁️ ~$${fmt(gpu.cloud_hourly * (gpu.count || 1), 2)}/hr</div>` : '';
-  const price = gpu.price_usd ? 
-    `<div class="price">💰 ~$${(gpu.price_usd * (gpu.count || 1)).toLocaleString()}</div>` : '';
-  const vramHeadroom = gpu.vram_headroom ? 
-    `<span class="headroom">+${fmt(gpu.vram_headroom, 0)}GB headroom</span>` : '';
-  
-  return `
-    <div class="gpu-card">
-      <div class="gpu-card-header">
-        <strong>${count} ${gpu.name}</strong>
-      </div>
-      <div class="gpu-card-specs">
-        <div>VRAM: ${gpu.count > 1 ? fmt(gpu.total_vram, 0) : gpu.vram_gb} GB ${vramHeadroom}</div>
-        <div>Compute: ${fmt(gpu.effective_tflops || gpu.tflops_bf16 || gpu.tflops_fp16, 1)} TFLOPS</div>
-        <div>Bandwidth: ${gpu.bandwidth_gbps} GB/s</div>
-      </div>
-      ${price}
-      ${cloudCost}
-    </div>
-  `;
-}
 
 function computeAndRender() {
   const inputs = gatherInputs();
   const results = calcRequirements(inputs);
   render(results);
+  renderVerdictBar(results); // New sticky bar update
   updateGPUFitness(results);
 }
 
@@ -644,35 +573,35 @@ function computeAndRender() {
 async function initHardwarePicker() {
   await loadGPUDatabase();
   populateGPUSelect();
-  
+
   const toggleBtn = byId('toggleHardware');
   const picker = byId('hardwarePicker');
   const gpuSelect = byId('gpuSelect');
-  
+
   if (toggleBtn && picker) {
     toggleBtn.addEventListener('click', () => {
       const isHidden = picker.style.display === 'none';
       picker.style.display = isHidden ? 'block' : 'none';
       toggleBtn.setAttribute('aria-expanded', isHidden);
-      toggleBtn.querySelector('[data-i18n]').setAttribute('data-i18n', 
+      toggleBtn.querySelector('[data-i18n]').setAttribute('data-i18n',
         isHidden ? 'hideHardware' : 'showHardware');
-      toggleBtn.querySelector('[data-i18n]').textContent = 
+      toggleBtn.querySelector('[data-i18n]').textContent =
         t(isHidden ? 'hideHardware' : 'showHardware');
     });
   }
-  
+
   if (gpuSelect) {
     gpuSelect.addEventListener('change', handleGPUSelection);
-    
+
     // Check if GPU was preset via URL or mode=local
     const presetGPU = document.body.getAttribute('data-preset-gpu');
     const shouldAutoExpand = currentMode === 'local' || presetGPU;
-    
+
     if (presetGPU) {
       gpuSelect.value = presetGPU;
       handleGPUSelection();
     }
-    
+
     // Auto-expand picker if mode=local (hobbyist scenario)
     if (shouldAutoExpand && picker && toggleBtn) {
       picker.style.display = 'block';
@@ -686,12 +615,12 @@ async function initHardwarePicker() {
 function populateGPUSelect() {
   const sel = byId('gpuSelect');
   if (!sel || !gpuDatabase) return;
-  
+
   // Clear existing options except first (None)
   while (sel.options.length > 1) {
     sel.remove(1);
   }
-  
+
   // Group by category
   const categories = {
     consumer: 'Consumer GPUs',
@@ -699,7 +628,7 @@ function populateGPUSelect() {
     apple: 'Apple Silicon',
     datacenter: 'Datacenter / Enterprise accelerators'
   };
-  
+
   Object.entries(categories).forEach(([category, label]) => {
     const gpus = getGPUsByCategory(category);
     if (gpus.length > 0) {
@@ -728,10 +657,10 @@ function populateGPUSelect() {
     });
     // Add custom option if not in the list
     if (![1, 2, 4, 8, 16, 32, 64, 72].includes(parseInt(currentVal))) {
-        const opt = document.createElement('option');
-        opt.value = currentVal;
-        opt.textContent = currentVal;
-        countSel.appendChild(opt);
+      const opt = document.createElement('option');
+      opt.value = currentVal;
+      opt.textContent = currentVal;
+      countSel.appendChild(opt);
     }
     countSel.value = currentVal;
   }
@@ -740,15 +669,15 @@ function populateGPUSelect() {
 function handleGPUSelection() {
   const gpuId = byId('gpuSelect').value;
   const infoDiv = byId('gpuInfo');
-  
+
   if (!gpuId || !infoDiv) {
     if (infoDiv) infoDiv.innerHTML = '';
     return;
   }
-  
+
   const gpu = getGPUById(gpuId);
   if (!gpu) return;
-  
+
   // Display GPU info
   infoDiv.innerHTML = `
     <div class="gpu-specs">
@@ -761,7 +690,7 @@ function handleGPUSelection() {
       ${gpu.price_usd ? `<small>~$${gpu.price_usd.toLocaleString()}</small>` : ''}
     </div>
   `;
-  
+
   // Will be used in render to show fit
   computeAndRender();
 }
@@ -769,14 +698,14 @@ function handleGPUSelection() {
 function updateGPUFitness(results) {
   const gpuId = byId('gpuSelect')?.value;
   if (!gpuId) return;
-  
+
   const gpu = getGPUById(gpuId);
   if (!gpu) return;
-  
+
   const gpuCount = parseInt(byId('gpuCount')?.value || "1");
   const infoDiv = byId('gpuInfo');
   if (!infoDiv) return;
-  
+
   // Check if requirements fit
   const totalVram = gpu.vram_gb * gpuCount;
   const vramFits = totalVram >= results.totalVramGb;
@@ -784,9 +713,9 @@ function updateGPUFitness(results) {
   const computeFits = totalTflops >= results.requiredTflops;
   const totalBw = gpu.bandwidth_gbps * gpuCount;
   const bwFits = totalBw >= results.requiredBwGbps;
-  
+
   const allFit = vramFits && computeFits && bwFits;
-  
+
   const fitnessHtml = `
     <div class="gpu-fitness ${allFit ? 'fit' : 'no-fit'}">
       <div class="fitness-title">${allFit ? '✅ This configuration fits!' : '⚠️ May not meet requirements'}</div>
@@ -797,7 +726,7 @@ function updateGPUFitness(results) {
       </div>
     </div>
   `;
-  
+
   // Find existing fitness div or append
   const existingFitness = infoDiv.querySelector('.gpu-fitness');
   if (existingFitness) {
@@ -818,18 +747,18 @@ function initQuickStartButtons() {
   // Hero Search Logic
   const searchInput = byId('heroSearchInput');
   const searchBtn = byId('heroSearchBtn');
-  
+
   const handleSearch = () => {
     const term = searchInput.value.toLowerCase().trim();
     if (!term) return;
-    
+
     // Simple search: find first matching model
-    const match = MODEL_PRESETS.find(m => 
-      m.name.toLowerCase().includes(term) || 
+    const match = MODEL_PRESETS.find(m =>
+      m.name.toLowerCase().includes(term) ||
       m.id.toLowerCase().includes(term) ||
       m.provider.toLowerCase().includes(term)
     );
-    
+
     if (match) {
       useModelInCalc(match.id);
     } else {
@@ -858,10 +787,10 @@ function initQuickStartButtons() {
 /**
  * Bridges model selection to the calculator
  */
-window.useModelInCalc = function(id) {
+window.useModelInCalc = function (id) {
   const presetSelect = byId('modelPreset');
   if (!presetSelect) return;
-  
+
   presetSelect.value = id;
   // If not in select yet (dynamic data still loading), wait or fallback
   if (presetSelect.value !== id) {
@@ -878,7 +807,7 @@ window.useModelInCalc = function(id) {
     updatePresetLink(preset);
     computeAndRender();
   }
-  
+
   // Smooth scroll to results
   setTimeout(() => {
     byId('verdictCard')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -892,17 +821,17 @@ async function initModelSpotlight() {
   // We'll use MODEL_PRESETS which is populated in fetchDynamicData
   // Since fetchDynamicData is async, we might need to wait for it
   // or trigger this after it's done.
-  
+
   const renderSpotlight = () => {
     if (!MODEL_PRESETS || MODEL_PRESETS.length === 0) return;
-    
+
     // Pick flagships: Qwen 235B, DeepSeek-V3, Llama 3.1 70B
     const spotlightIds = [
-      'Qwen/Qwen3-235B-A22B-Thinking-2507-FP8', 
-      'deepseek-ai/DeepSeek-V3', 
+      'Qwen/Qwen3-235B-A22B-Thinking-2507-FP8',
+      'deepseek-ai/DeepSeek-V3',
       'meta-llama/Llama-3.1-70B-Instruct'
     ];
-    
+
     // Filter and maintain order
     const featured = spotlightIds
       .map(id => MODEL_PRESETS.find(m => m.id === id))
@@ -918,7 +847,7 @@ async function initModelSpotlight() {
     spotlightGrid.innerHTML = featured.map(model => {
       const vramInt8 = Math.ceil(model.paramsB * 1.05);
       const vramBf16 = Math.ceil(model.paramsB * 2);
-      
+
       return `
         <div class="card-landing spotlight-card" onclick="useModelInCalc('${model.id}')" style="cursor: pointer;">
           <div class="pill">${model.provider}</div>
@@ -944,7 +873,7 @@ async function initModelSpotlight() {
 
   // Initial attempt
   renderSpotlight();
-  
+
   // Return the function so it can be called again after dynamic fetch
   return renderSpotlight;
 }
@@ -960,7 +889,7 @@ function initAdvancedToggles() {
       toggleAdvanced.setAttribute('aria-expanded', isHidden);
     });
   }
-  
+
   // Workload advanced options
   const toggleAdvancedWorkload = byId('toggleAdvancedWorkload');
   const advancedWorkloadOptions = byId('advancedWorkloadOptions');
@@ -1006,9 +935,9 @@ function initWorkloadPresets() {
 async function init() {
   // Check for URL parameters first
   const urlParams = getURLParams();
-  
+
   populatePresetSelect();
-  
+
   // Apply URL params before setting defaults
   if (Object.values(urlParams).some(v => v !== null)) {
     applyURLParams(urlParams);
@@ -1016,7 +945,7 @@ async function init() {
     applyPreset(MODEL_PRESETS[0]);
     updatePresetLink(MODEL_PRESETS[0]);
   }
-  
+
   applyStaticTranslations();
 
   // Initialize spotlight with current hardcoded data
@@ -1026,18 +955,18 @@ async function init() {
   fetchDynamicData().then(() => {
     // Re-render spotlight after dynamic data is loaded
     if (reRenderSpotlight) reRenderSpotlight();
-    
+
     // Re-apply URL params in case the dynamic data added the requested preset
     if (urlParams.preset) {
-        const presetSelect = byId('modelPreset');
-        const presetExists = MODEL_PRESETS.find(m => m.id === urlParams.preset);
-        if (presetSelect && presetExists) {
-            presetSelect.value = urlParams.preset;
-            const preset = getSelectedPreset();
-            applyPreset(preset);
-            updatePresetLink(preset);
-            computeAndRender();
-        }
+      const presetSelect = byId('modelPreset');
+      const presetExists = MODEL_PRESETS.find(m => m.id === urlParams.preset);
+      if (presetSelect && presetExists) {
+        presetSelect.value = urlParams.preset;
+        const preset = getSelectedPreset();
+        applyPreset(preset);
+        updatePresetLink(preset);
+        computeAndRender();
+      }
     }
   });
 
@@ -1070,13 +999,13 @@ async function init() {
 
   // Initialize quick-start buttons
   initQuickStartButtons();
-  
+
   // Initialize advanced toggles
   initAdvancedToggles();
-  
+
   // Initialize workload presets
   initWorkloadPresets();
-  
+
   // Initialize hardware picker
   initHardwarePicker();
 
@@ -1092,14 +1021,14 @@ function initNavigation() {
   // Ecosystem grid dismissal
   const ecosystemGrid = byId('ecosystemGrid');
   const dismissBtn = byId('dismissEcosystem');
-  
+
   if (ecosystemGrid && dismissBtn) {
     // Check localStorage
     const isDismissed = localStorage.getItem('ecosystemDismissed') === 'true';
     if (isDismissed) {
       ecosystemGrid.style.display = 'none';
     }
-    
+
     dismissBtn.addEventListener('click', () => {
       ecosystemGrid.style.display = 'none';
       localStorage.setItem('ecosystemDismissed', 'true');
