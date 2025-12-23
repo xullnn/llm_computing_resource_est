@@ -1,1 +1,10 @@
 prompts/
+
+# Environment variables (API keys, secrets)
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+npm-debug.log*
