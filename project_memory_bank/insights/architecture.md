@@ -44,7 +44,7 @@ graph LR
 Strict use of **Absolute Paths** for all internal links and asset references.
 
 ### Rationale
-*   **Hierarchy Resilience**: Prevents broken images/links when navigating from root (`/index.html`) to sub-directories (`/for/enterprise.html`).
+*   **Hierarchy Resilience**: Prevents broken images/links when navigating from root (`/index.html`) to sub-directories (`/hardware/index.html`) or top-level pages (`/quickstart.html`).
 *   **Standardization**: Simplifies navigation logic in `js/nav.js` as it doesn't need to calculate relative "dots" (`../../`).
 
 ## 5. Deployment Strategy

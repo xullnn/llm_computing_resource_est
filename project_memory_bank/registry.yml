@@ -8,7 +8,7 @@ pillar_files:
   - index.html: Model Browser (Vendor/Tier views)
   - calculator.html: Sizing Engine (Physics-backed)
   - hardware/index.html: Comparative Hardware Hub
-  - for/*.html: Persona-specific Deployment Guides
+  - quickstart.html: Onboarding & Workflow Guide
   - about.html: Methodology & Transparency documentation
 
 service_layer:

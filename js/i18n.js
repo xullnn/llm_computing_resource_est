@@ -9,9 +9,23 @@ const I18N = {
     navModels: "Models",
     navCalculator: "Calculator",
     navHardware: "Hardware",
-    navGuides: "Guides",
+    navQuickStart: "Quick Start",
     navAbout: "About",
-    
+
+    // Quick Start Page
+    qsHeroTitle: "Quick Start",
+    qsHeroHeadline: "Get Started in 3 Steps",
+    qsHeroSubhead: "Find a model, calculate requirements, match hardware.",
+    qsStep1Title: "1. Find a Model",
+    qsStep1Desc: "Select an open-source LLM to see its hardware requirements. Click a model below to open the calculator with preset parameters.",
+    qsStep1Browse: "→ Browse all 75 models",
+    qsStep2Title: "2. Calculate Requirements",
+    qsStep2Desc: "Adjust context length, batch size, and precision to see VRAM, compute, and bandwidth requirements. All calculations run locally in your browser.",
+    qsStep2Btn: "Open Calculator →",
+    qsStep3Title: "3. Match Hardware",
+    qsStep3Desc: "Compare NVIDIA and Huawei GPUs to find configurations that meet your VRAM and bandwidth requirements.",
+    qsStep3Btn: "View Hardware Specs →",
+
     // Homepage - Hero Section
     landingHeroTitle: "Open-Source LLM Deployment Planner",
     landingHeroLead: "Find models, calculate GPU and VRAM requirements, compare costs. All calculations run locally in your browser.",
@@ -19,16 +33,16 @@ const I18N = {
     journeyExploreDesc: "View available options",
     journeyCalculateTitle: "Calculate Hardware",
     journeyCalculateDesc: "Size requirements",
-    
+
     // Models Page - Model Browser Section
     modelBrowserTitle: "Browse Production-Ready Models",
     modelBrowserSubhead: "Curated open-source models · Filter by vendor, size, or architecture",
     searchPlaceholder: "Search: Qwen3, DeepSeek, moe, 70-100B...",
-    
+
     // Models Page - View Toggle
     viewVendor: "By Vendor",
     viewHardware: "By Hardware Tier",
-    
+
     // Hardware Tiers
     tierConsumerTitle: "Consumer Tier",
     tierConsumerDesc: "Fits on common consumer GPUs (< 24GB VRAM)",
@@ -36,7 +50,7 @@ const I18N = {
     tierWorkstationDesc: "Professional GPUs or single-node workstation (24GB - 80GB)",
     tierInfrastructureTitle: "Infrastructure Tier",
     tierInfrastructureDesc: "Multi-GPU clusters or datacenter scale (> 80GB)",
-    
+
     // Models Page - Filters
     filtersBtn: "Filters",
     filterRecency: "Recency",
@@ -62,7 +76,7 @@ const I18N = {
     sortLargest: "Largest First",
     sortPopular: "Most Popular",
     clearFilters: "Clear All",
-    
+
     // Models Page - Trending
     trendingLabel: "Trending:",
     trendingAlgorithm: "Trending Algorithm",
@@ -73,7 +87,7 @@ const I18N = {
     trendingMinLikes: "Min. Likes",
     trendingMinLikesValue: "1,000+ in 3 months",
     trendingScoreFormula: "Score Formula: (Recency × 40%) + (Downloads × 40%) + (Engagement × 20%)",
-    
+
     // Models Page - Cards
     compareLabel: "Compare",
     calculateBtn: "Calculate",
@@ -82,7 +96,7 @@ const I18N = {
     speedLabel: "SPEED",
     estLabel: "EST.",
     showMoreBtn: "Show {n} more {vendor} models",
-    
+
     // Models Page - Comparison
     compareSelected: "Selected",
     compareModels: "models",
@@ -100,7 +114,7 @@ const I18N = {
     compareMoeLabel: "MoE Experts",
     compareDataSourceLabel: "Data Source",
     compareActionsLabel: "Actions",
-    
+
     // Models Page - Metadata
     metadataLastUpdated: "Last updated:",
     metadataModels: "models",
@@ -108,7 +122,7 @@ const I18N = {
     metadataNoTrending: "No models trending (90-day window)",
     metadataSource: "Source:",
     metadataSourceValue: "Hugging Face Hub API",
-    
+
     // Calculator Page (existing keys from ui.js)
     eyebrow: "Offline · Serverless",
     calculatorEyebrow: "Calculator",
@@ -133,10 +147,9 @@ const I18N = {
     ecoDiscover: "Discover →",
     ecoHardwareDesc: "Compare NVIDIA & Huawei multi-GPU configurations for LLM deployment.",
     ecoCompare: "Compare →",
-    ecoGuidesDesc: "Pre-configured deployment scenarios and capacity planning workflows.",
-    ecoLearn: "Learn →",
+    ecoCompare: "Compare →",
     ecoDismiss: "↓ Just show me the calculator",
-    
+
     featureOfflineTitle: "Offline & private",
     featureOfflineDesc: "No sign-in, no telemetry, no servers. Your workload stays on your device.",
     featurePhysicsTitle: "Physics-backed",
@@ -252,7 +265,7 @@ const I18N = {
       "Bandwidth (conservative) = weight_bytes/batch + KV_read + KV_write per token; optimistic assumes weights stay resident and KV dominates.",
       "KV cache = batch * seq * layers * hidden * 2 * bytes (K+V); workspace = 12% of weights.",
     ],
-    
+
     // About Page
     aboutTitle: "About & Methodology",
     aboutLead: "Technical documentation for the model database and calculation engine.",
@@ -292,7 +305,7 @@ const I18N = {
     faqParameterSourceAnswer: "Priority order: (1) Safetensors metadata, (2) Model card statements, (3) Physics-based estimation from architecture, (4) Manual verification. Each model displays its data source.",
     faqPrivacy: "Is my data collected?",
     faqPrivacyAnswer: "No. All calculations run entirely in your browser using JavaScript. No data is sent to servers, no analytics, no tracking. The site is 100% client-side.",
-    
+
     // Drawer
     drawerVramTitle: "VRAM Requirements",
     drawerInt8Label: "INT8 (Recommended)",
@@ -323,9 +336,23 @@ const I18N = {
     navModels: "模型库",
     navCalculator: "计算器",
     navHardware: "硬件中心",
-    navGuides: "企业指南",
+    navQuickStart: "快速开始",
     navAbout: "关于",
-    
+
+    // Quick Start Page
+    qsHeroTitle: "快速开始",
+    qsHeroHeadline: "只需三个步骤",
+    qsHeroSubhead: "选择模型、计算需求、匹配硬件",
+    qsStep1Title: "1. 查找模型",
+    qsStep1Desc: "选择一个开源模型以查看其硬件需求。点击下方模型可直接在计算器中预设参数。",
+    qsStep1Browse: "→ 浏览全部 75 个模型",
+    qsStep2Title: "2. 计算需求",
+    qsStep2Desc: "调整上下文长度、批量大小和精度，实时查看显存、算力和带宽需求。所有计算均在本地执行。",
+    qsStep2Btn: "打开计算器 →",
+    qsStep3Title: "3. 匹配硬件",
+    qsStep3Desc: "对比 NVIDIA 和华为 GPU，寻找符合显存和带宽需求的硬件配置。",
+    qsStep3Btn: "查看硬件参数 →",
+
     // Homepage - Hero Section
     landingHeroTitle: "开源大语言模型部署规划工具",
     landingHeroLead: "查找模型、计算 GPU 和显存需求、对比成本。所有计算在浏览器本地运行。",
@@ -333,16 +360,16 @@ const I18N = {
     journeyExploreDesc: "查看可用选项",
     journeyCalculateTitle: "计算硬件",
     journeyCalculateDesc: "测算需求",
-    
+
     // Models Page - Model Browser Section
     modelBrowserTitle: "浏览生产级模型",
     modelBrowserSubhead: "精选开源模型 · 按厂商、大小或架构筛选",
     searchPlaceholder: "搜索: Qwen3, DeepSeek, moe, 70-100B...",
-    
+
     // Models Page - View Toggle
     viewVendor: "按厂商",
     viewHardware: "按硬件等级",
-    
+
     // Hardware Tiers
     tierConsumerTitle: "消费级 (Consumer)",
     tierConsumerDesc: "适用于常见消费级 GPU (< 24GB 显存)",
@@ -350,7 +377,7 @@ const I18N = {
     tierWorkstationDesc: "专业级 GPU 或单节点工作站 (24GB - 80GB)",
     tierInfrastructureTitle: "基础设施级 (Infrastructure)",
     tierInfrastructureDesc: "多卡集群或数据中心规模 (> 80GB)",
-    
+
     // Models Page - Filters
     filtersBtn: "筛选器",
     filterRecency: "发布时间",
@@ -376,7 +403,7 @@ const I18N = {
     sortLargest: "最大优先",
     sortPopular: "最受欢迎",
     clearFilters: "清除全部",
-    
+
     // Models Page - Trending
     trendingLabel: "热门模型:",
     trendingAlgorithm: "热门算法",
@@ -387,7 +414,7 @@ const I18N = {
     trendingMinLikes: "最低点赞数",
     trendingMinLikesValue: "3 个月内 1,000+",
     trendingScoreFormula: "评分公式: (时效性 × 40%) + (下载量 × 40%) + (热度 × 20%)",
-    
+
     // Models Page - Cards
     compareLabel: "对比",
     calculateBtn: "计算需求",
@@ -396,7 +423,7 @@ const I18N = {
     speedLabel: "速度",
     estLabel: "预估",
     showMoreBtn: "查看剩余 {n} 个 {vendor} 模型",
-    
+
     // Models Page - Comparison
     compareSelected: "已选",
     compareModels: "个模型",
@@ -414,7 +441,7 @@ const I18N = {
     compareMoeLabel: "MoE 专家数",
     compareDataSourceLabel: "数据来源",
     compareActionsLabel: "操作",
-    
+
     // Models Page - Metadata
     metadataLastUpdated: "最后更新:",
     metadataModels: "个模型",
@@ -422,7 +449,7 @@ const I18N = {
     metadataNoTrending: "暂无热门模型 (90 天窗口)",
     metadataSource: "数据源:",
     metadataSourceValue: "Hugging Face Hub API",
-    
+
     // Calculator Page (existing keys)
     eyebrow: "离线 · 无服务器",
     calculatorEyebrow: "计算器",
@@ -445,10 +472,9 @@ const I18N = {
     ecoDiscover: "探索 →",
     ecoHardwareDesc: "对比 NVIDIA 和华为的多卡 GPU/NPU 配置。",
     ecoCompare: "对比 →",
-    ecoGuidesDesc: "预设的部署场景和容量规划工作流。",
-    ecoLearn: "学习 →",
+    ecoCompare: "对比 →",
     ecoDismiss: "↓ 直接显示计算器",
-    
+
     featureOfflineTitle: "离线 & 隐私",
     featureOfflineDesc: "无需登录、无遥测、无服务器。你的负载留在本地。",
     featurePhysicsTitle: "物理模型支撑",
@@ -564,7 +590,7 @@ const I18N = {
       "带宽（保守）= weight_bytes/batch + KV_read + KV_write 每 token；乐观假设权重常驻，KV 为主要带宽。",
       "KV cache = batch * seq * layers * hidden * 2 * bytes (K+V)；workspace = 权重的 12%。",
     ],
-    
+
     // About Page
     aboutTitle: "关于 & 方法论",
     aboutLead: "模型数据库和计算引擎的技术文档。",
@@ -604,7 +630,7 @@ const I18N = {
     faqParameterSourceAnswer: "优先级顺序：(1) Safetensors 元数据，(2) 模型卡说明，(3) 基于架构的物理估算，(4) 人工验证。每个模型都显示其数据来源。",
     faqPrivacy: "是否收集我的数据？",
     faqPrivacyAnswer: "否。所有计算完全在您的浏览器中使用 JavaScript 运行。不向服务器发送数据，无分析，无跟踪。该网站 100% 客户端运行。",
-    
+
     // Drawer
     drawerVramTitle: "显存需求",
     drawerInt8Label: "INT8 (推荐)",
@@ -652,12 +678,12 @@ let currentLang = window.currentLang;
 function t(key, replacements = {}) {
   const dict = I18N[window.currentLang] || I18N.en;
   let text = dict[key] || I18N.en[key] || key;
-  
+
   // Replace placeholders like {n}, {vendor}, {speed}, {raw}
   for (const [k, v] of Object.entries(replacements)) {
     text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
   }
-  
+
   return text;
 }
 
@@ -668,7 +694,7 @@ function applyStaticTranslations() {
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
     const translation = t(key);
-    
+
     if (translation !== key) {
       // Handle input placeholders
       if (el.tagName === 'INPUT' && el.hasAttribute('placeholder')) {
@@ -689,7 +715,13 @@ function applyStaticTranslations() {
       }
     }
   });
-  
+
+  // Update Document Title if it has data-i18n
+  const titleEl = document.querySelector('title[data-i18n]');
+  if (titleEl) {
+    document.title = t(titleEl.getAttribute('data-i18n'));
+  }
+
   // Update compute unit dropdown options (calculator page specific)
   const computeUnitSelect = document.getElementById('computeUnit');
   if (computeUnitSelect) {
@@ -700,7 +732,7 @@ function applyStaticTranslations() {
       }
     });
   }
-  
+
   // Update language selector value
   const langSelects = document.querySelectorAll('#langSelect');
   langSelects.forEach(select => {
@@ -717,7 +749,7 @@ function setLanguage(lang) {
     console.warn(`Language '${lang}' not found, falling back to English`);
     lang = 'en';
   }
-  
+
   window.currentLang = lang;
   currentLang = lang; // Update local shortcut too
   try {
@@ -725,10 +757,10 @@ function setLanguage(lang) {
   } catch (e) {
     console.warn('Failed to save language preference:', e);
   }
-  
+
   // Update static elements
   applyStaticTranslations();
-  
+
   // Notify all dynamic components to re-render
   window.dispatchEvent(new CustomEvent('languageChanged', { detail: { lang } }));
 }
@@ -749,10 +781,10 @@ function initI18n() {
       // ignore
     }
   }
-  
+
   // Apply initial translations
   applyStaticTranslations();
-  
+
   // Enable and setup all language selectors on the page
   document.querySelectorAll('#langSelect').forEach(select => {
     // Enable the selector (it might be disabled)
@@ -760,7 +792,7 @@ function initI18n() {
     select.style.opacity = '1';
     select.style.cursor = 'pointer';
     select.removeAttribute('title');
-    
+
     // Add Chinese option if missing
     if (!Array.from(select.options).some(opt => opt.value === 'zh')) {
       const zhOption = document.createElement('option');
@@ -768,10 +800,10 @@ function initI18n() {
       zhOption.textContent = '中文';
       select.appendChild(zhOption);
     }
-    
+
     // Set current language
     select.value = window.currentLang;
-    
+
     // Add change listener (only once)
     if (!select.dataset.hasListener) {
       select.addEventListener('change', (e) => {

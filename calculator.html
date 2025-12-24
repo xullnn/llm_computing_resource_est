@@ -39,10 +39,10 @@
     </a>
     <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
     <div class="nav-links" id="navLinks">
+      <a href="/quickstart.html" class="nav-item" data-i18n="navQuickStart">Quick Start</a>
       <a href="/" class="nav-item" data-i18n="navModels">Models</a>
       <a href="/calculator.html" class="nav-item active" data-i18n="navCalculator">Calculator</a>
       <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
-      <a href="/for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
       <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
     </div>
     <div class="nav-actions">
@@ -56,7 +56,10 @@
   </nav>
 
   <main style="margin-top: 1rem;">
-    <h1 class="visually-hidden">LLM VRAM & GPU Specs Calculator</h1>
+    <h1 class="visually-hidden">LLM VRAM Calculator | GPU Requirements Tool</h1>
+    <p class="visually-hidden">Calculate GPU requirements for LLM deployment. Estimate VRAM needs, bandwidth, and
+      performance for running LLM locally or in production. Free open source LLM VRAM calculator for DeepSeek, Llama,
+      Qwen models.</p>
     <!-- Sticky Verdict Bar (hardware-agnostic) -->
     <div class="verdict-bar" id="verdictBar">
       <span class="verdict-tier" data-i18n="verdictCalculating">Calculating...</span>

@@ -180,10 +180,10 @@
         </a>
         <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
         <div class="nav-links" id="navLinks">
+            <a href="/quickstart.html" class="nav-item" data-i18n="navQuickStart">Quick Start</a>
             <a href="/" class="nav-item" data-i18n="navModels">Models</a>
             <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
             <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
-            <a href="/for/enterprise.html" class="nav-item" data-i18n="navGuides">Guides</a>
             <a href="/about.html" class="nav-item active" data-i18n="navAbout">About</a>
         </div>
         <div class="nav-actions">
@@ -318,6 +318,67 @@
                         Priority order: (1) Safetensors metadata, (2) Model card statements,
                         (3) Physics-based estimation from architecture, (4) Manual verification.
                         Each model displays its data source.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How much VRAM do I need to run an LLM locally?</summary>
+                <div class="faq-answer">
+                    <p>
+                        VRAM requirements depend on model size and precision. For open source LLM deployment, a 70B
+                        model typically needs 140GB in BF16 or 70GB in INT8. Use our LLM VRAM calculator to estimate
+                        requirements based on your specific context length and batch size. Consumer GPUs like RTX 4090
+                        (24GB) can run smaller models, while datacenter GPUs like H100 (80GB) handle larger deployments.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What are the GPU requirements for DeepSeek models?</summary>
+                <div class="faq-answer">
+                    <p>
+                        DeepSeek models range from 70B to 685B parameters. GPU requirements for LLM of this scale vary:
+                        DeepSeek 70B needs 2-4x A100 or H100 GPUs, while the 685B MoE architecture requires 8-16x H100
+                        for efficient open source LLM deployment. The LLM VRAM calculator provides exact estimates based
+                        on your workload configuration.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Can I run Llama on a consumer GPU?</summary>
+                <div class="faq-answer">
+                    <p>
+                        Yes, you can run LLM locally on consumer hardware with quantization. Llama 70B in INT8 requires
+                        approximately 70GB VRAM, achievable with 2-3x RTX 4090 GPUs. For running LLM locally on a single
+                        GPU, consider Llama 30B or smaller models. Our GPU requirements calculator helps you determine
+                        the optimal quantization level for your hardware.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What's the difference between running LLM in FP16 vs INT8?</summary>
+                <div class="faq-answer">
+                    <p>
+                        FP16 (BF16) provides maximum quality but doubles VRAM requirements for open source LLM
+                        deployment. INT8 quantization reduces memory by 50% with minimal quality loss (~1-3%
+                        degradation). For running LLM locally on limited hardware, INT8 is recommended. The LLM VRAM
+                        calculator shows both configurations so you can balance quality and GPU requirements for LLM
+                        inference.
+                    </p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How do I calculate compute requirements for open source LLM deployment?</summary>
+                <div class="faq-answer">
+                    <p>
+                        GPU requirements for LLM include VRAM capacity, memory bandwidth, and compute throughput. Our
+                        LLM VRAM calculator estimates: (1) Total VRAM based on model size and context, (2) Bandwidth
+                        needs for token generation, (3) Expected tokens/second based on your GPU. For running LLM
+                        locally in production, you'll also need to factor in concurrent users and response time targets.
                     </p>
                 </div>
             </details>

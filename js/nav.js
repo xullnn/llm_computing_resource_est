@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mobile menu toggle
   const mobileToggle = document.querySelector('.mobile-menu-toggle');
   const navLinks = document.getElementById('navLinks');
-  
+
   if (mobileToggle && navLinks) {
     mobileToggle.addEventListener('click', () => {
       navLinks.classList.toggle('open');
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileToggle.textContent = isOpen ? '✕' : '☰';
     });
   }
-  
+
   // Highlight active link if not already set manually
   const currentPath = window.location.pathname;
   if (!document.querySelector('.nav-item.active')) {
@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.add('active');
       } else if (href.includes('models/') && currentPath.includes('models/')) {
         link.classList.add('active');
-      } else if (href.includes('hardware/') && currentPath.includes('hardware/')) {
+      } else if (href.includes('quickstart.html') && currentPath.includes('quickstart.html')) {
         link.classList.add('active');
-      } else if (href.includes('for/') && currentPath.includes('for/')) {
+      } else if (href.includes('hardware/') && currentPath.includes('hardware/')) {
         link.classList.add('active');
       }
     });

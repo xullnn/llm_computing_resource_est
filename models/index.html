@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Models (70B+) | LLM Resource Calculator</title>
-    <meta name="description" content="Browse large language models (70B+ parameters) and calculate resource requirements">
+    <meta name="description"
+        content="Browse large language models (70B+ parameters) and calculate resource requirements">
     <link rel="stylesheet" href="../css/main.css">
     <style>
         .models-header {
@@ -13,24 +15,24 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        
+
         .models-header h1 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
         }
-        
+
         .models-header p {
             font-size: 1.1rem;
             opacity: 0.9;
             margin-bottom: 2rem;
         }
-        
+
         .search-filter {
             max-width: 1200px;
             margin: 0 auto 2rem;
             padding: 0 1rem;
         }
-        
+
         .search-box {
             width: 100%;
             padding: 0.75rem 1rem;
@@ -41,7 +43,7 @@
             color: #fff;
             margin-bottom: 1.5rem;
         }
-        
+
         .search-box:focus {
             outline: none;
             border-color: #4a9eff;
@@ -74,13 +76,13 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        
+
         .filter-tags {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
-        
+
         .filter-tag {
             padding: 0.4rem 1rem;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -94,13 +96,13 @@
             align-items: center;
             gap: 0.5rem;
         }
-        
+
         .filter-tag:hover {
             background: rgba(74, 158, 255, 0.1);
             border-color: rgba(74, 158, 255, 0.4);
             color: #fff;
         }
-        
+
         .filter-tag.active {
             background: #4a9eff;
             border-color: #4a9eff;
@@ -120,7 +122,7 @@
             background: rgba(255, 255, 255, 0.2);
             opacity: 1;
         }
-        
+
         .models-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -129,7 +131,7 @@
             margin: 0 auto;
             padding: 0 1rem 3rem;
         }
-        
+
         .model-card {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -141,21 +143,21 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .model-card:hover {
             transform: translateY(-4px);
             border-color: #4a9eff;
             box-shadow: 0 8px 32px rgba(74, 158, 255, 0.15);
             background: rgba(255, 255, 255, 0.07);
         }
-        
+
         .model-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 0.5rem;
         }
-        
+
         .model-name {
             font-size: 1.2rem;
             font-weight: 600;
@@ -171,10 +173,20 @@
             display: inline-block;
             margin-right: 6px;
         }
-        .fresh-new { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
-        .fresh-recent { background: #facc15; }
-        .fresh-standard { background: rgba(255, 255, 255, 0.3); }
-        
+
+        .fresh-new {
+            background: #4ade80;
+            box-shadow: 0 0 8px #4ade80;
+        }
+
+        .fresh-recent {
+            background: #facc15;
+        }
+
+        .fresh-standard {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         .model-meta-row {
             display: flex;
             flex-wrap: wrap;
@@ -200,7 +212,7 @@
             border: 1px solid rgba(74, 158, 255, 0.2);
             font-weight: 600;
         }
-        
+
         .model-badge {
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
@@ -209,17 +221,26 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
-        
-        .badge-moe { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.3); }
-        .badge-dense { background: rgba(74, 158, 255, 0.15); color: #4a9eff; border: 1px solid rgba(74, 158, 255, 0.3); }
-        
+
+        .badge-moe {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .badge-dense {
+            background: rgba(74, 158, 255, 0.15);
+            color: #4a9eff;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+        }
+
         .model-params {
             font-size: 2rem;
             font-weight: 800;
             color: #4a9eff;
             margin: 0.25rem 0;
         }
-        
+
         .model-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -230,11 +251,11 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             flex-grow: 1;
         }
-        
+
         .model-stat {
             font-size: 0.85rem;
         }
-        
+
         .model-stat-label {
             opacity: 0.5;
             margin-bottom: 0.2rem;
@@ -242,18 +263,18 @@
             text-transform: uppercase;
             font-weight: 600;
         }
-        
+
         .model-stat-value {
             font-weight: 600;
             color: rgba(255, 255, 255, 0.9);
         }
-        
+
         .model-actions {
             display: flex;
             gap: 0.5rem;
             margin-top: auto;
         }
-        
+
         .btn {
             flex: 1;
             padding: 0.7rem;
@@ -268,30 +289,30 @@
             justify-content: center;
             gap: 6px;
         }
-        
+
         .btn-primary {
             background: #4a9eff;
             color: #fff;
             box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
         }
-        
+
         .btn-primary:hover {
             background: #3a8eef;
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(74, 158, 255, 0.3);
         }
-        
+
         .btn-secondary {
             background: rgba(255, 255, 255, 0.05);
             color: rgba(255, 255, 255, 0.8);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
         }
-        
+
         .metadata {
             text-align: center;
             padding: 2rem 1rem;
@@ -394,7 +415,8 @@
             margin-top: 2rem;
         }
 
-        .compare-table th, .compare-table td {
+        .compare-table th,
+        .compare-table td {
             padding: 1.25rem;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -465,41 +487,40 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="global-nav">
-        <a href="../" class="nav-brand">
+        <a href="/" class="nav-brand">
             <span class="nav-icon">🧮</span>
             <span class="nav-logo">LLM Sizer</span>
         </a>
         <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
         <div class="nav-links" id="navLinks">
-            <a href="../" class="nav-item">Calculator</a>
-            <a href="../models/" class="nav-item active">Models</a>
-            <a href="../hardware/" class="nav-item">Hardware</a>
-            <a href="../for/enterprise.html" class="nav-item">Guides</a>
+            <a href="/quickstart.html" class="nav-item" data-i18n="navQuickStart">Quick Start</a>
+            <a href="/" class="nav-item" data-i18n="navModels">Models</a>
+            <a href="/calculator.html" class="nav-item" data-i18n="navCalculator">Calculator</a>
+            <a href="/hardware/" class="nav-item" data-i18n="navHardware">Hardware</a>
+            <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
         </div>
         <div class="nav-actions">
             <label class="field compact language-switch" style="margin-bottom: 0;">
-                <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+                <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;"
+                    title="Translation coming soon">
                     <option value="en">English</option>
                 </select>
             </label>
         </div>
     </nav>
-    
+
     <div class="models-header">
         <h1>Models (70B+)</h1>
         <p>Large language models from major vendors. Click any model to calculate requirements.</p>
     </div>
-    
+
     <div class="search-filter">
-        <input 
-            type="text" 
-            id="searchBox" 
-            class="search-box" 
-            placeholder="Search models by name, organization, or license..."
-        >
-        
+        <input type="text" id="searchBox" class="search-box"
+            placeholder="Search models by name, organization, or license...">
+
         <div class="filter-group">
             <!-- Row 1: Recency -->
             <div class="filter-row">
@@ -556,9 +577,9 @@
 
         <div id="activeFilterChips" class="active-filters" style="display: none;"></div>
     </div>
-    
+
     <div class="models-grid" id="modelsGrid"></div>
-    
+
     <div class="metadata" id="metadata"></div>
 
     <!-- Comparison UI -->
@@ -577,7 +598,7 @@
             <div id="compareTableContainer"></div>
         </div>
     </div>
-    
+
     <script src="../js/nav.js"></script>
     <script>
         let modelsData = [];
@@ -589,7 +610,7 @@
             size: 'all',
             sort: 'newest'
         };
-        
+
         // Load models data
         fetch('../data/models.json')
             .then(res => res.json())
@@ -602,15 +623,15 @@
             })
             .catch(err => {
                 console.error('Failed to load models:', err);
-                document.getElementById('modelsGrid').innerHTML = 
+                document.getElementById('modelsGrid').innerHTML =
                     '<p style="text-align: center; opacity: 0.7;">Failed to load models data</p>';
             });
-        
+
         // Extract orgs and populate buttons
         function populateOrgFilters() {
             const orgs = [...new Set(modelsData.map(m => m.id.split('/')[0]))].sort();
             const container = document.getElementById('orgFilterTags');
-            
+
             orgs.forEach(org => {
                 const btn = document.createElement('button');
                 btn.className = 'filter-tag';
@@ -628,7 +649,7 @@
             const now = new Date();
             const diffMs = now - date;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-            
+
             if (diffDays < 1) return 'Today';
             if (diffDays === 1) return 'Yesterday';
             if (diffDays < 30) return `${diffDays} days ago`;
@@ -646,7 +667,7 @@
             const date = new Date(dateString);
             const now = new Date();
             const diffDays = (now - date) / (1000 * 60 * 60 * 24);
-            
+
             if (diffDays < 7) return 'fresh-new';
             if (diffDays < 30) return 'fresh-recent';
             return 'fresh-standard';
@@ -722,7 +743,7 @@
         function updateFilterChips() {
             const container = document.getElementById('activeFilterChips');
             let chips = [];
-            
+
             if (filters.recency !== 'all') {
                 const label = document.querySelector(`[data-group="recency"] [data-val="${filters.recency}"]`).textContent.split('\n')[0];
                 chips.push(`<div class="filter-chip">📅 ${label} <button onclick="setFilter('recency', 'all')">×</button></div>`);
@@ -748,7 +769,7 @@
 
         function setFilter(group, val) {
             filters[group] = val;
-            
+
             // Update UI tags
             document.querySelectorAll(`[data-group="${group}"] .filter-tag`).forEach(tag => {
                 tag.classList.toggle('active', tag.dataset.val === val);
@@ -787,7 +808,7 @@
             const bar = document.getElementById('compareBar');
             const count = document.getElementById('compareCount');
             count.textContent = selectedModels.size;
-            
+
             if (selectedModels.size > 0) {
                 bar.classList.add('visible');
             } else {
@@ -804,7 +825,7 @@
         function showComparison() {
             const container = document.getElementById('compareTableContainer');
             const selected = Array.from(selectedModels).map(id => modelsData.find(m => m.id === id));
-            
+
             let html = `<table class="compare-table">
                 <thead>
                     <tr>
@@ -855,7 +876,7 @@
                     </tr>
                 </tbody>
             </table>`;
-            
+
             container.innerHTML = html;
             document.getElementById('compareModal').style.display = 'flex';
             document.body.style.overflow = 'hidden';
@@ -865,20 +886,20 @@
             document.getElementById('compareModal').style.display = 'none';
             document.body.style.overflow = 'auto';
         }
-        
+
         // Render models
         function renderModels() {
             const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            
+
             let filtered = modelsData.filter(model => {
                 // Search filter
-                const matchesSearch = 
+                const matchesSearch =
                     model.name.toLowerCase().includes(searchTerm) ||
                     model.id.toLowerCase().includes(searchTerm) ||
                     model.license.toLowerCase().includes(searchTerm);
-                
+
                 if (!matchesSearch) return false;
-                
+
                 // Recency filter
                 if (filters.recency !== 'all') {
                     const months = parseInt(filters.recency);
@@ -888,7 +909,7 @@
 
                 // Architecture filter
                 if (filters.architecture !== 'all' && model.architecture !== filters.architecture) return false;
-                
+
                 // Org filter
                 if (filters.org !== 'all' && !model.id.startsWith(filters.org + '/')) return false;
 
@@ -901,7 +922,7 @@
                     if (val === '200-400' && (p < 200 || p >= 400)) return false;
                     if (val === '400+' && p < 400) return false;
                 }
-                
+
                 return true;
             });
 
@@ -912,14 +933,14 @@
                 if (filters.sort === 'popular') return (b.downloads + b.likes) - (a.downloads + a.likes);
                 return 0;
             });
-            
+
             const grid = document.getElementById('modelsGrid');
-            
+
             if (filtered.length === 0) {
                 grid.innerHTML = '<p style="text-align: center; opacity: 0.7; grid-column: 1/-1;">No models found matching your criteria</p>';
                 return;
             }
-            
+
             grid.innerHTML = filtered.map(model => `
                 <div class="model-card">
                     <div class="compare-checkbox-container">
@@ -988,7 +1009,7 @@
                 </div>
             `).join('');
         }
-        
+
         // Render metadata
         function renderMetadata(metadata) {
             const date = new Date(metadata.updated_at);
@@ -998,7 +1019,7 @@
                 Source: ${metadata.source}
             `;
         }
-        
+
         // Format large numbers
         function formatNumber(num) {
             if (!num) return 'N/A';
@@ -1006,12 +1027,12 @@
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
             return num.toString();
         }
-        
+
         // Use model in calculator
         function useInCalculator(modelId) {
             const model = modelsData.find(m => m.id === modelId);
             if (!model) return;
-            
+
             // Build URL with parameters
             const params = new URLSearchParams({
                 model: modelId,
@@ -1025,13 +1046,13 @@
                     moe_top_k: model.moe_top_k
                 })
             });
-            
+
             window.location.href = `../index.html?${params.toString()}`;
         }
-        
+
         // Search functionality
         document.getElementById('searchBox').addEventListener('input', renderModels);
-        
+
         // Filter functionality initialization
         document.querySelectorAll('.filter-tag').forEach(tag => {
             tag.addEventListener('click', () => {
@@ -1042,5 +1063,5 @@
         });
     </script>
 </body>
-</html>
 
+</html>

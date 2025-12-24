@@ -15,7 +15,7 @@ graph TD
     A[index.html: Model Browser] -->|Preset Link| B[calculator.html: Sizing Engine]
     A -->|Drawer View| F[Side Drawer: Quick Calc]
     B -->|Search Query| C[hardware/: Hardware Hub]
-    D[for/: Deployment Guides] -->|Context Parameters| B
+    D[quickstart.html: Quick Start Guide] -->|Context Parameters| B
     E[about.html: Methodology] --> B
 ```
 
@@ -26,7 +26,7 @@ graph TD
     2.  **Overrides**: Technical parameters (Billion parameters, Precision, KV Cache).
     3.  **Scenarios**: Quick-select Workload Presets (Low/Medium/High).
 *   **Hardware Hub (`hardware/`)**: Comparative specs for **NVIDIA** and **Huawei** infrastructure.
-*   **Deployment Guides (`for/`)**: Persona-specific scenarios (Enterprise, Research, Teams, Hobbyist).
+*   **Quick Start Guide (`quickstart.html`)**: Interactive onboarding for new users.
 *   **Methodology (`about.html`)**: Transparency on calculation formulas and inclusion criteria.
 
 ## 🛠️ Service Layer Map
