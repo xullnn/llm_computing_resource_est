@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="robots" content="index, follow">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
     <!-- SEO - Title optimized for deployment planning -->
     <title>Open-Source LLM Deployment Planner | Model Discovery + Hardware Calculator</title>
-    
+
     <!-- SEO - Description -->
-    <meta name="description" content="Find open-source LLMs and calculate GPU/VRAM requirements. 75 models from DeepSeek, Qwen, Llama. Compare hardware costs, estimate performance. Free tool, runs offline in browser.">
-    
+    <meta name="description"
+        content="Find open-source LLMs and calculate GPU/VRAM requirements. 75 models from DeepSeek, Qwen, Llama. Compare hardware costs, estimate performance. Free tool, runs offline in browser.">
+
     <!-- SEO - Keywords for search visibility -->
-    <meta name="keywords" content="LLM deployment planning, open source AI, GPU requirements calculator, VRAM sizing, affordable LLM, self-hosted models, DeepSeek hardware, Qwen deployment, enterprise AI infrastructure, model comparison, inference cost">
-    
+    <meta name="keywords"
+        content="LLM deployment planning, open source AI, GPU requirements calculator, VRAM sizing, affordable LLM, self-hosted models, DeepSeek hardware, Qwen deployment, enterprise AI infrastructure, model comparison, inference cost">
+
     <!-- Open Graph - Social sharing -->
     <meta property="og:title" content="Open-Source LLM Deployment Planner">
-    <meta property="og:description" content="Find models and calculate GPU requirements. 75 options from DeepSeek, Qwen, Llama. Free, offline tool.">
+    <meta property="og:description"
+        content="Find models and calculate GPU requirements. 75 options from DeepSeek, Qwen, Llama. Free, offline tool.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://llmrunnable.com/">
     <meta property="og:image" content="https://llmrunnable.com/og-preview.png">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="LLM Deployment Planner">
-    <meta name="twitter:description" content="Find open-source LLMs and calculate GPU requirements. 75 models, free tool.">
+    <meta name="twitter:description"
+        content="Find open-source LLMs and calculate GPU requirements. 75 models, free tool.">
     <meta name="twitter:image" content="https://llmrunnable.com/og-preview.png">
-    
+
     <link rel="canonical" href="https://llmrunnable.com/">
-    
+
     <!-- Structured Data for Rich Snippets -->
     <script type="application/ld+json">
     {
@@ -78,15 +85,16 @@
       }
     }
     </script>
-    
+
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/models.css">
     <link rel="stylesheet" href="css/drawer.css">
 </head>
+
 <body>
     <nav class="global-nav">
         <a href="/" class="nav-brand">
-            <span class="nav-icon">🧮</span>
+            <span class="nav-icon" role="img" aria-label="Calculator Icon">🧮</span>
             <span class="nav-logo">LLM Sizer</span>
         </a>
         <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
@@ -99,41 +107,46 @@
         </div>
         <div class="nav-actions">
             <label class="field compact language-switch" style="margin-bottom: 0;">
-                <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;" title="Translation coming soon">
+                <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;"
+                    title="Translation coming soon">
                     <option value="en">English</option>
                 </select>
             </label>
         </div>
     </nav>
-    
+
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-container">
             <h1 class="hero-title" data-i18n="landingHeroTitle">Open-Source LLM Deployment Planner</h1>
+            <h2 class="visually-hidden">GPU VRAM Estimator & Hardware Calculator for DeepSeek, Qwen and Llama Models
+            </h2>
             <p class="hero-lead" data-i18n="landingHeroLead">
-                Find models, calculate GPU and VRAM requirements, compare costs. All calculations run locally in your browser.
+                Find models, calculate GPU and VRAM requirements, compare costs. All calculations run locally in your
+                browser.
             </p>
-            
+
             <!-- Journey Options -->
             <div class="journey-options">
-                <button class="journey-btn journey-primary" onclick="document.getElementById('searchBox').focus(); document.getElementById('searchBox').scrollIntoView({ behavior: 'smooth', block: 'center' });">
-                    <span class="journey-icon">🔍</span>
+                <button class="journey-btn journey-primary"
+                    onclick="document.getElementById('searchBox').focus(); document.getElementById('searchBox').scrollIntoView({ behavior: 'smooth', block: 'center' });">
+                    <span class="journey-icon" role="img" aria-label="Search icon">🔍</span>
                     <span data-i18n="journeyExploreTitle">Browse Models</span>
                 </button>
                 <a href="calculator.html" class="journey-btn journey-secondary">
-                    <span class="journey-icon">🧮</span>
+                    <span class="journey-icon" role="img" aria-label="Calculator icon">🧮</span>
                     <span data-i18n="journeyCalculateTitle">Calculate Hardware</span>
                 </a>
             </div>
         </div>
     </div>
-    
+
     <!-- Model Browser Section -->
     <div class="models-header">
-        <h2 data-i18n="modelBrowserTitle">Browse Production-Ready Models</h2>
+        <h2 data-i18n="modelBrowserTitle">Browse Production-Ready AI Models</h2>
         <p data-i18n="modelBrowserSubhead">Curated open-source models · Filter by vendor, size, or architecture</p>
     </div>
-    
+
     <!-- Trending Models Bar -->
     <div class="trending-bar" id="trendingBar" style="display: none;">
         <div class="trending-bar-content">
@@ -171,17 +184,12 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Search & Controls -->
     <div class="search-filter">
-        <input 
-            type="text" 
-            id="searchBox" 
-            class="search-box" 
-            placeholder="Search: Qwen3, DeepSeek, moe, 70-100B..."
-            data-i18n="searchPlaceholder"
-        >
-        
+        <input type="text" id="searchBox" class="search-box" placeholder="Search: Qwen3, DeepSeek, moe, 70-100B..."
+            data-i18n="searchPlaceholder">
+
         <!-- View Controls Group -->
         <div class="view-controls">
             <div class="view-toggle">
@@ -192,12 +200,12 @@
                     <span class="view-icon">🖥️</span> <span data-i18n="viewHardware">By Hardware</span>
                 </button>
             </div>
-            
+
             <button class="filter-toggle-btn" id="filterToggleBtn">
                 <span class="filter-icon">⚙️</span> <span data-i18n="filtersBtn">Filters</span>
             </button>
         </div>
-        
+
         <div class="filter-group" id="filterGroup" style="display: none;">
             <!-- Row 1: Recency -->
             <div class="filter-row">
@@ -254,22 +262,24 @@
 
         <div id="activeFilterChips" class="active-filters" style="display: none;"></div>
     </div>
-    
+
     <!-- Vendor Groups View (Default) -->
     <div class="vendor-groups" id="vendorGroups"></div>
-    
+
     <!-- Models Grid (Hardware Tier View) -->
     <div class="models-grid" id="modelsGrid" style="display: none;"></div>
-    
+
     <!-- Metadata -->
     <div class="metadata" id="metadata"></div>
 
     <!-- Comparison UI -->
     <div id="compareBar" class="compare-bar">
-        <span><span data-i18n="compareSelected">Selected</span> <span id="compareCount" class="compare-count">0</span> <span data-i18n="compareModels">models</span></span>
+        <span><span data-i18n="compareSelected">Selected</span> <span id="compareCount" class="compare-count">0</span>
+            <span data-i18n="compareModels">models</span></span>
         <div style="display: flex; gap: 0.75rem;">
             <button class="btn btn-secondary" onclick="clearComparison()" data-i18n="compareClear">Clear</button>
-            <button class="btn btn-primary" onclick="showComparison()" data-i18n="compareAction">Compare Side-by-Side</button>
+            <button class="btn btn-primary" onclick="showComparison()" data-i18n="compareAction">Compare
+                Side-by-Side</button>
         </div>
     </div>
 
@@ -292,10 +302,10 @@
             <p style="color: var(--muted); text-align: center; padding: 2rem;">Select a model to begin</p>
         </div>
     </div>
-    
+
     <!-- Backdrop for drawer -->
     <div id="drawerBackdrop" class="drawer-backdrop"></div>
-    
+
     <script src="js/i18n.js"></script>
     <script src="js/nav.js"></script>
     <script src="js/models.js"></script>
@@ -304,4 +314,5 @@
     <script src="js/models-page.js"></script>
     <script src="js/drawer.js"></script>
 </body>
+
 </html>

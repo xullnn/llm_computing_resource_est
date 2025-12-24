@@ -1,10 +1,15 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="NVIDIA Data Center GPU specifications for LLM inference: H100, H200, A100, B100, B200, and GB200. Complete specs for multi-GPU configurations.">
-  <meta name="keywords" content="NVIDIA H100, H200, A100, B100, GPU specs, VRAM, memory bandwidth, multi-GPU, LLM inference">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="description"
+    content="NVIDIA Data Center GPU specifications for LLM inference: H100, H200, A100, B100, B200, and GB200. Complete specs for multi-GPU configurations.">
+  <meta name="keywords"
+    content="NVIDIA H100, H200, A100, B100, GPU specs, VRAM, memory bandwidth, multi-GPU, LLM inference">
   <title>NVIDIA Data Center GPUs | LLM Resource Sizer</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
@@ -14,6 +19,7 @@
       gap: 1.5rem;
       margin: 2rem 0;
     }
+
     .hardware-card {
       background: var(--card-bg, #1e1e1e);
       border: 1px solid var(--border, #333);
@@ -21,19 +27,23 @@
       padding: 1.5rem;
       transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .hardware-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
+
     .hardware-card.announced {
       border-color: var(--warning, #f59e0b);
       opacity: 0.9;
     }
+
     .hardware-card h3 {
       margin: 0 0 0.5rem;
       font-size: 1.5rem;
       color: var(--accent, #10b981);
     }
+
     .hardware-card .generation {
       display: inline-block;
       background: var(--accent-dim, #064e3b);
@@ -43,6 +53,7 @@
       font-size: 0.875rem;
       margin-bottom: 1rem;
     }
+
     .hardware-card .status-badge {
       display: inline-block;
       background: var(--success-dim, #1e3a28);
@@ -52,10 +63,12 @@
       font-size: 0.75rem;
       margin-left: 0.5rem;
     }
+
     .hardware-card .status-badge.announced {
       background: var(--warning-dim, #422006);
       color: var(--warning, #f59e0b);
     }
+
     .spec-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -63,19 +76,23 @@
       margin: 1rem 0;
       font-size: 0.9rem;
     }
+
     .spec-item {
       display: flex;
       flex-direction: column;
     }
+
     .spec-label {
       color: var(--text-muted, #9ca3af);
       font-size: 0.8rem;
       margin-bottom: 0.25rem;
     }
+
     .spec-value {
       color: var(--text, #e5e7eb);
       font-weight: 600;
     }
+
     .use-btn {
       width: 100%;
       margin-top: 1rem;
@@ -88,15 +105,18 @@
       cursor: pointer;
       transition: background 0.2s;
     }
+
     .use-btn:hover {
       background: var(--accent-hover, #059669);
     }
+
     .filter-controls {
       display: flex;
       gap: 1rem;
       margin: 2rem 0;
       flex-wrap: wrap;
     }
+
     .filter-controls input,
     .filter-controls select {
       padding: 0.5rem;
@@ -105,6 +125,7 @@
       border-radius: 4px;
       color: var(--text, #e5e7eb);
     }
+
     .stats-summary {
       display: flex;
       gap: 2rem;
@@ -114,21 +135,25 @@
       border-radius: 8px;
       flex-wrap: wrap;
     }
+
     .stat-item {
       display: flex;
       flex-direction: column;
     }
+
     .stat-value {
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--accent, #10b981);
     }
+
     .stat-label {
       font-size: 0.875rem;
       color: var(--text-muted, #9ca3af);
     }
   </style>
 </head>
+
 <body>
   <nav class="global-nav">
     <a href="/" class="nav-brand">
@@ -177,12 +202,8 @@
     </div>
 
     <div class="filter-controls">
-      <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="Search by name or generation..."
-        style="flex: 1; min-width: 200px;"
-      >
+      <input type="text" id="searchInput" placeholder="Search by name or generation..."
+        style="flex: 1; min-width: 200px;">
       <select id="generationFilter">
         <option value="all">All Generations</option>
         <option value="Blackwell">Blackwell</option>
@@ -242,18 +263,18 @@
         const response = await fetch('../data/hardware/nvidia.json');
         const data = await response.json();
         hardwareData = data.hardware;
-        
+
         // Update stats
         document.getElementById('totalGPUs').textContent = hardwareData.length;
         document.getElementById('lastUpdated').textContent = data.metadata.updated_at;
-        
+
         const generations = new Set(hardwareData.map(h => h.generation));
         document.getElementById('generationCount').textContent = generations.size;
-        
+
         renderHardware();
       } catch (error) {
         console.error('Failed to load hardware data:', error);
-        document.getElementById('hardwareGrid').innerHTML = 
+        document.getElementById('hardwareGrid').innerHTML =
           '<p style="color: var(--error);">Failed to load GPU data. Please check console for details.</p>';
       }
     }
@@ -264,15 +285,15 @@
       const statusFilter = document.getElementById('statusFilter').value;
 
       const filtered = hardwareData.filter(gpu => {
-        const matchesSearch = gpu.name.toLowerCase().includes(searchTerm) || 
-                              gpu.generation.toLowerCase().includes(searchTerm);
+        const matchesSearch = gpu.name.toLowerCase().includes(searchTerm) ||
+          gpu.generation.toLowerCase().includes(searchTerm);
         const matchesGen = genFilter === 'all' || gpu.generation === genFilter;
         const matchesStatus = statusFilter === 'all' || gpu.status === statusFilter;
         return matchesSearch && matchesGen && matchesStatus;
       });
 
       const grid = document.getElementById('hardwareGrid');
-      
+
       if (filtered.length === 0) {
         grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-muted);">No GPUs match your filters.</p>';
         return;
@@ -284,7 +305,7 @@
     function createGPUCard(gpu) {
       const t = i18n[currentLang];
       const statusClass = gpu.status === 'announced' ? 'announced' : '';
-      const statusBadge = gpu.status === 'announced' ? 
+      const statusBadge = gpu.status === 'announced' ?
         `<span class="status-badge announced">${t.announced}</span>` :
         `<span class="status-badge">${t.available}</span>`;
 
@@ -336,7 +357,7 @@
     document.getElementById('searchInput').addEventListener('input', renderHardware);
     document.getElementById('generationFilter').addEventListener('change', renderHardware);
     document.getElementById('statusFilter').addEventListener('change', renderHardware);
-    
+
     document.getElementById('langSelect').addEventListener('change', (e) => {
       currentLang = e.target.value;
       renderHardware();
@@ -346,5 +367,5 @@
     loadHardware();
   </script>
 </body>
-</html>
 
+</html>

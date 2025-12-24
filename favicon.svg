@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- White rounded background -->
+  <rect width="32" height="32" rx="8" fill="#FFFFFF"/>
+  
+  <!-- Abstract Minimalist Cube (3 solid surfaces, no internal lines) -->
+  <g transform="translate(0, 1)">
+    <!-- Top Face - Google Blue -->
+    <path d="M16 6 L26 12 L16 18 L6 12 Z" fill="#4285F4"/>
+    
+    <!-- Left Face - Google Red -->
+    <path d="M6 12 L16 18 L16 26 L6 20 Z" fill="#EA4335"/>
+    
+    <!-- Right Face - Google Green -->
+    <path d="M26 12 L16 18 L16 26 L26 20 Z" fill="#34A853"/>
+  </g>
+</svg>

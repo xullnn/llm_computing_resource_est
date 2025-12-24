@@ -1,10 +1,15 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Huawei Ascend NPU specifications for LLM inference - Atlas 300I Duo, Ascend 910, 910B hardware reference.">
-  <meta name="keywords" content="Huawei Ascend, Atlas 300I Duo, Ascend 910, NPU specifications, AI accelerator, LLM inference hardware">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="description"
+    content="Huawei Ascend NPU specifications for LLM inference - Atlas 300I Duo, Ascend 910, 910B hardware reference.">
+  <meta name="keywords"
+    content="Huawei Ascend, Atlas 300I Duo, Ascend 910, NPU specifications, AI accelerator, LLM inference hardware">
   <title>Huawei Ascend NPUs — LLM Resource Sizer</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
@@ -14,7 +19,7 @@
       gap: 1.5rem;
       margin: 2rem 0;
     }
-    
+
     .hardware-card {
       background: var(--card-bg, #1a1a1a);
       border: 1px solid var(--border-color, #333);
@@ -22,58 +27,58 @@
       padding: 1.5rem;
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    
+
     .hardware-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    
+
     .hardware-card.draft {
       border-left: 4px solid #ff9800;
     }
-    
+
     .card-header {
       margin-bottom: 1rem;
     }
-    
+
     .card-title {
       font-size: 1.5rem;
       font-weight: 600;
       margin: 0 0 0.5rem 0;
       color: var(--text-primary, #fff);
     }
-    
+
     .card-subtitle {
       font-size: 0.9rem;
       color: var(--text-secondary, #888);
       margin: 0;
     }
-    
+
     .specs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.75rem;
       margin: 1rem 0;
     }
-    
+
     .spec-item {
       display: flex;
       flex-direction: column;
     }
-    
+
     .spec-label {
       font-size: 0.75rem;
       text-transform: uppercase;
       color: var(--text-secondary, #888);
       margin-bottom: 0.25rem;
     }
-    
+
     .spec-value {
       font-size: 1.1rem;
       font-weight: 500;
       color: var(--text-primary, #fff);
     }
-    
+
     .badge {
       display: inline-block;
       padding: 0.25rem 0.5rem;
@@ -82,23 +87,23 @@
       font-weight: 500;
       margin-right: 0.5rem;
     }
-    
+
     .badge-warning {
       background: #ff9800;
       color: #000;
     }
-    
+
     .badge-available {
       background: #4caf50;
       color: #fff;
     }
-    
+
     .card-actions {
       margin-top: 1rem;
       display: flex;
       gap: 0.5rem;
     }
-    
+
     .btn {
       padding: 0.5rem 1rem;
       border: none;
@@ -107,26 +112,26 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    
+
     .btn-primary {
       background: var(--primary-color, #2196f3);
       color: #fff;
     }
-    
+
     .btn-primary:hover {
       background: var(--primary-hover, #1976d2);
     }
-    
+
     .btn-secondary {
       background: transparent;
       border: 1px solid var(--border-color, #333);
       color: var(--text-primary, #fff);
     }
-    
+
     .btn-secondary:hover {
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
     }
-    
+
     .warning-banner {
       background: #ff9800;
       color: #000;
@@ -135,7 +140,7 @@
       margin-bottom: 2rem;
       font-weight: 500;
     }
-    
+
     .metadata-section {
       background: var(--card-bg, #1a1a1a);
       border: 1px solid var(--border-color, #333);
@@ -143,23 +148,24 @@
       padding: 1.5rem;
       margin: 2rem 0;
     }
-    
+
     .breadcrumb {
       margin-bottom: 2rem;
       font-size: 0.9rem;
       color: var(--text-secondary, #888);
     }
-    
+
     .breadcrumb a {
       color: var(--primary-color, #2196f3);
       text-decoration: none;
     }
-    
+
     .breadcrumb a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
   <nav class="global-nav">
     <a href="/" class="nav-brand">
@@ -192,7 +198,8 @@
 
   <main class="container">
     <div id="warning-banner" class="warning-banner" style="display: none;">
-      ⚠️ <strong>DRAFT DATA:</strong> All specifications on this page require verification from official Huawei documentation. Do not use for production decisions.
+      ⚠️ <strong>DRAFT DATA:</strong> All specifications on this page require verification from official Huawei
+      documentation. Do not use for production decisions.
     </div>
 
     <section class="metadata-section" id="metadata">
@@ -225,41 +232,41 @@
       try {
         const response = await fetch('../data/hardware/huawei.json');
         if (!response.ok) throw new Error('Failed to load hardware data');
-        
+
         const data = await response.json();
-        
+
         // Display metadata
         document.getElementById('updated-date').textContent = data.metadata.updated_at;
         document.getElementById('source-link').href = data.metadata.source;
         document.getElementById('version').textContent = data.metadata.version;
-        
+
         // Show warning if draft
         if (data.metadata.status && data.metadata.status.includes('DRAFT')) {
           document.getElementById('warning-banner').style.display = 'block';
         }
-        
+
         // Render hardware cards
         const grid = document.getElementById('hardware-grid');
         grid.innerHTML = data.hardware.map(hw => createHardwareCard(hw)).join('');
-        
+
         // Render research notes
         if (data.research_notes) {
           renderResearchNotes(data.research_notes);
         }
-        
+
       } catch (error) {
         console.error('Error loading hardware data:', error);
-        document.getElementById('hardware-grid').innerHTML = 
+        document.getElementById('hardware-grid').innerHTML =
           '<p style="color: #ff5252;">Error loading hardware data. Please check that the data file exists.</p>';
       }
     }
-    
+
     function createHardwareCard(hw) {
       const hasWarning = hw.notes && hw.notes.includes('PLACEHOLDER');
-      const statusBadge = hw.status === 'available' ? 
-        '<span class="badge badge-available">Available</span>' : 
+      const statusBadge = hw.status === 'available' ?
+        '<span class="badge badge-available">Available</span>' :
         '<span class="badge">' + hw.status + '</span>';
-      
+
       return `
         <div class="hardware-card ${hasWarning ? 'draft' : ''}">
           <div class="card-header">
@@ -321,11 +328,11 @@
         </div>
       `;
     }
-    
+
     function renderResearchNotes(notes) {
       const container = document.getElementById('research-notes');
       let html = `<p><strong>Status:</strong> ${notes.status}</p>`;
-      
+
       if (notes.todo && notes.todo.length > 0) {
         html += '<h4>Research TODO:</h4><ul>';
         notes.todo.forEach(item => {
@@ -333,7 +340,7 @@
         });
         html += '</ul>';
       }
-      
+
       if (notes.official_resources && notes.official_resources.length > 0) {
         html += '<h4>Official Resources:</h4><ul>';
         notes.official_resources.forEach(url => {
@@ -341,18 +348,18 @@
         });
         html += '</ul>';
       }
-      
+
       container.innerHTML = html;
     }
-    
+
     function useInCalculator(hwId) {
       // Navigate to calculator with pre-selected hardware
       window.location.href = `../index.html?gpu=${hwId}`;
     }
-    
+
     // Load data on page load
     document.addEventListener('DOMContentLoaded', loadHuaweiHardware);
   </script>
 </body>
-</html>
 
+</html>

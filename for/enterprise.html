@@ -1,9 +1,13 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Strategic deployment planning for enterprise LLM infrastructure. Multi-GPU clusters, H100/H200 capacity planning, and sovereign AI solutions.">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta name="description"
+    content="Strategic deployment planning for enterprise LLM infrastructure. Multi-GPU clusters, H100/H200 capacity planning, and sovereign AI solutions.">
   <title>Enterprise Infrastructure Planner | LLM Resource Tool</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
@@ -13,19 +17,19 @@
       padding: 0 1rem;
       text-align: center;
     }
-    
+
     .guide-intro h2 {
       font-size: 1.8rem;
       margin-bottom: 1rem;
       color: var(--accent);
     }
-    
+
     .guide-intro p {
       font-size: 1.1rem;
       opacity: 0.9;
       line-height: 1.6;
     }
-    
+
     .workflow-section {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
@@ -34,19 +38,19 @@
       margin: 2rem auto;
       max-width: 900px;
     }
-    
+
     .workflow-section h3 {
       font-size: 1.5rem;
       margin-bottom: 1rem;
       color: var(--accent);
     }
-    
+
     .workflow-steps {
       display: grid;
       gap: 1rem;
       margin-top: 1.5rem;
     }
-    
+
     .workflow-step {
       display: flex;
       gap: 1rem;
@@ -54,7 +58,7 @@
       background: var(--bg-tertiary);
       border-radius: 8px;
     }
-    
+
     .step-number {
       flex-shrink: 0;
       width: 32px;
@@ -67,18 +71,18 @@
       justify-content: center;
       font-weight: 600;
     }
-    
+
     .step-content h4 {
       font-size: 1.1rem;
       margin-bottom: 0.25rem;
     }
-    
+
     .step-content p {
       font-size: 0.95rem;
       opacity: 0.8;
       margin: 0;
     }
-    
+
     .step-link {
       display: inline-block;
       margin-top: 0.5rem;
@@ -86,11 +90,11 @@
       color: var(--accent);
       text-decoration: none;
     }
-    
+
     .step-link:hover {
       text-decoration: underline;
     }
-    
+
     .scenario-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -99,7 +103,7 @@
       margin: 0 auto;
       padding: 0 1rem;
     }
-    
+
     .scenario-card {
       background: var(--bg-secondary);
       border: 2px solid var(--border);
@@ -110,29 +114,29 @@
       color: inherit;
       display: block;
     }
-    
+
     .scenario-card:hover {
       transform: translateY(-4px);
       border-color: var(--accent);
     }
-    
+
     .scenario-icon {
       font-size: 2rem;
       margin-bottom: 0.5rem;
     }
-    
+
     .scenario-card h3 {
       font-size: 1.3rem;
       margin-bottom: 0.75rem;
     }
-    
+
     .scenario-card p {
       font-size: 0.95rem;
       opacity: 0.85;
       line-height: 1.5;
       margin-bottom: 1rem;
     }
-    
+
     .scenario-specs {
       display: grid;
       gap: 0.25rem;
@@ -141,7 +145,7 @@
       border-top: 1px solid var(--border);
       padding-top: 1rem;
     }
-    
+
     .quick-links {
       max-width: 900px;
       margin: 3rem auto;
@@ -150,7 +154,7 @@
       gap: 1rem;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
-    
+
     .quick-link {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
@@ -161,21 +165,21 @@
       color: inherit;
       transition: background 0.2s;
     }
-    
+
     .quick-link:hover {
       background: var(--bg-tertiary);
     }
-    
+
     .quick-link-icon {
       font-size: 2rem;
       margin-bottom: 0.5rem;
     }
-    
+
     .quick-link h4 {
       font-size: 1.1rem;
       margin-bottom: 0.25rem;
     }
-    
+
     .quick-link p {
       font-size: 0.9rem;
       opacity: 0.7;
@@ -183,6 +187,7 @@
     }
   </style>
 </head>
+
 <body>
   <nav class="global-nav">
     <a href="/" class="nav-brand">
@@ -213,22 +218,22 @@
       <p class="lede">Plan sovereign AI deployments and validate hardware for business-critical workloads</p>
     </div>
   </header>
-  
+
   <div class="guide-intro">
     <h2>🎯 Your Challenge</h2>
     <p>
-      You're building AI-powered applications for enterprise customers who require on-premise deployment 
-      for data privacy. You need to determine hardware requirements, validate capacity for different user loads, 
+      You're building AI-powered applications for enterprise customers who require on-premise deployment
+      for data privacy. You need to determine hardware requirements, validate capacity for different user loads,
       and design multi-tier server offerings—all without exposing sensitive data to third parties.
     </p>
   </div>
-  
+
   <div class="workflow-section">
     <h3>🔄 The Virtuous Loop</h3>
     <p style="opacity: 0.85; margin-bottom: 1.5rem;">
       Follow this workflow to plan your infrastructure from model selection to hardware configuration:
     </p>
-    
+
     <div class="workflow-steps">
       <div class="workflow-step">
         <div class="step-number">1</div>
@@ -238,7 +243,7 @@
           <a href="../" class="step-link">→ Explore Model Database</a>
         </div>
       </div>
-      
+
       <div class="workflow-step">
         <div class="step-number">2</div>
         <div class="step-content">
@@ -247,7 +252,7 @@
           <a href="../" class="step-link">→ Open Calculator</a>
         </div>
       </div>
-      
+
       <div class="workflow-step">
         <div class="step-number">3</div>
         <div class="step-content">
@@ -256,7 +261,7 @@
           <a href="../hardware/" class="step-link">→ Hardware Hub</a>
         </div>
       </div>
-      
+
       <div class="workflow-step">
         <div class="step-number">4</div>
         <div class="step-content">
@@ -265,7 +270,7 @@
           <a href="../?prompt=8000&batch=50#calculator" class="step-link">→ Run Capacity Test</a>
         </div>
       </div>
-      
+
       <div class="workflow-step">
         <div class="step-number">5</div>
         <div class="step-content">
@@ -276,15 +281,16 @@
       </div>
     </div>
   </div>
-  
+
   <section class="landing-section">
     <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">Common Deployment Scenarios</h2>
-    
+
     <div class="scenario-grid">
       <a href="/?preset=qwen-2.5-72b&prompt=8000&new=2000&batch=50#calculator" class="scenario-card">
         <div class="scenario-icon">🏢</div>
         <h3>Basic Tier (72B Model)</h3>
-        <p>Entry-level offering for small enterprises with moderate AI workloads. Document analysis, chatbots, basic automation.</p>
+        <p>Entry-level offering for small enterprises with moderate AI workloads. Document analysis, chatbots, basic
+          automation.</p>
         <div class="scenario-specs">
           <div>• Model: Qwen 2.5 72B</div>
           <div>• Users: 50 concurrent</div>
@@ -292,7 +298,7 @@
           <div>• Hardware: 4× H100 or 8× Huawei 910B</div>
         </div>
       </a>
-      
+
       <a href="/?preset=llama-3.1-405b&prompt=16000&new=3000&batch=100#calculator" class="scenario-card">
         <div class="scenario-icon">🚀</div>
         <h3>Pro Tier (405B Model)</h3>
@@ -304,7 +310,7 @@
           <div>• Hardware: 8× H200 or 16× H100</div>
         </div>
       </a>
-      
+
       <a href="/?preset=deepseek-v3&prompt=32000&new=4000&batch=200#calculator" class="scenario-card">
         <div class="scenario-icon">⚡</div>
         <h3>Enterprise Tier (685B MoE)</h3>
@@ -316,7 +322,7 @@
           <div>• Hardware: 16× H200 or 32× Huawei 910B</div>
         </div>
       </a>
-      
+
       <a href="/?preset=qwen-2.5-32b&prompt=4000&new=1000&batch=20#calculator" class="scenario-card">
         <div class="scenario-icon">💰</div>
         <h3>Cost-Optimized (32B Model)</h3>
@@ -328,7 +334,7 @@
           <div>• Hardware: 2× H100 or 4× Huawei 910B</div>
         </div>
       </a>
-      
+
       <a href="/?preset=llama-3-70b&prompt=6000&new=1500&batch=80#calculator" class="scenario-card">
         <div class="scenario-icon">🔐</div>
         <h3>Secure Deployment (70B)</h3>
@@ -340,7 +346,7 @@
           <div>• Hardware: 4× A100 80GB or 8× Huawei 910B</div>
         </div>
       </a>
-      
+
       <a href="/?preset=mixtral-8x7b&prompt=3000&new=500&batch=150#calculator" class="scenario-card">
         <div class="scenario-icon">🌐</div>
         <h3>Multi-Tenant SaaS (MoE)</h3>
@@ -354,20 +360,20 @@
       </a>
     </div>
   </section>
-  
+
   <div class="quick-links">
     <a href="../" class="quick-link">
       <div class="quick-link-icon">📚</div>
       <h4>Model Database</h4>
       <p>Browse 47 open-source models</p>
     </a>
-    
+
     <a href="../hardware/" class="quick-link">
       <div class="quick-link-icon">⚙️</div>
       <h4>Hardware Hub</h4>
       <p>Compare NVIDIA & Huawei specs</p>
     </a>
-    
+
     <a href="../" class="quick-link">
       <div class="quick-link-icon">🧮</div>
       <h4>Calculator</h4>
@@ -375,11 +381,13 @@
     </a>
   </div>
 
-  <footer style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
+  <footer
+    style="max-width: 1240px; margin: 32px auto 40px; padding: 0 20px; text-align: center; color: var(--muted); font-size: 13px;">
     <a href="../" style="color: var(--accent); text-decoration: none; font-weight: 600;">← Back to models</a>
   </footer>
 
   <script src="../js/i18n.js"></script>
   <script src="../js/nav.js"></script>
 </body>
+
 </html>
