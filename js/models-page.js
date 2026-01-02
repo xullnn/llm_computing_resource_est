@@ -271,28 +271,64 @@ function renderVendorGroups(models) {
     const grouped = groupModelsByVendor(models);
     const sortedVendors = Object.keys(grouped).sort();
 
-    container.innerHTML = sortedVendors.map(vendor => {
+    // Controls for Expand/Collapse All
+    const allExpanded = sortedVendors.every(v => expandedVendors.has(v));
+    const controlsHTML = `
+        <div class="vendor-controls">
+            <button class="btn-text" onclick="toggleAllVendors(!${allExpanded})">
+                ${allExpanded ? 'Collapse All' : 'Expand All'}
+            </button>
+        </div>
+    `;
+
+    const groupsHTML = sortedVendors.map(vendor => {
         const vendorModels = grouped[vendor];
-        const isExpanded = expandedVendors.has(vendor) || expandedVendors.size === 0;
+        const isExpanded = expandedVendors.has(vendor); // Default collapsed
 
         // Group vendor models by parameter class
         const paramClasses = groupByParameterClass(vendorModels);
+        // Sort param classes ascending (smaller first) for better UX
+        const sortedClassKeys = Object.keys(paramClasses).sort((a, b) => parseFloat(a) - parseFloat(b));
+
+        // Always show first row (smallest model)
+        const firstClassKey = sortedClassKeys[0];
+        const remainingClassKeys = sortedClassKeys.slice(1);
+        const hasMore = remainingClassKeys.length > 0;
+
+        // Generate param class pills
+        const paramClassPills = sortedClassKeys
+            .map(classKey => `
+                <span class="param-pill" onclick="expandVendorAndScrollToClass(event, '${vendor}', '${classKey}')">
+                    ${Math.round(parseFloat(classKey))}B <span class="pill-count">x${paramClasses[classKey].length}</span>
+                </span>
+            `)
+            .join('');
 
         return `
             <div class="vendor-group ${isExpanded ? '' : 'collapsed'}" data-vendor="${vendor}">
-                <div class="vendor-header" onclick="toggleVendor('${vendor}')">
-                    <button class="vendor-toggle">${isExpanded ? '🔽' : '▷'}</button>
-                    <h3 class="vendor-title">${vendor} <span class="vendor-count">(${vendorModels.length} models)</span></h3>
-                    <span class="vendor-param-range">${Math.min(...vendorModels.map(m => m.parameters_billion)).toFixed(1)}B ◄─► ${Math.max(...vendorModels.map(m => m.parameters_billion)).toFixed(1)}B</span>
+                <div class="vendor-header" onclick="${hasMore ? `toggleVendor('${vendor}')` : ''}" style="${!hasMore ? 'cursor: default' : ''}">
+                    <div class="vendor-header-content">
+                        ${hasMore ? `<button class="vendor-toggle">${isExpanded ? '🔽' : '▷'}</button>` : '<span style="display:inline-block; width:1.5em"></span>'}
+                        <h3 class="vendor-title">${vendor} <span class="vendor-count">(${vendorModels.length} models)</span></h3>
+                        
+                        <div class="vendor-param-pills">${paramClassPills}</div>
+                    </div>
                 </div>
+                
+                <div class="vendor-preview">
+                    ${firstClassKey ? renderParameterClassHTML(firstClassKey, paramClasses[firstClassKey]) : ''}
+                </div>
+
                 <div class="vendor-content ${isExpanded ? 'expanded' : ''}">
-                    ${Object.keys(paramClasses).sort((a, b) => parseFloat(b) - parseFloat(a)).map(classKey =>
+                    ${remainingClassKeys.map(classKey =>
             renderParameterClassHTML(classKey, paramClasses[classKey])
         ).join('')}
                 </div>
             </div>
         `;
     }).join('');
+
+    container.innerHTML = controlsHTML + groupsHTML;
 }
 
 /**
@@ -401,7 +437,7 @@ function renderParameterClassHTML(classKey, models) {
                     </div>
                 </div>
                 <div class="spec-box">
-                    <div class="spec-box-header">
+                    <div class="spec-box-header" style="justify-content: flex-start;">
                         <span class="spec-box-icon">⏱</span>
                         <span class="spec-box-title">Time To First Token</span>
                     </div>
@@ -1056,3 +1092,48 @@ document.getElementById('trendingExpandBtn')?.addEventListener('click', () => {
     trendingExpanded = !trendingExpanded;
     renderTrendingBar();
 });
+
+/**
+ * Toggle all vendors
+ */
+window.toggleAllVendors = function (shouldExpand) {
+    const models = applyFilters(modelsData);
+    const grouped = groupModelsByVendor(models);
+
+    // Clear first to ensure we don't have stale state
+    if (!shouldExpand) {
+        expandedVendors.clear();
+    } else {
+        Object.keys(grouped).forEach(vendor => expandedVendors.add(vendor));
+    }
+
+    renderModels();
+};
+
+/**
+ * Expand vendor and scroll to specific param class
+ */
+window.expandVendorAndScrollToClass = function (event, vendor, classKey) {
+    event.stopPropagation(); // Prevent header toggle
+
+    let needsRender = false;
+    if (!expandedVendors.has(vendor)) {
+        expandedVendors.add(vendor);
+        needsRender = true;
+    }
+
+    if (needsRender) {
+        renderModels();
+    }
+
+    // Slight delay to allow DOM update
+    setTimeout(() => {
+        const element = document.querySelector(`.param-row[data-class="${classKey}"]`);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Add a highlight effect
+            element.classList.add('highlight-flash');
+            setTimeout(() => element.classList.remove('highlight-flash'), 2000);
+        }
+    }, 50);
+};

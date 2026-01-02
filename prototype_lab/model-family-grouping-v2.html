@@ -130,6 +130,37 @@
             font-weight: 600;
         }
 
+        .vendor-param-pills {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .param-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .param-pill:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .pill-count {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.7rem;
+            font-weight: 400;
+        }
+
         .vendor-content {
             padding: 1.5rem;
             display: none;
@@ -640,7 +671,11 @@
                     <span class="vendor-toggle">▶</span>
                     <h2 class="vendor-title">Qwen <span class="vendor-count">(30 models)</span></h2>
                 </div>
-                <span class="vendor-param-range">72.3B ◄─► 480.2B</span>
+                <div class="vendor-param-pills">
+                    <span class="param-pill">72B <span class="pill-count">x3</span></span>
+                    <span class="param-pill">235B <span class="pill-count">x8</span></span>
+                    <span class="param-pill">480B <span class="pill-count">x5</span></span>
+                </div>
             </div>
             <div class="vendor-content">
 
@@ -673,7 +708,7 @@
                             </div>
                         </div>
                         <div class="spec-box">
-                            <div class="spec-box-header">
+                            <div class="spec-box-header" style="justify-content: flex-start;">
                                 <span class="spec-box-icon">⏱</span>
                                 <span class="spec-box-title">Time To First Token</span>
                             </div>
@@ -811,7 +846,7 @@
                             </div>
                         </div>
                         <div class="spec-box">
-                            <div class="spec-box-header">
+                            <div class="spec-box-header" style="justify-content: flex-start;">
                                 <span class="spec-box-icon">⏱</span>
                                 <span class="spec-box-title">Time To First Token</span>
                             </div>
@@ -984,7 +1019,7 @@
                             </div>
                         </div>
                         <div class="spec-box">
-                            <div class="spec-box-header">
+                            <div class="spec-box-header" style="justify-content: flex-start;">
                                 <span class="spec-box-icon">⏱</span>
                                 <span class="spec-box-title">Time To First Token</span>
                             </div>
@@ -1070,7 +1105,9 @@
                     <span class="vendor-toggle">▶</span>
                     <h2 class="vendor-title">deepseek-ai <span class="vendor-count">(23 models)</span></h2>
                 </div>
-                <span class="vendor-param-range">70.6B ◄─► 685.4B</span>
+                <div class="vendor-param-pills">
+                    <span class="param-pill">685B <span class="pill-count">x5</span></span>
+                </div>
             </div>
             <div class="vendor-content">
 
@@ -1095,7 +1132,7 @@
                             </div>
                         </div>
                         <div class="spec-box">
-                            <div class="spec-box-header">
+                            <div class="spec-box-header" style="justify-content: flex-start;">
                                 <span class="spec-box-icon">⏱</span>
                                 <span class="spec-box-title">Time To First Token</span>
                             </div>

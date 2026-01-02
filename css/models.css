@@ -1829,3 +1829,139 @@
         padding-left: 0.75rem;
     }
 }
+
+/* Vendor Controls */
+.vendor-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+    padding: 0 0.5rem;
+}
+
+.btn-text {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.btn-text:hover {
+    color: var(--accent);
+}
+
+/* Param Pills */
+.vendor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 1rem 1.5rem;
+    min-height: 70px;
+    /* Ensure click area is easy to hit */
+}
+
+.vendor-header-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    overflow: hidden;
+}
+
+.vendor-param-pills {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-left: 2rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.vendor-param-pills::-webkit-scrollbar {
+    display: none;
+}
+
+.param-pill {
+    background: rgba(167, 139, 250, 0.1);
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #a78bfa;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.param-pill:hover {
+    background: rgba(167, 139, 250, 0.25);
+    border-color: rgba(167, 139, 250, 0.6);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(167, 139, 250, 0.2);
+}
+
+/* Highlight Flash Animation for Scroll */
+@keyframes highlightFlash {
+    0% {
+        background: rgba(167, 139, 250, 0);
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    15% {
+        background: rgba(167, 139, 250, 0.15);
+        border-color: rgba(167, 139, 250, 0.5);
+    }
+
+    100% {
+        background: rgba(167, 139, 250, 0);
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+}
+
+.highlight-flash {
+    animation: highlightFlash 1.5s ease-out;
+}
+
+.vendor-preview {
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Vendor Parameter Pills */
+.vendor-param-pills {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.param-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.param-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pill-count {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.7rem;
+    font-weight: 400;
+}
