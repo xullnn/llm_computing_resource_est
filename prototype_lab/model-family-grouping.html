@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Family Grouping Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #fff;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4a9eff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        /* Vendor Group */
+        .vendor-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 0;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .vendor-group:hover {
+            border-color: rgba(74, 158, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(74, 158, 255, 0.1);
+        }
+
+        .vendor-header {
+            padding: 1.5rem 2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .vendor-header:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .vendor-title-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .vendor-toggle {
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: transform 0.3s ease;
+        }
+
+        .vendor-group.expanded .vendor-toggle {
+            transform: rotate(90deg);
+        }
+
+        .vendor-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .vendor-count {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .vendor-param-range {
+            background: rgba(74, 158, 255, 0.1);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .vendor-content {
+            padding: 2rem;
+            display: none;
+        }
+
+        .vendor-group.expanded .vendor-content {
+            display: block;
+        }
+
+        /* Parameter Class Row */
+        .param-class {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .param-class:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .param-class:last-child {
+            margin-bottom: 0;
+        }
+
+        .param-class-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .param-class-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .param-class-icon {
+            font-size: 1.3rem;
+        }
+
+        .param-class-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .arch-badge {
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .arch-badge.dense {
+            background: rgba(74, 158, 255, 0.15);
+            color: #4a9eff;
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        /* Shared Specs */
+        .shared-specs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .spec-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .spec-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Model Variants Display */
+        .variants-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: stretch;
+        }
+
+        .variant-chip {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 0.7rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 1 1 0;
+            min-width: 200px;
+            max-width: 280px;
+        }
+
+        .variant-chip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(167, 139, 250, 0.1));
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .variant-chip:hover::before {
+            opacity: 1;
+        }
+
+        .variant-chip:hover {
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(74, 158, 255, 0.2);
+        }
+
+        /* Priority-based styling */
+        .variant-chip.primary {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.15), rgba(167, 139, 250, 0.15));
+            border-color: rgba(74, 158, 255, 0.4);
+            border-width: 2px;
+        }
+
+        .variant-chip.primary .variant-icon {
+            font-size: 1.3rem;
+        }
+
+        .variant-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .variant-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .variant-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .variant-chip.primary .variant-name {
+            font-size: 1rem;
+        }
+
+        .variant-type {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .variant-stats {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 0.1rem;
+        }
+
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+        }
+
+        /* Overflow chip */
+        .overflow-chip {
+            background: rgba(74, 158, 255, 0.08);
+            border: 1.5px dashed rgba(74, 158, 255, 0.3);
+            color: #4a9eff;
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: relative;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .overflow-chip:hover {
+            background: rgba(74, 158, 255, 0.15);
+            border-style: solid;
+        }
+
+        .overflow-details {
+            font-size: 0.7rem;
+            color: rgba(74, 158, 255, 0.7);
+            margin-top: 0.2rem;
+        }
+
+        /* Expanded variants */
+        .expanded-variants {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .expanded-variants.show {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Notes */
+        .design-notes {
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .design-notes h3 {
+            color: #a78bfa;
+            margin-bottom: 1rem;
+        }
+
+        .design-notes ul {
+            list-style-position: inside;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .design-notes li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .shared-specs {
+                grid-template-columns: 1fr;
+            }
+
+            .param-class-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎯 Model Family Grouping Prototype</h1>
+        <p class="subtitle">Parameter-level organization with smart variant prioritization</p>
+
+        <div class="design-notes">
+            <h3>Design Principles:</h3>
+            <ul>
+                <li><strong>Parameter Grouping:</strong> Models grouped by size class (685B, 235B, etc.)</li>
+                <li><strong>Variant Priority:</strong> Thinking/Reasoning → Chat → Instruct → Specialized (Math, Coder)
+                    → Base</li>
+                <li><strong>Visual Hierarchy:</strong> Primary variant highlighted, 3-4 visible chips, overflow
+                    collapsed</li>
+                <li><strong>Shared Specs:</strong> VRAM/Speed shown once per family (same for all variants)</li>
+                <li><strong>Information Density:</strong> 60-70% space reduction vs. individual cards</li>
+            </ul>
+        </div>
+
+        <!-- DeepSeek Vendor Group -->
+        <div class="vendor-group expanded">
+            <div class="vendor-header" onclick="toggleVendor(this)">
+                <div class="vendor-title-section">
+                    <span class="vendor-toggle">▶</span>
+                    <h2 class="vendor-title">deepseek-ai <span class="vendor-count">(23 models)</span></h2>
+                </div>
+                <span class="vendor-param-range">70.6B ◄─► 685.4B</span>
+            </div>
+            <div class="vendor-content">
+
+                <!-- 685B Parameter Class -->
+                <div class="param-class">
+                    <div class="param-class-header">
+                        <div class="param-class-title">
+                            <span class="param-class-icon">📊</span>
+                            <span>685B Class</span>
+                            <span class="vendor-count">(5 models)</span>
+                        </div>
+                        <div class="param-class-meta">
+                            <span class="arch-badge">MOE</span>
+                            <span>256 experts</span>
+                        </div>
+                    </div>
+
+                    <div class="shared-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">VRAM Required</span>
+                            <span class="spec-value">776GB INT8 · 1551GB BF16</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Bandwidth</span>
+                            <span class="spec-value">~6928 GB/s</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Performance Est.</span>
+                            <span class="spec-value">1 tok/s (4090) · 4 tok/s (H100)</span>
+                        </div>
+                    </div>
+
+                    <div class="variants-container">
+                        <!-- Primary: Reasoning -->
+                        <div class="variant-chip primary">
+                            <span class="variant-icon">🧠</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek R1</div>
+                                <div class="variant-type">Reasoning ⭐ Primary</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">970K downloads</span>
+                                    <span class="stat-pill">12.9K likes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek V3.2</div>
+                                <div class="variant-type">Chat</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">78K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Specialized -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">⚙️</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V3.2 Speciale</div>
+                                <div class="variant-type">Variant</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">12.6K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overflow -->
+                        <div class="variant-chip overflow-chip" onclick="toggleExpanded(this)">
+                            <div class="variant-info">
+                                <div class="variant-name">+2 more variants</div>
+                                <div class="overflow-details">Math V2, V3.2 Exp</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expanded (hidden by default) -->
+                    <div class="expanded-variants">
+                        <div class="variant-chip">
+                            <span class="variant-icon">🔢</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek Math V2</div>
+                                <div class="variant-type">Math Specialist</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">11.2K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">🧪</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek V3.2 Exp</div>
+                                <div class="variant-type">Experimental</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">80.8K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 684.5B Parameter Class (merged with 685B conceptually, but showing separately for demo) -->
+                <div class="param-class">
+                    <div class="param-class-header">
+                        <div class="param-class-title">
+                            <span class="param-class-icon">📊</span>
+                            <span>684B Class</span>
+                            <span class="vendor-count">(8 models)</span>
+                        </div>
+                        <div class="param-class-meta">
+                            <span class="arch-badge">MOE</span>
+                            <span>256 experts</span>
+                        </div>
+                    </div>
+
+                    <div class="shared-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">VRAM Required</span>
+                            <span class="spec-value">775GB INT8 · 1550GB BF16</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Bandwidth</span>
+                            <span class="spec-value">~6920 GB/s</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Performance Est.</span>
+                            <span class="spec-value">1 tok/s (4090) · 4 tok/s (H100)</span>
+                        </div>
+                    </div>
+
+                    <div class="variants-container">
+                        <!-- Primary: Reasoning -->
+                        <div class="variant-chip primary">
+                            <span class="variant-icon">🧠</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek R1 Zero</div>
+                                <div class="variant-type">Reasoning ⭐ Primary</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">4.8K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat variants -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek V3</div>
+                                <div class="variant-type">Chat</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">952K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V3.1</div>
+                                <div class="variant-type">Chat</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">73K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overflow -->
+                        <div class="variant-chip overflow-chip" onclick="toggleExpanded(this)">
+                            <div class="variant-info">
+                                <div class="variant-name">+5 more variants</div>
+                                <div class="overflow-details">V3.1 Terminus, V3.1 Base, V3 0324, Prover V2, R1 0528
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expanded-variants">
+                        <div class="variant-chip">
+                            <span class="variant-icon">🔧</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V3.1 Terminus</div>
+                                <div class="variant-type">Specialized</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">📦</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V3.1 Base</div>
+                                <div class="variant-type">Base Model</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V3 0324</div>
+                                <div class="variant-type">Chat Snapshot</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">180K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">🔬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Prover V2 671B</div>
+                                <div class="variant-type">Math Proof</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">🧠</span>
+                            <div class="variant-info">
+                                <div class="variant-name">R1 0528</div>
+                                <div class="variant-type">Reasoning Snapshot</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">485K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 235B Parameter Class -->
+                <div class="param-class">
+                    <div class="param-class-header">
+                        <div class="param-class-title">
+                            <span class="param-class-icon">📊</span>
+                            <span>235B Class</span>
+                            <span class="vendor-count">(8 models)</span>
+                        </div>
+                        <div class="param-class-meta">
+                            <span class="arch-badge">MOE</span>
+                            <span>160 experts</span>
+                        </div>
+                    </div>
+
+                    <div class="shared-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">VRAM Required</span>
+                            <span class="spec-value">271GB INT8 · 541GB BF16</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Bandwidth</span>
+                            <span class="spec-value">~2417 GB/s</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Performance Est.</span>
+                            <span class="spec-value">4 tok/s (4090) · 13 tok/s (H100)</span>
+                        </div>
+                    </div>
+
+                    <div class="variants-container">
+                        <!-- Primary: Chat -->
+                        <div class="variant-chip primary">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">DeepSeek V2.5</div>
+                                <div class="variant-type">Chat ⭐ Primary</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">Latest</span>
+                                    <span class="stat-pill">2.8K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Specialized: Coder -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">💻</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Coder V2 Instruct</div>
+                                <div class="variant-type">Code Specialist</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">137K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Base -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">📦</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V2 Base</div>
+                                <div class="variant-type">Base Model</div>
+                            </div>
+                        </div>
+
+                        <!-- Overflow -->
+                        <div class="variant-chip overflow-chip" onclick="toggleExpanded(this)">
+                            <div class="variant-info">
+                                <div class="variant-name">+5 more variants</div>
+                                <div class="overflow-details">V2 Chat, Coder V2 Base, V2 Chat 0628, Coder V2 0724, V2.5
+                                    1210</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expanded-variants">
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V2 Chat</div>
+                                <div class="variant-type">Chat</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">💻</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Coder V2 Base</div>
+                                <div class="variant-type">Code Base</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V2 Chat 0628</div>
+                                <div class="variant-type">Chat Snapshot</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">💻</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Coder V2 0724</div>
+                                <div class="variant-type">Code Snapshot</div>
+                            </div>
+                        </div>
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">V2.5 1210</div>
+                                <div class="variant-type">Chat Snapshot</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Qwen Vendor Group -->
+        <div class="vendor-group expanded">
+            <div class="vendor-header" onclick="toggleVendor(this)">
+                <div class="vendor-title-section">
+                    <span class="vendor-toggle">▶</span>
+                    <h2 class="vendor-title">Qwen <span class="vendor-count">(30 models)</span></h2>
+                </div>
+                <span class="vendor-param-range">72.3B ◄─► 480.2B</span>
+            </div>
+            <div class="vendor-content">
+
+                <!-- 480B Parameter Class -->
+                <div class="param-class">
+                    <div class="param-class-header">
+                        <div class="param-class-title">
+                            <span class="param-class-icon">📊</span>
+                            <span>480B Class</span>
+                            <span class="vendor-count">(2 models)</span>
+                        </div>
+                        <div class="param-class-meta">
+                            <span class="arch-badge">MOE</span>
+                            <span>Active: 35B</span>
+                        </div>
+                    </div>
+
+                    <div class="shared-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">VRAM Required</span>
+                            <span class="spec-value">545GB INT8 · 1089GB BF16</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Bandwidth</span>
+                            <span class="spec-value">~4867 GB/s</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Performance Est.</span>
+                            <span class="spec-value">2 tok/s (4090) · 6 tok/s (H100)</span>
+                        </div>
+                    </div>
+
+                    <div class="variants-container">
+                        <!-- Primary: Code Instruct -->
+                        <div class="variant-chip primary">
+                            <span class="variant-icon">💻</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Qwen3 Coder 480B</div>
+                                <div class="variant-type">Code Instruct ⭐ Primary</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">84K downloads</span>
+                                    <span class="stat-pill">1.3K likes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FP8 Variant -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">⚡</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Coder 480B FP8</div>
+                                <div class="variant-type">Optimized Precision</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">83K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 235B Parameter Class -->
+                <div class="param-class">
+                    <div class="param-class-header">
+                        <div class="param-class-title">
+                            <span class="param-class-icon">📊</span>
+                            <span>235B Class</span>
+                            <span class="vendor-count">(3 models)</span>
+                        </div>
+                        <div class="param-class-meta">
+                            <span class="arch-badge">MOE</span>
+                            <span>Active: 22B</span>
+                        </div>
+                    </div>
+
+                    <div class="shared-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">VRAM Required</span>
+                            <span class="spec-value">271GB INT8 · 541GB BF16</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Bandwidth</span>
+                            <span class="spec-value">~2417 GB/s</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Performance Est.</span>
+                            <span class="spec-value">4 tok/s (4090) · 13 tok/s (H100)</span>
+                        </div>
+                    </div>
+
+                    <div class="variants-container">
+                        <!-- Primary: Thinking -->
+                        <div class="variant-chip primary">
+                            <span class="variant-icon">🧠</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Qwen3 235B Thinking</div>
+                                <div class="variant-type">Reasoning ⭐ Primary</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">Latest 2507</span>
+                                    <span class="stat-pill">58K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Base -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">💬</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Qwen3 235B A22B</div>
+                                <div class="variant-type">Chat</div>
+                                <div class="variant-stats">
+                                    <span class="stat-pill">368K downloads</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FP8 -->
+                        <div class="variant-chip">
+                            <span class="variant-icon">⚡</span>
+                            <div class="variant-info">
+                                <div class="variant-name">Thinking 2507 FP8</div>
+                                <div class="variant-type">Optimized Precision</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleVendor(header) {
+            const group = header.closest('.vendor-group');
+            group.classList.toggle('expanded');
+        }
+
+        function toggleExpanded(chip) {
+            const paramClass = chip.closest('.param-class');
+            const expandedSection = paramClass.querySelector('.expanded-variants');
+
+            if (expandedSection.classList.contains('show')) {
+                expandedSection.classList.remove('show');
+                chip.querySelector('.variant-name').textContent = chip.querySelector('.variant-name').textContent.replace('Show less', '+' + expandedSection.children.length + ' more variants');
+            } else {
+                expandedSection.classList.add('show');
+                chip.querySelector('.variant-name').textContent = 'Show less';
+            }
+        }
+
+        // Open all by default for demo
+        document.querySelectorAll('.vendor-group').forEach(group => {
+            group.classList.add('expanded');
+        });
+    </script>
+</body>
+
+</html>

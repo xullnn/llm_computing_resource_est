@@ -118,6 +118,122 @@ function groupModelsByVendor(models) {
 }
 
 /**
+ * Variant type priority order
+ * Lower number = higher priority
+ */
+const VARIANT_TYPES = {
+    REASONING: { priority: 1, icon: '🧠', label: 'Reasoning' },
+    CHAT: { priority: 2, icon: '💬', label: 'Chat' },
+    INSTRUCT: { priority: 3, icon: '📖', label: 'Instruct' },
+    CODER: { priority: 4, icon: '💻', label: 'Code Specialist' },
+    MATH: { priority: 4, icon: '🔢', label: 'Math Specialist' },
+    PROVER: { priority: 4, icon: '🔬', label: 'Proof Specialist' },
+    BASE: { priority: 5, icon: '📦', label: 'Base Model' },
+    OTHER: { priority: 6, icon: '⚙️', label: 'Variant' }
+};
+
+/**
+ * Classify a model variant type based on name
+ */
+function classifyVariant(model) {
+    const name = model.name.toLowerCase();
+    const id = model.id.toLowerCase();
+
+    // Reasoning/Thinking models (highest priority)
+    if (name.includes('r1') || name.includes('thinking') || name.includes('reason')) {
+        return VARIANT_TYPES.REASONING;
+    }
+
+    // Specialized models
+    if (name.includes('coder') || id.includes('coder')) {
+        return VARIANT_TYPES.CODER;
+    }
+    if (name.includes('math')) {
+        return VARIANT_TYPES.MATH;
+    }
+    if (name.includes('prover')) {
+        return VARIANT_TYPES.PROVER;
+    }
+
+    // Base models
+    if (name.includes('base')) {
+        return VARIANT_TYPES.BASE;
+    }
+
+    // Instruct models
+    if (name.includes('instruct')) {
+        return VARIANT_TYPES.INSTRUCT;
+    }
+
+    // Chat models (explicit chat or version numbers without other keywords)
+    if (name.includes('chat') || (/v\d+(\.\d+)?(\s|$)/.test(name) && !name.includes('base') && !name.includes('instruct'))) {
+        return VARIANT_TYPES.CHAT;
+    }
+
+    // Default to other
+    return VARIANT_TYPES.OTHER;
+}
+
+/**
+ * Group models by parameter class (similar sizes grouped together)
+ * Groups models within ~2B tolerance to handle 684.5B and 685.4B as same family
+ */
+function groupByParameterClass(models) {
+    if (!models || models.length === 0) return {};
+
+    // Sort by parameter size descending
+    const sorted = [...models].sort((a, b) => b.parameters_billion - a.parameters_billion);
+
+    const classes = {};
+    const tolerance = 5; // Group models within 5B of each other
+
+    sorted.forEach(model => {
+        const params = model.parameters_billion;
+
+        // Find existing class within tolerance
+        let classKey = null;
+        for (const key of Object.keys(classes)) {
+            const classParams = parseFloat(key);
+            if (Math.abs(params - classParams) <= tolerance) {
+                classKey = key;
+                break;
+            }
+        }
+
+        // If no matching class found, create new one with rounded key
+        if (!classKey) {
+            const roundedParams = Math.round(params);
+            classKey = roundedParams.toString();
+        }
+
+        if (!classes[classKey]) {
+            classes[classKey] = [];
+        }
+        classes[classKey].push(model);
+    });
+
+    // Sort models within each class by variant priority
+    Object.keys(classes).forEach(classKey => {
+        classes[classKey].sort((a, b) => {
+            const typeA = classifyVariant(a);
+            const typeB = classifyVariant(b);
+
+            // Primary sort: by variant priority
+            if (typeA.priority !== typeB.priority) {
+                return typeA.priority - typeB.priority;
+            }
+
+            // Secondary sort: by downloads/popularity
+            const popularityA = (a.downloads || 0) + (a.likes || 0);
+            const popularityB = (b.downloads || 0) + (b.likes || 0);
+            return popularityB - popularityA;
+        });
+    });
+
+    return classes;
+}
+
+/**
  * Group models by hardware tier
  */
 function groupModelsByHardware(models) {
@@ -147,7 +263,7 @@ function groupModelsByHardware(models) {
 }
 
 /**
- * Render vendor groups
+ * Render vendor groups with parameter class grouping
  */
 function renderVendorGroups(models) {
     const container = document.getElementById('vendorGroups');
@@ -158,27 +274,290 @@ function renderVendorGroups(models) {
     container.innerHTML = sortedVendors.map(vendor => {
         const vendorModels = grouped[vendor];
         const isExpanded = expandedVendors.has(vendor) || expandedVendors.size === 0;
-        const visibleModels = isExpanded ? vendorModels.slice(0, 4) : [];
-        const hasMore = vendorModels.length > 4;
+
+        // Group vendor models by parameter class
+        const paramClasses = groupByParameterClass(vendorModels);
 
         return `
             <div class="vendor-group ${isExpanded ? '' : 'collapsed'}" data-vendor="${vendor}">
                 <div class="vendor-header" onclick="toggleVendor('${vendor}')">
                     <button class="vendor-toggle">${isExpanded ? '🔽' : '▷'}</button>
                     <h3 class="vendor-title">${vendor} <span class="vendor-count">(${vendorModels.length} models)</span></h3>
-                    <span class="vendor-param-range">${Math.min(...vendorModels.map(m => m.parameters_billion))}B ◄─► ${Math.max(...vendorModels.map(m => m.parameters_billion))}B</span>
+                    <span class="vendor-param-range">${Math.min(...vendorModels.map(m => m.parameters_billion)).toFixed(1)}B ◄─► ${Math.max(...vendorModels.map(m => m.parameters_billion)).toFixed(1)}B</span>
                 </div>
                 <div class="vendor-content ${isExpanded ? 'expanded' : ''}">
-                    <div class="vendor-models-grid">${visibleModels.map(renderModelCardHTML).join('')}</div>
-                    ${hasMore && isExpanded ? `
-                        <button class="vendor-show-more" onclick="showAllVendorModels('${vendor}')">
-                            ▼ ${t('showMoreBtn', { n: vendorModels.length - 4, vendor: vendor })}
-                        </button>
-                    ` : ''}
+                    ${Object.keys(paramClasses).sort((a, b) => parseFloat(b) - parseFloat(a)).map(classKey =>
+            renderParameterClassHTML(classKey, paramClasses[classKey])
+        ).join('')}
                 </div>
             </div>
         `;
     }).join('');
+}
+
+/**
+ * Render a parameter class row with horizontal layout
+ */
+function renderParameterClassHTML(classKey, models) {
+    if (!models || models.length === 0) return '';
+
+    const paramSize = Math.round(parseFloat(classKey));
+    const firstModel = models[0];
+    const architecture = firstModel.architecture;
+
+    // Calculate specs for default 10 tokens/s
+    const specs10 = calcRequirements({
+        paramsB: firstModel.parameters_billion,
+        activeParamsB: firstModel.active_parameters_billion || firstModel.parameters_billion,
+        weightPrecision: 'int8',
+        kvPrecision: 'int8',
+        layers: firstModel.num_layers,
+        hiddenSize: firstModel.hidden_size,
+        heads: firstModel.num_heads,
+        promptTokens: 8192,
+        newTokens: 512,
+        batchSize: 1,
+        targetTps: 10
+    });
+
+    const specs10BF16 = calcRequirements({
+        paramsB: firstModel.parameters_billion,
+        activeParamsB: firstModel.active_parameters_billion || firstModel.parameters_billion,
+        weightPrecision: 'bf16',
+        kvPrecision: 'bf16',
+        layers: firstModel.num_layers,
+        hiddenSize: firstModel.hidden_size,
+        heads: firstModel.num_heads,
+        promptTokens: 8192,
+        newTokens: 512,
+        batchSize: 1,
+        targetTps: 10
+    });
+
+    // Determine visibility - show first 2-3 model cards, hide rest
+    const maxVisible = 2;
+    const visibleModels = models.slice(0, maxVisible);
+    const hiddenModels = models.slice(maxVisible);
+
+    // Generate TTFT chart thumbnail
+    const ttftThumbnail = renderTTFTChartThumbnail(firstModel.parameters_billion);
+
+    // Generate TTFT modal (will be hidden initially)
+    const ttftModal = renderTTFTChartModal(
+        firstModel.parameters_billion,
+        `${paramSize}B Class`,
+        classKey
+    );
+
+    // Generate model cards HTML
+    const modelCardsHTML = models.map((model, idx) => {
+        const variantType = classifyVariant(model);
+        const isPrimary = idx === 0;
+        const isHidden = idx >= maxVisible;
+
+        return `
+            <div class="model-card ${isPrimary ? 'primary' : ''} ${isHidden ? 'overflow-hidden' : ''}" onclick="openCalculatorDrawer('${model.id}')">
+                <div class="model-card-header">
+                    <span class="model-icon">${variantType.icon}</span>
+                    <div class="model-info">
+                        <div class="model-name">${model.name}</div>
+                        <div class="model-type">${variantType.label}${isPrimary ? ' <span class="primary-badge">⭐ PRIMARY</span>' : ''}</div>
+                    </div>
+                </div>
+                <div class="model-stats">
+                    <span class="stat-pill">${formatNumber(model.downloads || 0)} downloads</span>
+                    <span class="stat-pill">${formatNumber(model.likes || 0)} likes</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="param-row" data-class="${classKey}" data-params-b="${firstModel.parameters_billion}" data-active-params-b="${firstModel.active_parameters_billion || firstModel.parameters_billion}" data-layers="${firstModel.num_layers}" data-hidden-size="${firstModel.hidden_size}" data-heads="${firstModel.num_heads}">
+            <div class="param-info">
+                <div class="param-size">${paramSize}B</div>
+                <div class="param-count">${models.length} models</div>
+                <span class="arch-badge ${architecture === 'moe' ? '' : 'dense'}">${architecture === 'moe' ? 'MOE' : 'DENSE'}</span>
+            </div>
+
+            <div class="specs-section">
+                <div class="spec-box">
+                    <div class="spec-box-header">
+                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                            <span class="spec-box-icon">⚡</span>
+                            <span class="spec-box-title">Output Speed</span>
+                        </div>
+                        <select class="speed-dropdown" onchange="updateSpeedRequirements(this, '${classKey}')">
+                            <option value="10" selected>10 tokens/s</option>
+                            <option value="100">100 tokens/s</option>
+                            <option value="1000">1,000 tokens/s</option>
+                            <option value="10000">10,000 tokens/s</option>
+                        </select>
+                    </div>
+                    <div class="spec-box-content" data-speed-content="${classKey}">
+                        <strong>VRAM:</strong> ${Math.ceil(specs10.totalVramGb)} GB <span class="detail">(INT8)</span><br>
+                        <span class="detail">or ${Math.ceil(specs10BF16.totalVramGb)} GB (BF16)</span><br>
+                        <strong>Bandwidth:</strong> ~${Math.ceil(specs10.requiredBwGbps)} GB/s
+                    </div>
+                </div>
+                <div class="spec-box">
+                    <div class="spec-box-header">
+                        <span class="spec-box-icon">⏱</span>
+                        <span class="spec-box-title">Time To First Token</span>
+                    </div>
+                    <div class="spec-box-content">
+                        <div class="ttft-mini-chart" onclick="openTTFTChart('${classKey}', event)" style="cursor: pointer;">
+                            ${ttftThumbnail}
+                        </div>
+                        <div class="ttft-action-btn" onclick="openTTFTChart('${classKey}', event)">Click to explore TTFT vs FLOPs</div>
+                    </div>
+                </div>
+            </div>
+
+            ${ttftModal}
+
+            <div class="models-section">
+                <div class="models-container" id="models-${classKey}">
+                    ${modelCardsHTML}
+                </div>
+                ${hiddenModels.length > 0 ? `
+                    <div class="more-models-trigger">
+                        <button class="more-btn" onclick="toggleMoreModels(this, 'models-${classKey}', ${hiddenModels.length})">
+                            + ${hiddenModels.length} models <span class="more-btn-icon">→</span>
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render individual variant chip
+ */
+function renderVariantChipHTML(model, isPrimary) {
+    const variantType = classifyVariant(model);
+    const popularity = (model.downloads || 0) + (model.likes || 0);
+
+    return `
+        <div class="variant-chip ${isPrimary ? 'primary' : ''}" onclick="openCalculatorDrawer('${model.id}'); event.stopPropagation();">
+            <span class="variant-icon">${variantType.icon}</span>
+            <div class="variant-info">
+                <div class="variant-name">${model.name}</div>
+                <div class="variant-type">${variantType.label}${isPrimary ? ' ⭐ Primary' : ''}</div>
+                ${model.downloads || model.likes ? `
+                    <div class="variant-stats">
+                        ${model.downloads ? `<span class="stat-pill">${formatNumber(model.downloads)} downloads</span>` : ''}
+                        ${model.likes ? `<span class="stat-pill">${formatNumber(model.likes)} likes</span>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Toggle expanded variants section
+ */
+window.toggleExpandedVariants = function (classKey) {
+    const expandedSection = document.querySelector(`.expanded-variants[data-class="${classKey}"]`);
+    const overflowChip = event.currentTarget;
+
+    if (expandedSection) {
+        if (expandedSection.classList.contains('show')) {
+            expandedSection.classList.remove('show');
+            const hiddenCount = expandedSection.children.length;
+            overflowChip.querySelector('.variant-name').textContent = `+${hiddenCount} more variants`;
+        } else {
+            expandedSection.classList.add('show');
+            overflowChip.querySelector('.variant-name').textContent = 'Show less';
+        }
+    }
+};
+
+/**
+ * Update speed requirements based on dropdown selection
+ */
+window.updateSpeedRequirements = function (selectElement, classKey) {
+    const targetTps = parseInt(selectElement.value);
+    const paramRow = selectElement.closest('.param-row');
+    if (!paramRow) return;
+
+    // Get model parameters from data attributes
+    const paramsB = parseFloat(paramRow.dataset.paramsB);
+    const activeParamsB = parseFloat(paramRow.dataset.activeParamsB || paramsB);
+    const layers = parseInt(paramRow.dataset.layers);
+    const hiddenSize = parseInt(paramRow.dataset.hiddenSize);
+    const heads = parseInt(paramRow.dataset.heads);
+
+    // Recalculate specs for selected speed
+    const specsInt8 = calcRequirements({
+        paramsB,
+        activeParamsB,
+        weightPrecision: 'int8',
+        kvPrecision: 'int8',
+        layers,
+        hiddenSize,
+        heads,
+        promptTokens: 8192,
+        newTokens: 512,
+        batchSize: 1,
+        targetTps
+    });
+
+    const specsBF16 = calcRequirements({
+        paramsB,
+        activeParamsB,
+        weightPrecision: 'bf16',
+        kvPrecision: 'bf16',
+        layers,
+        hiddenSize,
+        heads,
+        promptTokens: 8192,
+        newTokens: 512,
+        batchSize: 1,
+        targetTps
+    });
+
+    // Update the spec box content
+    const contentEl = paramRow.querySelector(`[data-speed-content="${classKey}"]`);
+    if (contentEl) {
+        contentEl.innerHTML = `
+            <strong>VRAM:</strong> ${Math.ceil(specsInt8.totalVramGb)} GB <span class="detail">(INT8)</span><br>
+            <span class="detail">or ${Math.ceil(specsBF16.totalVramGb)} GB (BF16)</span><br>
+            <strong>Bandwidth:</strong> ~${Math.ceil(specsInt8.requiredBwGbps)} GB/s
+        `;
+    }
+};
+
+/**
+ * Toggle more models visibility and scrolling
+ */
+window.toggleMoreModels = function (btn, containerId, hiddenCount) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const isExpanded = container.classList.contains('expanded');
+
+    if (isExpanded) {
+        // Collapse: hide overflow models and remove scrollable
+        container.classList.remove('expanded', 'scrollable');
+        btn.classList.remove('active');
+        btn.innerHTML = `+ ${hiddenCount} models <span class="more-btn-icon">→</span>`;
+
+        // Scroll back to start
+        container.scrollLeft = 0;
+    } else {
+        // Expand: show overflow models and make scrollable
+        container.classList.add('expanded', 'scrollable');
+        btn.classList.add('active');
+        btn.innerHTML = `Collapse <span class="more-btn-icon">←</span>`;
+
+        // Scroll to reveal new models
+        setTimeout(() => {
+            container.scrollLeft = container.scrollWidth;
+        }, 100);
+    }
 }
 
 /**

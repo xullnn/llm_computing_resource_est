@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Family Grouping V2 - Horizontal Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #fff;
+            padding: 2rem;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #4a9eff 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        /* Design Notes */
+        .design-notes {
+            background: rgba(167, 139, 250, 0.1);
+            border: 1px solid rgba(167, 139, 250, 0.3);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .design-notes h3 {
+            color: #a78bfa;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .design-notes ul {
+            list-style-position: inside;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            columns: 2;
+            column-gap: 2rem;
+        }
+
+        .design-notes li {
+            margin-bottom: 0.35rem;
+        }
+
+        /* Vendor Group */
+        .vendor-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .vendor-header {
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .vendor-header:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .vendor-title-section {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .vendor-toggle {
+            font-size: 1rem;
+            opacity: 0.7;
+            transition: transform 0.3s ease;
+        }
+
+        .vendor-group.expanded .vendor-toggle {
+            transform: rotate(90deg);
+        }
+
+        .vendor-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .vendor-count {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
+        .vendor-param-range {
+            background: rgba(74, 158, 255, 0.1);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #4a9eff;
+            font-weight: 600;
+        }
+
+        .vendor-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .vendor-group.expanded .vendor-content {
+            display: block;
+        }
+
+        /* ====== PARAMETER CLASS ROW - NEW HORIZONTAL LAYOUT ====== */
+        .param-row {
+            display: flex;
+            align-items: stretch;
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .param-row:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .param-row:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Left Section: Param Info */
+        .param-info {
+            flex-shrink: 0;
+            width: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 0.75rem;
+            background: rgba(167, 139, 250, 0.08);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: center;
+        }
+
+        .param-size {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #a78bfa;
+            line-height: 1;
+        }
+
+        .param-count {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.25rem;
+        }
+
+        .arch-badge {
+            margin-top: 0.5rem;
+            background: rgba(255, 107, 107, 0.15);
+            color: #ff6b6b;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .arch-badge.dense {
+            background: rgba(74, 158, 255, 0.15);
+            color: #4a9eff;
+            border-color: rgba(74, 158, 255, 0.3);
+        }
+
+        /* Specs Section: Side-by-side boxes */
+        .specs-section {
+            flex-shrink: 0;
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.75rem 0.5rem;
+            align-items: center;
+        }
+
+        .spec-box {
+            width: 220px;
+            height: 132px;
+            padding: 0.85rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .spec-box-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-box-icon {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .spec-box-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 700;
+        }
+
+        /* Speed selector dropdown */
+        .speed-selector {
+            position: relative;
+            display: inline-block;
+            margin-left: auto;
+        }
+
+        .speed-dropdown {
+            background: rgba(74, 158, 255, 0.15);
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            border-radius: 6px;
+            padding: 0.3rem 1.5rem 0.3rem 0.6rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #4a9eff;
+            cursor: pointer;
+            appearance: none;
+            outline: none;
+            transition: all 0.2s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a9eff' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.4rem center;
+            background-size: 10px;
+        }
+
+        .speed-dropdown:hover {
+            background-color: rgba(74, 158, 255, 0.25);
+            border-color: rgba(74, 158, 255, 0.5);
+        }
+
+        .speed-dropdown:focus {
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.3);
+        }
+
+        .spec-box-content {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        .spec-box-content strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .spec-box-content .detail {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        /* TTFT mini chart with visual lines */
+        .ttft-mini-chart {
+            height: 32px;
+            background: linear-gradient(135deg,
+                    rgba(15, 15, 30, 0.8) 0%,
+                    rgba(26, 26, 46, 0.9) 100%);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ttft-mini-chart svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Separate action button below chart */
+        .ttft-action-btn {
+            display: block;
+            text-align: center;
+            font-size: 0.5rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.85);
+            background: linear-gradient(90deg,
+                    rgba(74, 158, 255, 0.65) 0%,
+                    rgba(167, 139, 250, 0.65) 50%,
+                    rgba(255, 107, 107, 0.55) 100%);
+            padding: 5px 8px;
+            margin-top: 4px;
+            letter-spacing: 0.02em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ttft-action-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
+            color: #fff;
+        }
+
+        /* Models Section: Scrollable container */
+        .models-section {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            position: relative;
+        }
+
+        .models-container {
+            display: flex;
+            gap: 0.6rem;
+            padding-right: 0.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .models-container.scrollable {
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .models-container.scrollable::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .models-container.scrollable::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+
+        .models-container.scrollable::-webkit-scrollbar-thumb {
+            background: rgba(74, 158, 255, 0.4);
+            border-radius: 2px;
+        }
+
+        /* Model Card */
+        .model-card {
+            flex-shrink: 0;
+            width: 220px;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1.5px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 0.7rem 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .model-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(167, 139, 250, 0.1));
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            border-radius: 11px;
+        }
+
+        .model-card:hover::before {
+            opacity: 1;
+        }
+
+        .model-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(74, 158, 255, 0.2);
+        }
+
+        .model-card.primary {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.12), rgba(167, 139, 250, 0.12));
+            border-color: rgba(74, 158, 255, 0.4);
+            border-width: 2px;
+        }
+
+        .model-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+            margin-bottom: auto;
+        }
+
+        .model-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .model-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .model-name {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .model-type {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-top: 0.15rem;
+        }
+
+        .model-type .primary-badge {
+            color: #fbbf24;
+        }
+
+        .model-stats {
+            display: flex;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-pill {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* More Models Trigger Button */
+        .more-models-trigger {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 1rem;
+            margin-left: auto;
+        }
+
+        .more-btn {
+            background: rgba(74, 158, 255, 0.1);
+            border: 1.5px dashed rgba(74, 158, 255, 0.4);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            color: #4a9eff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .more-btn:hover {
+            background: rgba(74, 158, 255, 0.2);
+            border-style: solid;
+            transform: scale(1.02);
+        }
+
+        .more-btn.active {
+            background: rgba(74, 158, 255, 0.15);
+            border-style: solid;
+            border-color: rgba(74, 158, 255, 0.5);
+        }
+
+        .more-btn-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            margin-left: 0.3rem;
+        }
+
+        .more-btn.active .more-btn-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Hidden overflow models (initially hidden) */
+        .model-card.overflow-hidden {
+            display: none;
+        }
+
+        .models-container.expanded .model-card.overflow-hidden {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .param-row {
+                flex-wrap: wrap;
+            }
+
+            .param-info {
+                width: 80px;
+            }
+
+            .specs-section {
+                flex-direction: column;
+                padding: 0.5rem;
+            }
+
+            .spec-box {
+                width: 140px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .design-notes ul {
+                columns: 1;
+            }
+
+            .param-row {
+                flex-direction: column;
+            }
+
+            .param-info {
+                width: 100%;
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 1rem;
+                padding: 0.75rem 1rem;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            }
+
+            .specs-section {
+                flex-direction: row;
+                width: 100%;
+                padding: 0.75rem 1rem;
+            }
+
+            .spec-box {
+                flex: 1;
+            }
+
+            .models-section {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0.75rem 1rem;
+            }
+
+            .models-container {
+                flex-wrap: wrap;
+            }
+
+            .model-card {
+                width: calc(50% - 0.3rem);
+            }
+
+            .more-models-trigger {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+
+            .more-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎯 Model Family Grouping V2</h1>
+        <p class="subtitle">Horizontal layout with scrollable model cards</p>
+
+        <div class="design-notes">
+            <h3>V2 Design Changes:</h3>
+            <ul>
+                <li><strong>Horizontal row layout</strong> per parameter class</li>
+                <li><strong>Param class anchored left</strong> with size + model count</li>
+                <li><strong>Side-by-side spec boxes</strong> (Output Speed + TTFT)</li>
+                <li><strong>Scrollable model cards</strong> with fixed visible count</li>
+                <li><strong>[+ N models] trigger</strong> enables scrolling on click</li>
+                <li><strong>Primary variant</strong> always visible first</li>
+            </ul>
+        </div>
+
+        <!-- Qwen Vendor Group -->
+        <div class="vendor-group expanded">
+            <div class="vendor-header" onclick="toggleVendor(this)">
+                <div class="vendor-title-section">
+                    <span class="vendor-toggle">▶</span>
+                    <h2 class="vendor-title">Qwen <span class="vendor-count">(30 models)</span></h2>
+                </div>
+                <span class="vendor-param-range">72.3B ◄─► 480.2B</span>
+            </div>
+            <div class="vendor-content">
+
+                <!-- 480B Parameter Class Row -->
+                <div class="param-row">
+                    <div class="param-info">
+                        <div class="param-size">480B</div>
+                        <div class="param-count">5 models</div>
+                        <span class="arch-badge">MOE</span>
+                    </div>
+
+                    <div class="specs-section">
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                    <span class="spec-box-icon">⚡</span>
+                                    <span class="spec-box-title">Output Speed</span>
+                                </div>
+                                <select class="speed-dropdown" onchange="updateSpeedRequirements(this, 'speed-480b')">
+                                    <option value="10" selected>10 tokens/s</option>
+                                    <option value="100">100 tokens/s</option>
+                                    <option value="1000">1,000 tokens/s</option>
+                                    <option value="10000">10,000 tokens/s</option>
+                                </select>
+                            </div>
+                            <div class="spec-box-content">
+                                <strong>VRAM:</strong> 545 GB <span class="detail">(INT8)</span><br>
+                                <span class="detail">or 1089 GB (BF16)</span><br>
+                                <strong>Bandwidth:</strong> ~4867 GB/s
+                            </div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⏱</span>
+                                <span class="spec-box-title">Time To First Token</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <div class="ttft-mini-chart">
+                                    <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+                                        <!-- Grid lines (subtle) -->
+                                        <line x1="0" y1="10" x2="100" y2="10" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="30" x2="100" y2="30" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <!-- H100 line (blue - fastest) -->
+                                        <polyline points="5,35 25,28 50,18 75,12 95,8" fill="none" stroke="#4a9eff"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <!-- A100 line (purple) -->
+                                        <polyline points="5,36 25,32 50,24 75,18 95,14" fill="none" stroke="#a78bfa"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <!-- 4090 line (cyan) -->
+                                        <polyline points="5,37 25,34 50,28 75,24 95,20" fill="none" stroke="#22d3d1"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <!-- Consumer line (orange - slowest) -->
+                                        <polyline points="5,38 25,36 50,32 75,30 95,28" fill="none" stroke="#ff6b6b"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="ttft-action-btn">Click to explore TTFT vs FLOPs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="models-section">
+                        <div class="models-container" id="models-480b">
+                            <!-- Visible models (2-3 shown initially) -->
+                            <div class="model-card primary">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💻</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 Coder 480B</div>
+                                        <div class="model-type">Code Specialist <span class="primary-badge">⭐
+                                                PRIMARY</span></div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">84.4K downloads</span>
+                                    <span class="stat-pill">1.3K likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💻</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 Coder 480B In...</div>
+                                        <div class="model-type">Code Specialist</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">83.8K downloads</span>
+                                    <span class="stat-pill">140 likes</span>
+                                </div>
+                            </div>
+
+                            <!-- Overflow models (hidden until expanded) -->
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">⚡</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Coder 480B FP8</div>
+                                        <div class="model-type">Optimized Precision</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">45K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🧠</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 480B Thinking</div>
+                                        <div class="model-type">Reasoning</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">32K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">📦</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 480B Base</div>
+                                        <div class="model-type">Base Model</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">18K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="more-models-trigger">
+                            <button class="more-btn" onclick="toggleMoreModels(this, 'models-480b', 3)">
+                                + 3 models <span class="more-btn-icon">→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 235B Parameter Class Row -->
+                <div class="param-row">
+                    <div class="param-info">
+                        <div class="param-size">235B</div>
+                        <div class="param-count">8 models</div>
+                        <span class="arch-badge">MOE</span>
+                    </div>
+
+                    <div class="specs-section">
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⚡</span>
+                                <span class="spec-box-title">10 tok/s Requirements</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <strong>VRAM:</strong> 271 GB <span class="detail">(INT8)</span><br>
+                                <span class="detail">or 541 GB (BF16)</span><br>
+                                <strong>Bandwidth:</strong> ~2417 GB/s
+                            </div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⏱</span>
+                                <span class="spec-box-title">Time To First Token</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <div class="ttft-mini-chart">
+                                    <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+                                        <line x1="0" y1="10" x2="100" y2="10" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="30" x2="100" y2="30" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <polyline points="5,32 25,22 50,12 75,6 95,4" fill="none" stroke="#4a9eff"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,34 25,26 50,18 75,12 95,8" fill="none" stroke="#a78bfa"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,36 25,30 50,24 75,18 95,14" fill="none" stroke="#22d3d1"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,38 25,34 50,30 75,26 95,22" fill="none" stroke="#ff6b6b"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="ttft-action-btn">Click to explore TTFT vs FLOPs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="models-section">
+                        <div class="models-container" id="models-235b">
+                            <div class="model-card primary">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🧠</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 235B Thinking</div>
+                                        <div class="model-type">Reasoning <span class="primary-badge">⭐ PRIMARY</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">Latest 2507</span>
+                                    <span class="stat-pill">58K downloads</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💬</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 235B A22B</div>
+                                        <div class="model-type">Chat</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">368K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">⚡</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Thinking 2507 FP8</div>
+                                        <div class="model-type">Optimized</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">42K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💻</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 Coder 235B</div>
+                                        <div class="model-type">Code Specialist</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">89K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💬</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 235B Chat</div>
+                                        <div class="model-type">Chat</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">156K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">📦</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 235B Base</div>
+                                        <div class="model-type">Base Model</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">28K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🔢</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 Math 235B</div>
+                                        <div class="model-type">Math Specialist</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">34K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🧪</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen3 235B Exp</div>
+                                        <div class="model-type">Experimental</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">12K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="more-models-trigger">
+                            <button class="more-btn" onclick="toggleMoreModels(this, 'models-235b', 6)">
+                                + 6 models <span class="more-btn-icon">→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 72B Parameter Class Row (Dense architecture example) -->
+                <div class="param-row">
+                    <div class="param-info">
+                        <div class="param-size">72B</div>
+                        <div class="param-count">3 models</div>
+                        <span class="arch-badge dense">Dense</span>
+                    </div>
+
+                    <div class="specs-section">
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⚡</span>
+                                <span class="spec-box-title">10 tok/s Requirements</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <strong>VRAM:</strong> 82 GB <span class="detail">(INT8)</span><br>
+                                <span class="detail">or 163 GB (BF16)</span><br>
+                                <strong>Bandwidth:</strong> ~729 GB/s
+                            </div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⏱</span>
+                                <span class="spec-box-title">Time To First Token</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <div class="ttft-mini-chart">
+                                    <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+                                        <line x1="0" y1="10" x2="100" y2="10" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="30" x2="100" y2="30" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <polyline points="5,28 25,16 50,8 75,5 95,3" fill="none" stroke="#4a9eff"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,32 25,22 50,14 75,10 95,7" fill="none" stroke="#a78bfa"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,35 25,28 50,20 75,16 95,12" fill="none" stroke="#22d3d1"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,38 25,34 50,28 75,24 95,20" fill="none" stroke="#ff6b6b"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="ttft-action-btn">Click to explore TTFT vs FLOPs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="models-section">
+                        <div class="models-container" id="models-72b">
+                            <div class="model-card primary">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💬</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen2.5 72B Instruct</div>
+                                        <div class="model-type">Chat <span class="primary-badge">⭐ PRIMARY</span></div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">1.2M downloads</span>
+                                    <span class="stat-pill">4.5K likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💻</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen2.5 Coder 72B</div>
+                                        <div class="model-type">Code Specialist</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">892K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-card-header">
+                                    <span class="model-icon">📦</span>
+                                    <div class="model-info">
+                                        <div class="model-name">Qwen2.5 72B Base</div>
+                                        <div class="model-type">Base Model</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">245K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- No more-btn needed when all models are visible -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- DeepSeek Vendor Group -->
+        <div class="vendor-group expanded">
+            <div class="vendor-header" onclick="toggleVendor(this)">
+                <div class="vendor-title-section">
+                    <span class="vendor-toggle">▶</span>
+                    <h2 class="vendor-title">deepseek-ai <span class="vendor-count">(23 models)</span></h2>
+                </div>
+                <span class="vendor-param-range">70.6B ◄─► 685.4B</span>
+            </div>
+            <div class="vendor-content">
+
+                <!-- 685B Parameter Class Row -->
+                <div class="param-row">
+                    <div class="param-info">
+                        <div class="param-size">685B</div>
+                        <div class="param-count">5 models</div>
+                        <span class="arch-badge">MOE</span>
+                    </div>
+
+                    <div class="specs-section">
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⚡</span>
+                                <span class="spec-box-title">10 tok/s Requirements</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <strong>VRAM:</strong> 776 GB <span class="detail">(INT8)</span><br>
+                                <span class="detail">or 1551 GB (BF16)</span><br>
+                                <strong>Bandwidth:</strong> ~6928 GB/s
+                            </div>
+                        </div>
+                        <div class="spec-box">
+                            <div class="spec-box-header">
+                                <span class="spec-box-icon">⏱</span>
+                                <span class="spec-box-title">Time To First Token</span>
+                            </div>
+                            <div class="spec-box-content">
+                                <div class="ttft-mini-chart">
+                                    <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+                                        <line x1="0" y1="10" x2="100" y2="10" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <line x1="0" y1="30" x2="100" y2="30" stroke="rgba(255,255,255,0.05)"
+                                            stroke-width="0.5" />
+                                        <polyline points="5,35 25,28 50,18 75,12 95,8" fill="none" stroke="#4a9eff"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,36 25,32 50,24 75,18 95,14" fill="none" stroke="#a78bfa"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,37 25,34 50,28 75,24 95,20" fill="none" stroke="#22d3d1"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                        <polyline points="5,38 25,36 50,32 75,30 95,28" fill="none" stroke="#ff6b6b"
+                                            stroke-width="1.5" stroke-linecap="round" />
+                                    </svg>
+                                </div>
+                                <div class="ttft-action-btn">Click to explore TTFT vs FLOPs</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="models-section">
+                        <div class="models-container" id="models-685b">
+                            <div class="model-card primary">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🧠</span>
+                                    <div class="model-info">
+                                        <div class="model-name">DeepSeek R1</div>
+                                        <div class="model-type">Reasoning <span class="primary-badge">⭐ PRIMARY</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">970K downloads</span>
+                                    <span class="stat-pill">12.9K likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-card-header">
+                                    <span class="model-icon">💬</span>
+                                    <div class="model-info">
+                                        <div class="model-name">DeepSeek V3.2</div>
+                                        <div class="model-type">Chat</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">78K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">⚙️</span>
+                                    <div class="model-info">
+                                        <div class="model-name">V3.2 Speciale</div>
+                                        <div class="model-type">Variant</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">12.6K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🔢</span>
+                                    <div class="model-info">
+                                        <div class="model-name">DeepSeek Math V2</div>
+                                        <div class="model-type">Math Specialist</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">11.2K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+
+                            <div class="model-card overflow-hidden">
+                                <div class="model-card-header">
+                                    <span class="model-icon">🧪</span>
+                                    <div class="model-info">
+                                        <div class="model-name">DeepSeek V3.2 Exp</div>
+                                        <div class="model-type">Experimental</div>
+                                    </div>
+                                </div>
+                                <div class="model-stats">
+                                    <span class="stat-pill">80.8K downloads</span>
+                                    <span class="stat-pill">0 likes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="more-models-trigger">
+                            <button class="more-btn" onclick="toggleMoreModels(this, 'models-685b', 3)">
+                                + 3 models <span class="more-btn-icon">→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function toggleVendor(header) {
+            const group = header.closest('.vendor-group');
+            group.classList.toggle('expanded');
+        }
+
+        function toggleMoreModels(btn, containerId, hiddenCount) {
+            const container = document.getElementById(containerId);
+            const isExpanded = container.classList.contains('expanded');
+
+            if (isExpanded) {
+                // Collapse: hide overflow models and remove scrollable
+                container.classList.remove('expanded', 'scrollable');
+                btn.classList.remove('active');
+                btn.innerHTML = `+ ${hiddenCount} models <span class="more-btn-icon">→</span>`;
+
+                // Scroll back to start
+                container.scrollLeft = 0;
+            } else {
+                // Expand: show overflow models and make scrollable
+                container.classList.add('expanded', 'scrollable');
+                btn.classList.add('active');
+                btn.innerHTML = `Collapse <span class="more-btn-icon">←</span>`;
+
+                // Scroll to reveal new models
+                setTimeout(() => {
+                    container.scrollLeft = container.scrollWidth;
+                }, 100);
+            }
+        }
+
+        // Update speed requirements based on dropdown selection
+        function updateSpeedRequirements(selectElement, containerId) {
+            const tokensPerSecond = parseInt(selectElement.value);
+            console.log(`Selected speed: ${tokensPerSecond} tokens/s for ${containerId}`);
+
+            // TODO: Implement actual VRAM and bandwidth calculation
+            // For now, this is a placeholder that shows the dropdown is working
+        }
+
+        // Initialize all vendor groups as expanded
+        document.querySelectorAll('.vendor-group').forEach(group => {
+            group.classList.add('expanded');
+        });
+    </script>
+</body>
+
+</html>
