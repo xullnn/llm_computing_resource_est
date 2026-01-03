@@ -1,7 +1,7 @@
 ---
 name: Insights Index
 description: Knowledge hierarchy for Resource Physics and Architecture
-last_updated: 2025-12-21
+last_updated: 2026-01-03
 ---
 
 # Insights Index
@@ -21,7 +21,9 @@ This directory contains the intellectual property of the project: the mathematic
 *   Vanilla JS vs Frameworks (Portability and Longevity).
 *   Shared Logic Engines (Syncing Drawer, Browser, and Calculator).
 *   State Persistence via URL and LocalStorage.
+*   High-Density UI Patterns (Parameter Pills, Horizontal Layouts).
 
 ## 🎯 Usage Pattern
 *   **Engineering**: Consult `architecture.md` before adding new pages or heavy libraries.
+*   **UI/UX**: Consult `architecture.md` (High-Density UI Patterns) before modifying vendor displays or spec boxes.
 *   **Methodology**: Consult `physics.md` when refining estimation formulas for new architectures (e.g., MoE scaling).

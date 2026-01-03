@@ -1,7 +1,7 @@
 ---
 name: Architecture Decisions
 description: Design rationale for the Deployment Planning Platform
-last_updated: 2025-12-21
+last_updated: 2026-01-03
 ---
 
 # Architecture Decisions
@@ -56,6 +56,38 @@ Completely static deployment via GitHub Pages.
 *   **Security**: No backend means no attack surface for user data.
 *   **Offline-First**: Once the initial `models.json` is cached, the entire sizing logic works without an internet connection.
 *   **Zero Cost**: Infinite scaling at zero operational expense.
+
+## 6. High-Density UI Patterns
+
+### Decision: Parameter Pills over Range Text
+Replace generic range labels (e.g., "72B ◄─► 480B") with **Parameter Pills** showing specific sizes and model counts (e.g., "72B ×3", "480B ×5").
+
+**Production Reference**: `js/models-page.js` (Lines ~298-315) + `css/models.css` (`.vendor-param-pills`, `.param-pill`)
+
+### Rationale
+*   **Instant Inventory Awareness**: Procurement and infrastructure teams can assess model density at a glance without expanding vendor groups.
+*   **Pro-Grade Tooling Aesthetic**: Pills convey precision and data-density, aligning with the "Strategic Deployment Planner" positioning.
+*   **Efficient Scanning**: Users targeting specific parameter tiers (e.g., "All 70B variants") can quickly locate relevant families.
+*   **Scalability**: As model families grow (e.g., DeepSeek adds 480B, 685B, R1-Zero variants), pills scale better than text ranges.
+
+### Decision: Horizontal Row Layout for Parameter Classes
+Group model variants (Chat, Coder, Math, etc.) **horizontally within a parameter tier** rather than stacking them vertically.
+
+**Prototype Reference**: `prototype_lab/model-family-grouping-v2.html` (DeepSeek V3 section)
+
+### Rationale
+*   **Maximized Screen Real Estate**: Horizontal grouping allows 3-4 model cards per row, reducing scrolling for large inventories (70B+ families often have 10+ variants).
+*   **Natural Comparison Pattern**: Users comparing "DeepSeek V3 Coder vs Chat" benefit from side-by-side placement within the same parameter class.
+*   **Vendor Consistency**: Aligns with the "Vendor Grouping" strategy, where each vendor's entire lineup is presented as a cohesive block.
+
+### Decision: Left-Aligned Spec Box Headers
+Use `justify-content: flex-start` for spec box headers (e.g., "Time To First Token") to keep icon and title adjacent.
+
+**Production Reference**: `css/models.css` (`.spec-box-header`)
+
+### Rationale
+*   **Visual Coherence**: Prevents the "floating icon" bug where `space-between` separates icon and text when there's extra horizontal space.
+*   **Readability**: Left-aligned headers create a clear visual hierarchy, especially in narrow viewports.
 
 ## 🛡️ Summary of Choices
 

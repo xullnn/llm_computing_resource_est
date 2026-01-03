@@ -1,11 +1,11 @@
 ---
-last_updated: 2025-12-21
+last_updated: 2026-01-03
 project: LLM Deployment Planner
 type: Strategic Infrastructure Decision Hub
 stack: Vanilla JavaScript, GitHub Actions, Node.js (Fetch Pipeline), CSS3
 
 pillar_files:
-  - index.html: Model Browser (Vendor/Tier views)
+  - index.html: Model Browser (Vendor/Tier views with Parameter Pills)
   - calculator.html: Sizing Engine (Physics-backed)
   - hardware/index.html: Comparative Hardware Hub
   - quickstart.html: Onboarding & Workflow Guide
@@ -14,9 +14,13 @@ pillar_files:
 service_layer:
   - js/i18n.js: Central translation & persistence engine
   - js/calc.js: Core resource calculation math
-  - js/models-page.js: Dynamic rendering & view management
+  - js/models-page.js: Dynamic rendering & view management (Vendor Grouping + Pills)
   - js/nav.js: Absolute path navigation controller
   - js/drawer.js: High-density spec disclosure
+  - js/ttft-chart.js: TTFT data controller & threshold logic
+  - js/ttft-chart-renderer.js: Interactive SVG renderer for FLOPs vs Latency visualization
+  - js/ui.js: Calculator workspace orchestration
+  - js/gpus.js: GPU database & multi-device aggregation
 
 data_schema:
   models:
@@ -31,3 +35,7 @@ pipeline:
   trigger: Scheduled (Mon/Wed/Fri 02:00 UTC) via GH Actions
   probe: HTTP HEAD probe for Artificial Analysis slug verification
   merge: config.json + overrides.json + HF Hub API
+
+prototyping:
+  - prototype_lab/: Design sandbox for UI experiments before production merge
+  - model-family-grouping-v2.html: Reference for Parameter Pills + Horizontal Layout pattern

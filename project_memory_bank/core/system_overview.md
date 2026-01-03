@@ -1,7 +1,7 @@
 ---
 name: System Overview
 description: Architecture of the Deployment Planning Platform
-last_updated: 2025-12-21
+last_updated: 2026-01-03
 ---
 
 # System Overview
@@ -39,7 +39,39 @@ graph TD
 | **View Engine** | `js/models-page.js` | Orchestrates model grid, filtering logic, and persistent comparison state. |
 | **UI Orchestrator**| `js/ui.js` | Manages the calculator workspace, preset loading, and input synchronization. |
 | **Drawer Logic** | `js/drawer.js` | Progressive disclosure layer for quick-look calculations. |
+| **TTFT Controller** | `js/ttft-chart.js` | TTFT data management, threshold logic, and chart state. |
+| **TTFT Renderer** | `js/ttft-chart-renderer.js` | SVG visualization engine for interactive FLOPs vs Latency curves. |
+| **GPU Database** | `js/gpus.js` | Hardware specs and multi-device capacity aggregation. |
 | **Navigation** | `js/nav.js` | Global sticky nav using absolute paths for site-wide consistency. |
+
+## 📊 TTFT Visualization Architecture
+
+The platform implements a **two-section header pattern** for model performance metrics, separating static specs from interactive visualizations.
+
+```mermaid
+graph TD
+    Card[Model Card] --> Header[Two-Section Header]
+    Header --> Sec1[Output Speed Box]
+    Header --> Sec2[Time To First Token Box]
+    
+    Sec1 --> VRAM[VRAM Required]
+    Sec1 --> BW[Memory Bandwidth]
+    
+    Sec2 --> Chart[Interactive TTFT Chart]
+    Chart --> Click[Click to Explore]
+    Click --> Modal[TTFT Modal: Full Visualization]
+    
+    Modal --> Renderer[ttft-chart-renderer.js]
+    Renderer --> Curve[FLOPs vs Latency Curve]
+    Renderer --> Thresh[Threshold Labels: Instant/Acceptable/Slow]
+    Renderer --> Gradient[Visual Gradient Overlay]
+```
+
+### Design Rationale
+- **Separation of Concerns**: Static requirements (VRAM/BW) use compact pills; dynamic metrics (TTFT) use expandable charts
+- **Progressive Disclosure**: Small preview chart within card → Full interactive modal on click
+- **User-Centric Thresholds**: Charts annotate "Instant" (<100ms), "Acceptable" (<500ms), "Slow" (≥500ms) zones for quick decision-making
+- **Left-Aligned Headers**: Spec box titles use `justify-content: flex-start` to group icon + text, avoiding "floating icon" visual bugs
 
 ## 🔄 Data Lifecycle
 
