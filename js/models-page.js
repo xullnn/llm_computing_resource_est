@@ -404,6 +404,9 @@ function renderParameterClassHTML(classKey, models) {
                     <span class="stat-pill">${formatNumber(model.downloads || 0)} downloads</span>
                     <span class="stat-pill">${formatNumber(model.likes || 0)} likes</span>
                 </div>
+                <div class="model-release-date">
+                    <span class="date-pill">📅 ${formatDate(model.created_at)}</span>
+                </div>
             </div>
         `;
     }).join('');
@@ -921,6 +924,19 @@ function formatNumber(num) {
     if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
     if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
     return num.toString();
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    try {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    } catch (e) {
+        return 'N/A';
+    }
 }
 
 function getRelativeTime(dateString) {

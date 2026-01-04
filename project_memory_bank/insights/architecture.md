@@ -1,7 +1,7 @@
 ---
 name: Architecture Decisions
 description: Design rationale for the Deployment Planning Platform
-last_updated: 2026-01-03
+last_updated: 2026-01-04
 ---
 
 # Architecture Decisions
@@ -97,3 +97,22 @@ Use `justify-content: flex-start` for spec box headers (e.g., "Time To First Tok
 | **Serverless** | Privacy & Reliability | No cross-device sync |
 | **Absolute Paths** | Robust Navigation | Local `file://` limitations |
 | **Custom Events** | Decoupled Logic | No built-in state debugger |
+
+##  7. Data Fetcher: Override Merge Pattern
+
+### Decision
+`scripts/fetch-models.js` merges manual override fields with live HuggingFace metadata instead of using override data as-is.
+
+### Implementation
+- **Override fields** (technical specs): `parameters_billion`, `architecture`, `active_parameters_billion`, `hidden_size`, etc.
+- **Live HF fields** (dynamic metadata): `downloads`, `likes`, `created_at`, `last_modified`
+
+### Rationale
+- **Always Fresh Stats**: Model popularity metrics (downloads/likes) update automatically on each fetch
+- **Preserved Corrections**: Manual parameter fixes for complex MoE architectures (like MiMo) remain accurate
+- **DRY Overrides**: Override file only contains fields that need correction, not duplicate metadata
+- **Single Source of Truth**: HuggingFace API is authoritative for dates and engagement metrics
+
+### Production Reference
+`scripts/fetch-models.js` (Lines 443-544): Override check during processing, not before
+

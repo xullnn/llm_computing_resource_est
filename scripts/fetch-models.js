@@ -371,15 +371,6 @@ async function fetchOpenSourceModels() {
       continue;
     }
 
-    // NEW: Check for manual overrides first
-    if (OVERRIDES.has(model.id)) {
-      const override = OVERRIDES.get(model.id);
-      console.log(`🎯 ${model.id}: Using manual override (${override.parameters_billion}B)`);
-      models.push(override);
-      seenModels.add(model.id);
-      continue;
-    }
-
     // Filter: Only models from past 2 years (use createdAt or lastModified)
     // Use lastModified as fallback if createdAt is missing (HF API inconsistency)
     const dateString = model.createdAt || model.lastModified;
@@ -443,12 +434,22 @@ async function fetchOpenSourceModels() {
       const configUrl = `https://huggingface.co/${model.id}/raw/main/config.json`;
       const config = await fetchJson(configUrl);
 
+      // Check if this model has a manual override
+      const hasOverride = OVERRIDES.has(model.id);
+      const override = hasOverride ? OVERRIDES.get(model.id) : null;
+
       // STEP 4: Validate and choose best parameter estimate
       let finalParams = null;
       let paramSource = null;
 
+      // Priority 0: Manual override (highest priority)
+      if (override && override.parameters_billion) {
+        finalParams = override.parameters_billion;
+        paramSource = 'manual_override';
+      }
+
       // Priority 1: Safetensors (from individual model API)
-      if (modelMetadata && modelMetadata.safetensors && modelMetadata.safetensors.total) {
+      if (!finalParams && modelMetadata && modelMetadata.safetensors && modelMetadata.safetensors.total) {
         finalParams = modelMetadata.safetensors.total / 1e9;
         paramSource = 'safetensors';
       }
@@ -505,31 +506,37 @@ async function fetchOpenSourceModels() {
         // Ignore AA lookup failures - not critical
       }
 
+      // Build model data, merging override fields with live HF data
       const modelData = {
         id: model.id,
-        name: formatModelName(model.id),
+        name: override?.name || formatModelName(model.id),
         parameters_billion: Math.round(finalParams * 10) / 10,
-        architecture: detectArchitecture(config),
-        hidden_size: config.hidden_size || null,
-        num_layers: config.num_hidden_layers || config.num_layers || null,
-        num_heads: config.num_attention_heads || null,
-        num_kv_heads: config.num_key_value_heads || config.num_attention_heads || null,
-        vocab_size: config.vocab_size || null,
-        max_seq_length: config.max_position_embeddings || config.max_sequence_length || null,
-        intermediate_size: config.intermediate_size || null,
+        active_parameters_billion: override?.active_parameters_billion || null,
+        architecture: override?.architecture || detectArchitecture(config),
+        hidden_size: override?.hidden_size || config.hidden_size || null,
+        num_layers: override?.num_layers || config.num_hidden_layers || config.num_layers || null,
+        num_heads: override?.num_heads || config.num_attention_heads || null,
+        num_kv_heads: override?.num_kv_heads || config.num_key_value_heads || config.num_attention_heads || null,
+        vocab_size: override?.vocab_size || config.vocab_size || null,
+        max_seq_length: override?.max_seq_length || config.max_position_embeddings || config.max_sequence_length || null,
+        intermediate_size: override?.intermediate_size || config.intermediate_size || null,
         // MoE fields (if present)
-        moe_num_experts: config.num_local_experts || config.n_routed_experts || null,
-        moe_top_k: config.num_experts_per_tok || null,
-        // Metadata
-        license: licenseTag ? licenseTag.replace('license:', '') : 'unknown',
+        moe_num_experts: override?.moe_num_experts || config.num_local_experts || config.n_routed_experts || null,
+        moe_top_k: override?.moe_top_k || config.num_experts_per_tok || null,
+        // Metadata (always from live HF data)
+        license: override?.license || (licenseTag ? licenseTag.replace('license:', '') : 'unknown'),
         downloads: model.downloads || 0,
         likes: model.likes || 0,
         created_at: createdAt ? createdAt.toISOString() : null,
         last_modified: lastModified ? lastModified.toISOString() : null,
         huggingface_url: `https://huggingface.co/${model.id}`,
-        param_source: paramSource, // Track whether we used stated or estimated value
-        artificial_analysis_slug: aaSlug, // Validated AA slug or null
+        param_source: paramSource,
+        artificial_analysis_slug: aaSlug,
       };
+
+      if (hasOverride) {
+        console.log(`   🎯 Applied override fields, merged with live HF data (downloads: ${modelData.downloads}, likes: ${modelData.likes})`);
+      }
 
       models.push(modelData);
 
