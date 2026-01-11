@@ -401,8 +401,8 @@ function renderParameterClassHTML(classKey, models) {
                     </div>
                 </div>
                 <div class="model-stats">
-                    <span class="stat-pill">${formatNumber(model.downloads || 0)} downloads</span>
-                    <span class="stat-pill">${formatNumber(model.likes || 0)} likes</span>
+                    <span class="stat-pill">📥 ${formatNumber(model.downloads || 0)} / ${formatNumber(model.downloads_all_time || 0)} (30d / All)</span>
+                    <span class="stat-pill">♥ ${formatNumber(model.likes || 0)}</span>
                 </div>
                 <div class="model-release-date">
                     <span class="date-pill">📅 ${formatDate(model.created_at)}</span>
@@ -486,8 +486,8 @@ function renderVariantChipHTML(model, isPrimary) {
                 <div class="variant-type">${variantType.label}${isPrimary ? ' ⭐ Primary' : ''}</div>
                 ${model.downloads || model.likes ? `
                     <div class="variant-stats">
-                        ${model.downloads ? `<span class="stat-pill">${formatNumber(model.downloads)} downloads</span>` : ''}
-                        ${model.likes ? `<span class="stat-pill">${formatNumber(model.likes)} likes</span>` : ''}
+                        ${model.downloads ? `<span class="stat-pill">📥 ${formatNumber(model.downloads)} / ${formatNumber(model.downloads_all_time || 0)} (30d / All)</span>` : ''}
+                        ${model.likes ? `<span class="stat-pill">♥ ${formatNumber(model.likes)}</span>` : ''}
                     </div>
                 ` : ''}
             </div>
@@ -920,9 +920,9 @@ document.querySelectorAll('.filter-tag').forEach(tag => {
 
 // Utility functions
 function formatNumber(num) {
-    if (!num) return 'N/A';
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    if (!num && num !== 0) return 'N/A';
+    if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'k';
     return num.toString();
 }
 

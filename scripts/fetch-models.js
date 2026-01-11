@@ -87,7 +87,8 @@ const AA_CACHE = loadAACache();
  */
 async function fetchModelMetadata(modelId) {
   try {
-    const url = `https://huggingface.co/api/models/${modelId}`;
+    // Request expanded fields for downloads, downloadsAllTime, and likes
+    const url = `https://huggingface.co/api/models/${modelId}?expand[]=downloads&expand[]=downloadsAllTime&expand[]=likes`;
     const metadata = await fetchJson(url);
     return metadata;
   } catch (e) {
@@ -404,8 +405,24 @@ async function fetchOpenSourceModels() {
       const existingModified = existing.last_modified ? new Date(existing.last_modified) : null;
 
       // If the model hasn't been modified on HF since our last fetch, reuse it
+      // BUT: if it's missing downloads_all_time, we need to fetch metadata
       if (existingModified && lastModified && existingModified.getTime() >= new Date(lastModified).getTime()) {
-        // But still try to add/update AA slug
+        // Check if we need to update with missing fields
+        if (!existing.downloads_all_time) {
+          // Fetch metadata to get downloads_all_time
+          try {
+            const metadata = await fetchModelMetadata(model.id);
+            if (metadata?.downloadsAllTime) {
+              existing.downloads_all_time = metadata.downloadsAllTime;
+              console.log(`   📊 Added downloads_all_time for cached model: ${model.id} (${metadata.downloadsAllTime})`);
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+          } catch (e) {
+            // Continue with existing data
+          }
+        }
+
+        // Try to add/update AA slug
         if (!existing.artificial_analysis_slug) {
           const aaSlug = findAASlugFromCache(model.id);
           if (aaSlug) {
@@ -526,6 +543,7 @@ async function fetchOpenSourceModels() {
         // Metadata (always from live HF data)
         license: override?.license || (licenseTag ? licenseTag.replace('license:', '') : 'unknown'),
         downloads: model.downloads || 0,
+        downloads_all_time: modelMetadata?.downloadsAllTime || null,
         likes: model.likes || 0,
         created_at: createdAt ? createdAt.toISOString() : null,
         last_modified: lastModified ? lastModified.toISOString() : null,
