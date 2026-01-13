@@ -1,9 +1,9 @@
 {
   "metadata": {
-    "updated_at": "2026-01-09T02:45:55.859Z",
+    "updated_at": "2026-01-12T02:51:26.435Z",
     "source": "Hugging Face Hub API",
-    "filter": "Vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo | Parameters: 70-700B | Released after 2024-01-10",
-    "count": 74,
+    "filter": "Vendors: google, anthropic, openai, Qwen, deepseek-ai, nvidia, apple, XiaomiMiMo | Parameters: 70-700B | Released after 2024-01-13",
+    "count": 70,
     "vendors": [
       "google",
       "anthropic",
@@ -233,6 +233,7 @@
       "downloads_all_time": 1209990
     },
     {
+<<<<<<< HEAD
       "id": "deepseek-ai/DeepSeek-R1-0528",
       "name": "DeepSeek R1 0528",
       "parameters_billion": 684.5,
@@ -257,6 +258,8 @@
       "downloads_all_time": 3659918
     },
     {
+=======
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
       "id": "deepseek-ai/DeepSeek-R1-Zero",
       "name": "DeepSeek R1 Zero",
       "parameters_billion": 684.5,
@@ -328,6 +331,29 @@
       "downloads_all_time": 22616
     },
     {
+      "id": "deepseek-ai/DeepSeek-R1-0528",
+      "name": "DeepSeek R1 0528",
+      "parameters_billion": 684.5,
+      "architecture": "moe",
+      "hidden_size": 7168,
+      "num_layers": 61,
+      "num_heads": 128,
+      "num_kv_heads": 128,
+      "vocab_size": 129280,
+      "max_seq_length": 163840,
+      "intermediate_size": 18432,
+      "moe_num_experts": 256,
+      "moe_top_k": 8,
+      "license": "mit",
+      "downloads": 485870,
+      "likes": 2388,
+      "created_at": "2025-05-28T09:46:42.000Z",
+      "last_modified": "2025-05-28T09:46:42.000Z",
+      "huggingface_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1-0528",
+      "param_source": "safetensors",
+      "artificial_analysis_slug": "deepseek-r1"
+    },
+    {
       "id": "deepseek-ai/DeepSeek-V3.1-Terminus",
       "name": "DeepSeek V3.1 Terminus",
       "parameters_billion": 684.5,
@@ -352,6 +378,7 @@
       "downloads_all_time": 153302
     },
     {
+<<<<<<< HEAD
       "id": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
       "name": "Qwen3 Coder 480 B A35 B Instruct FP8",
       "parameters_billion": 480.2,
@@ -376,6 +403,8 @@
       "downloads_all_time": 523091
     },
     {
+=======
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
       "id": "Qwen/Qwen3-Coder-480B-A35B-Instruct",
       "name": "Qwen3 Coder 480 B A35 B Instruct",
       "parameters_billion": 480.2,
@@ -395,6 +424,29 @@
       "created_at": "2025-07-22T14:52:38.000Z",
       "last_modified": "2025-07-22T14:52:38.000Z",
       "huggingface_url": "https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct",
+      "param_source": "safetensors",
+      "artificial_analysis_slug": "qwen3-coder-480b-a35b-instruct"
+    },
+    {
+      "id": "Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "name": "Qwen3 Coder 480 B A35 B Instruct FP8",
+      "parameters_billion": 480.2,
+      "architecture": "moe",
+      "hidden_size": 6144,
+      "num_layers": 62,
+      "num_heads": 96,
+      "num_kv_heads": 8,
+      "vocab_size": 151936,
+      "max_seq_length": 262144,
+      "intermediate_size": 8192,
+      "moe_num_experts": null,
+      "moe_top_k": 8,
+      "license": "apache-2.0",
+      "downloads": 83843,
+      "likes": 140,
+      "created_at": "2025-07-22T15:23:49.000Z",
+      "last_modified": "2025-07-22T15:23:49.000Z",
+      "huggingface_url": "https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct-FP8",
       "param_source": "safetensors",
       "artificial_analysis_slug": "qwen3-coder-480b-a35b-instruct"
     },
@@ -520,20 +572,21 @@
       "downloads_all_time": 584
     },
     {
-      "id": "nvidia/Llama-3_1-Nemotron-Ultra-253B-v1",
-      "name": "Llama 3_1 Nemotron Ultra 253 B v1",
-      "parameters_billion": 253.4,
-      "architecture": "dense",
-      "hidden_size": 16384,
-      "num_layers": 162,
+      "id": "deepseek-ai/DeepSeek-Coder-V2-Base",
+      "name": "DeepSeek Coder V2 Base",
+      "parameters_billion": 235.7,
+      "architecture": "moe",
+      "hidden_size": 5120,
+      "num_layers": 60,
       "num_heads": 128,
       "num_kv_heads": 128,
-      "vocab_size": 128256,
-      "max_seq_length": 131072,
-      "intermediate_size": null,
-      "moe_num_experts": null,
-      "moe_top_k": null,
+      "vocab_size": 102400,
+      "max_seq_length": 163840,
+      "intermediate_size": 12288,
+      "moe_num_experts": 160,
+      "moe_top_k": 6,
       "license": "other",
+<<<<<<< HEAD
       "downloads": 191312,
       "likes": 341,
       "created_at": "2025-04-07T18:47:10.000Z",
@@ -564,6 +617,15 @@
       "huggingface_url": "https://huggingface.co/nvidia/Llama-3_1-Nemotron-Ultra-253B-CPT-v1",
       "param_source": "safetensors",
       "downloads_all_time": 751
+=======
+      "downloads": 119224,
+      "likes": 80,
+      "created_at": "2024-06-14T03:45:54.000Z",
+      "last_modified": "2024-06-14T03:45:54.000Z",
+      "huggingface_url": "https://huggingface.co/deepseek-ai/DeepSeek-Coder-V2-Base",
+      "param_source": "safetensors",
+      "artificial_analysis_slug": "deepseek-coder-v2"
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
     },
     {
       "id": "deepseek-ai/DeepSeek-Coder-V2-Instruct",
@@ -637,6 +699,7 @@
       "downloads_all_time": 277865
     },
     {
+<<<<<<< HEAD
       "id": "deepseek-ai/DeepSeek-Coder-V2-Base",
       "name": "DeepSeek Coder V2 Base",
       "parameters_billion": 235.7,
@@ -661,6 +724,8 @@
       "downloads_all_time": 279097
     },
     {
+=======
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
       "id": "deepseek-ai/DeepSeek-V2-Chat-0628",
       "name": "DeepSeek V2 Chat 0628",
       "parameters_billion": 235.7,
@@ -1088,6 +1153,7 @@
       "artificial_analysis_slug": null
     },
     {
+<<<<<<< HEAD
       "id": "Qwen/Qwen3-Next-80B-A3B-Instruct",
       "name": "Qwen3 Next 80 B A3 B Instruct",
       "parameters_billion": 81.3,
@@ -1112,6 +1178,8 @@
       "downloads_all_time": 11837505
     },
     {
+=======
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
       "id": "Qwen/Qwen3-Next-80B-A3B-Thinking",
       "name": "Qwen3 Next 80 B A3 B Thinking",
       "parameters_billion": 81.3,
@@ -1157,6 +1225,29 @@
       "param_source": "safetensors",
       "artificial_analysis_slug": "qwen3-next-80b-a3b-instruct",
       "downloads_all_time": 1261721
+    },
+    {
+      "id": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+      "name": "Qwen3 Next 80 B A3 B Instruct",
+      "parameters_billion": 81.3,
+      "architecture": "moe",
+      "hidden_size": 2048,
+      "num_layers": 48,
+      "num_heads": 16,
+      "num_kv_heads": 2,
+      "vocab_size": 151936,
+      "max_seq_length": 262144,
+      "intermediate_size": 5120,
+      "moe_num_experts": null,
+      "moe_top_k": 10,
+      "license": "apache-2.0",
+      "downloads": 3048501,
+      "likes": 916,
+      "created_at": "2025-09-09T15:40:56.000Z",
+      "last_modified": "2025-09-09T15:40:56.000Z",
+      "huggingface_url": "https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct",
+      "param_source": "safetensors",
+      "artificial_analysis_slug": "qwen3-next-80b-a3b-instruct"
     },
     {
       "id": "Qwen/Qwen3-Next-80B-A3B-Thinking-FP8",
@@ -1443,6 +1534,7 @@
       "downloads_all_time": 3607
     },
     {
+<<<<<<< HEAD
       "id": "Qwen/Qwen2.5-Math-72B",
       "name": "Qwen2.5 Math 72 B",
       "parameters_billion": 72.7,
@@ -1491,6 +1583,8 @@
       "downloads_all_time": 125968
     },
     {
+=======
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
       "id": "nvidia/AceMath-72B-Instruct",
       "name": "AceMath 72 B Instruct",
       "parameters_billion": 72.7,
@@ -1700,6 +1794,28 @@
       "downloads_all_time": 3716763
     },
     {
+      "id": "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
+      "name": "Llama 3.1 Nemotron 70 B Instruct HF",
+      "parameters_billion": 70.6,
+      "architecture": "dense",
+      "hidden_size": 8192,
+      "num_layers": 80,
+      "num_heads": 64,
+      "num_kv_heads": 8,
+      "vocab_size": 128256,
+      "max_seq_length": 131072,
+      "intermediate_size": 28672,
+      "moe_num_experts": null,
+      "moe_top_k": null,
+      "license": "llama3.1",
+      "downloads": 5832,
+      "likes": 2060,
+      "created_at": "2024-10-12T02:37:13.000Z",
+      "last_modified": "2024-10-12T02:37:13.000Z",
+      "huggingface_url": "https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
+      "param_source": "safetensors"
+    },
+    {
       "id": "nvidia/Llama-3.3-Nemotron-70B-Reward-Principle",
       "name": "Llama 3.3 Nemotron 70 B Reward Principle",
       "parameters_billion": 70.6,
@@ -1793,6 +1909,7 @@
       "downloads_all_time": 11718
     },
     {
+<<<<<<< HEAD
       "id": "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
       "name": "Llama 3.1 Nemotron 70 B Instruct HF",
       "parameters_billion": 70.6,
@@ -1816,6 +1933,8 @@
       "downloads_all_time": 1771642
     },
     {
+=======
+>>>>>>> f93ddb0170d5c58d77df271d61d1f693270a4915
       "id": "nvidia/Llama-3.3-Nemotron-70B-Feedback",
       "name": "Llama 3.3 Nemotron 70 B Feedback",
       "parameters_billion": 70.6,

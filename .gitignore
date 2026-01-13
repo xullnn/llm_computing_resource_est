@@ -8,3 +8,4 @@ prompts/
 # Node
 node_modules/
 npm-debug.log*
+.playwright-mcp/

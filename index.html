@@ -107,6 +107,9 @@
             <a href="/about.html" class="nav-item" data-i18n="navAbout">About</a>
         </div>
         <div class="nav-actions">
+            <button id="helpBtn" class="help-btn" title="How to use this site" aria-label="Help">
+                <span class="help-icon">?</span>
+            </button>
             <label class="field compact language-switch" style="margin-bottom: 0;">
                 <select id="langSelect" disabled style="opacity: 0.5; cursor: not-allowed;"
                     title="Translation coming soon">
@@ -116,38 +119,45 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="hero-container">
-            <h1 class="hero-title" data-i18n="landingHeroTitle">LLM VRAM Calculator | Open-Source Deployment Planner
-            </h1>
-            <h2 class="visually-hidden">GPU Requirements for LLM | DeepSeek, Llama, Qwen Hardware Calculator
-            </h2>
-            <p class="hero-lead" data-i18n="landingHeroLead">
-                Calculate GPU requirements for LLM deployment. Find open source LLM models, estimate VRAM needs, and
-                plan hardware for running LLM locally. All calculations run offline in your browser.
-            </p>
+    <!-- Hidden title for SEO -->
+    <h1 class="visually-hidden">Open-Source LLM Deployment Planner | GPU Requirements for DeepSeek, Llama, Qwen Models</h1>
 
-            <!-- Journey Options -->
-            <div class="journey-options">
-                <button class="journey-btn journey-primary"
-                    onclick="document.getElementById('searchBox').focus(); document.getElementById('searchBox').scrollIntoView({ behavior: 'smooth', block: 'center' });">
-                    <span class="journey-icon" role="img" aria-label="Search icon">🔍</span>
-                    <span data-i18n="journeyExploreTitle">Browse Models</span>
-                </button>
-                <a href="calculator.html" class="journey-btn journey-secondary">
-                    <span class="journey-icon" role="img" aria-label="Calculator icon">🧮</span>
-                    <span data-i18n="journeyCalculateTitle">Calculate Hardware</span>
-                </a>
+    <!-- Quick Guide Tooltip (for first-time users) -->
+    <div id="quickGuide" class="quick-guide" style="display: none;">
+        <div class="quick-guide-content">
+            <button class="quick-guide-close" id="closeGuide" aria-label="Close guide">×</button>
+            <div class="quick-guide-header">
+                <span class="quick-guide-icon">👋</span>
+                <h2>Quick Guide</h2>
             </div>
+            <div class="quick-guide-body">
+                <div class="guide-item">
+                    <div class="guide-icon">📦</div>
+                    <div class="guide-text">
+                        <strong>Left cards</strong> show hardware requirements (VRAM, bandwidth, TTFT)
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-icon">🤖</div>
+                    <div class="guide-text">
+                        <strong>Right cards</strong> are actual models you can deploy
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-icon">🔢</div>
+                    <div class="guide-text">
+                        <strong>Size pills</strong> (e.g., 73B ×16) = 16 models at that parameter size
+                    </div>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-icon">⭐</div>
+                    <div class="guide-text">
+                        <strong>PRIMARY</strong> tag = most popular/recommended variant
+                    </div>
+                </div>
+            </div>
+            <button class="quick-guide-btn" id="gotItBtn">Got it!</button>
         </div>
-    </div>
-
-    <!-- Model Browser Section -->
-    <div class="models-header">
-        <h2 data-i18n="modelBrowserTitle">GPU Requirements for DeepSeek, Llama, Qwen Models</h2>
-        <p data-i18n="modelBrowserSubhead">Compare VRAM requirements and hardware specs for open source LLM deployment.
-            Filter by vendor, size, or architecture to find the right model for your GPU.</p>
     </div>
 
     <!-- Trending Models Bar -->
@@ -308,6 +318,46 @@
 
     <!-- Backdrop for drawer -->
     <div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+    <script>
+        // Quick Guide functionality
+        (function() {
+            const GUIDE_SHOWN_KEY = 'llm-sizer-guide-shown';
+            const quickGuide = document.getElementById('quickGuide');
+            const helpBtn = document.getElementById('helpBtn');
+            const closeGuide = document.getElementById('closeGuide');
+            const gotItBtn = document.getElementById('gotItBtn');
+
+            function showGuide() {
+                quickGuide.style.display = 'block';
+            }
+
+            function hideGuide() {
+                quickGuide.style.display = 'none';
+                localStorage.setItem(GUIDE_SHOWN_KEY, 'true');
+            }
+
+            // Show guide on first visit
+            if (!localStorage.getItem(GUIDE_SHOWN_KEY)) {
+                setTimeout(showGuide, 1000); // Show after 1 second
+            }
+
+            // Help button click
+            if (helpBtn) {
+                helpBtn.addEventListener('click', showGuide);
+            }
+
+            // Close button click
+            if (closeGuide) {
+                closeGuide.addEventListener('click', hideGuide);
+            }
+
+            // Got it button click
+            if (gotItBtn) {
+                gotItBtn.addEventListener('click', hideGuide);
+            }
+        })();
+    </script>
 
     <script src="js/i18n.js"></script>
     <script src="js/nav.js"></script>

@@ -1497,3 +1497,166 @@ button.ghost {
   white-space: nowrap;
   border: 0;
 }
+
+/* Help Button in Nav */
+.help-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  margin-right: 12px;
+}
+
+.help-btn:hover {
+  background: #6d28d9;
+  transform: scale(1.05);
+}
+
+.help-icon {
+  line-height: 1;
+}
+
+/* Quick Guide Tooltip */
+.quick-guide {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quick-guide-content {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 380px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(124, 58, 237, 0.1);
+  position: relative;
+}
+
+.quick-guide-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.quick-guide-close:hover {
+  color: var(--text);
+}
+
+.quick-guide-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.quick-guide-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.quick-guide-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.quick-guide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.guide-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.guide-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.guide-text {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.guide-text strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.quick-guide-btn {
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-guide-btn:hover {
+  background: #6d28d9;
+  transform: translateY(-1px);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .quick-guide {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+  }
+
+  .quick-guide-content {
+    max-width: 100%;
+  }
+
+  .help-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+    margin-right: 8px;
+  }
+}
