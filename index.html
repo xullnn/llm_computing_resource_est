@@ -119,8 +119,35 @@
         </div>
     </nav>
 
-    <!-- Hidden title for SEO -->
-    <h1 class="visually-hidden">Open-Source LLM Deployment Planner | GPU Requirements for DeepSeek, Llama, Qwen Models</h1>
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="hero-container">
+            <h1 class="hero-title">
+                <span class="gradient-text" data-i18n="landingHeroTitleTop">Open-Source LLM</span><br>
+                <span data-i18n="landingHeroTitleBottom">Deployment Planner</span>
+            </h1>
+            <p class="hero-lead" data-i18n="landingHeroLead">
+                Get practical resource estimates for running large language models locally.
+                Calculate GPU, VRAM, and RAM requirements under real-world workloads.
+            </p>
+
+            <div class="hero-search-wrapper">
+                <div class="search-input-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchBox" class="hero-search-box"
+                        placeholder="Search 75+ models (e.g. DeepSeek-V3, Qwen 2.5, Llama 3...)" autocomplete="off"
+                        data-i18n="searchPlaceholder">
+                </div>
+
+                <!-- Expansion Controls -->
+                <div class="hero-actions">
+                    <button class="text-link" onclick="toggleAllVendors(true)" data-i18n="expandAll">Expand All 75+
+                        Models</button>
+                    <!-- <button class="text-link" onclick="toggleAllVendors(false)">Collapse</button> -->
+                </div>
+            </div>
+        </div>
+    </header>
 
     <!-- Quick Guide Tooltip (for first-time users) -->
     <div id="quickGuide" class="quick-guide" style="display: none;">
@@ -198,26 +225,17 @@
         </div>
     </div>
 
-    <!-- Search & Controls -->
-    <div class="search-filter">
-        <input type="text" id="searchBox" class="search-box" placeholder="Search: Qwen3, DeepSeek, moe, 70-100B..."
-            data-i18n="searchPlaceholder">
+    <!-- Navigation Tabs Removed -->
 
-        <!-- View Controls Group -->
-        <div class="view-controls">
-            <div class="view-toggle">
-                <button class="view-toggle-btn active" id="viewVendorBtn" data-view="vendor">
-                    <span class="view-icon">🏢</span> <span data-i18n="viewVendor">By Vendor</span>
-                </button>
-                <button class="view-toggle-btn" id="viewHardwareBtn" data-view="hardware">
-                    <span class="view-icon">🖥️</span> <span data-i18n="viewHardware">By Hardware</span>
-                </button>
-            </div>
+    <!-- Compare Scale Trigger (Floating) -->
+    <button id="compareModeTrigger" class="compare-trigger-btn" aria-label="Toggle Compare Mode" title="Compare Models">
+        <span class="compare-icon">⚖️</span>
+        <span class="compare-label" data-i18n="compareLabel">Compare</span>
+    </button>
 
-            <button class="filter-toggle-btn" id="filterToggleBtn">
-                <span class="filter-icon">⚙️</span> <span data-i18n="filtersBtn">Filters</span>
-            </button>
-        </div>
+    <!-- Hidden Filter Container (Preserved for future use if needed, but hidden now) -->
+    <div class="search-filter" style="display: none;">
+        <!-- Legacy controls removed -->
 
         <div class="filter-group" id="filterGroup" style="display: none;">
             <!-- Row 1: Recency -->
@@ -285,6 +303,17 @@
     <!-- Metadata -->
     <div class="metadata" id="metadata"></div>
 
+    <!-- Comparison Tray (Middle State) -->
+    <div id="compareTray" class="compare-tray">
+        <div class="compare-tray-header">
+            <span class="compare-tray-title" data-i18n="compareTrayTitle">Selected Models</span>
+            <button class="tray-close-btn" onclick="toggleCompareTray(false)">×</button>
+        </div>
+        <div class="compare-tray-list" id="compareTrayList">
+            <!-- Dynamic items populated by JS -->
+        </div>
+    </div>
+
     <!-- Comparison UI -->
     <div id="compareBar" class="compare-bar">
         <span><span data-i18n="compareSelected">Selected</span> <span id="compareCount" class="compare-count">0</span>
@@ -321,7 +350,7 @@
 
     <script>
         // Quick Guide functionality
-        (function() {
+        (function () {
             const GUIDE_SHOWN_KEY = 'llm-sizer-guide-shown';
             const quickGuide = document.getElementById('quickGuide');
             const helpBtn = document.getElementById('helpBtn');

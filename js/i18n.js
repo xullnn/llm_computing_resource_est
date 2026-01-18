@@ -28,7 +28,9 @@ const I18N = {
 
     // Homepage - Hero Section
     landingHeroTitle: "Open-Source LLM Deployment Planner",
-    landingHeroLead: "Find models, calculate GPU and VRAM requirements, compare costs. All calculations run locally in your browser.",
+    landingHeroTitleTop: "Open-Source LLM",
+    landingHeroTitleBottom: "Deployment Planner",
+    landingHeroLead: "Get practical resource estimates for running large language models locally. Calculate GPU, VRAM, and RAM requirements under real-world workloads.",
     journeyExploreTitle: "Browse Models",
     journeyExploreDesc: "View available options",
     journeyCalculateTitle: "Calculate Hardware",
@@ -37,9 +39,17 @@ const I18N = {
     // Models Page - Model Browser Section
     modelBrowserTitle: "Browse Production-Ready Models",
     modelBrowserSubhead: "Curated open-source models · Filter by vendor, size, or architecture",
-    searchPlaceholder: "Search: Qwen3, DeepSeek, moe, 70-100B...",
+    searchPlaceholder: "Search 75+ models (e.g. DeepSeek-V3, Qwen 2.5, Llama 3...)",
 
-    // Models Page - View Toggle
+    // Models Page - Tabs (New)
+    tabExplore: "Explore Models",
+    tabHardware: "Hardware Match",
+
+    // Models Page - Compare Mode
+    compareLabel: "Compare",
+    compareExit: "Done",
+
+    // Models Page - View Toggle (Deprecated but kept for safety)
     viewVendor: "By Vendor",
     viewHardware: "By Hardware Tier",
 
@@ -355,7 +365,9 @@ const I18N = {
 
     // Homepage - Hero Section
     landingHeroTitle: "开源大语言模型部署规划工具",
-    landingHeroLead: "查找模型、计算 GPU 和显存需求、对比成本。所有计算在浏览器本地运行。",
+    landingHeroTitleTop: "开源大语言模型",
+    landingHeroTitleBottom: "部署规划工具",
+    landingHeroLead: "获取在本地运行大语言模型的实用资源估算。在真实工作负载下计算 GPU、VRAM 和内存需求。",
     journeyExploreTitle: "浏览模型",
     journeyExploreDesc: "查看可用选项",
     journeyCalculateTitle: "计算硬件",
@@ -364,7 +376,15 @@ const I18N = {
     // Models Page - Model Browser Section
     modelBrowserTitle: "浏览生产级模型",
     modelBrowserSubhead: "精选开源模型 · 按厂商、大小或架构筛选",
-    searchPlaceholder: "搜索: Qwen3, DeepSeek, moe, 70-100B...",
+    searchPlaceholder: "搜索 75+ 个模型 (例如 DeepSeek-V3, Qwen 2.5, Llama 3...)",
+
+    // Models Page - Tabs (New)
+    tabExplore: "探索模型",
+    tabHardware: "硬件匹配",
+
+    // Models Page - Compare Mode
+    compareLabel: "对比模型",
+    compareExit: "完成",
 
     // Models Page - View Toggle
     viewVendor: "按厂商",

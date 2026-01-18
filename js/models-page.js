@@ -6,6 +6,16 @@
 let modelsData = [];
 let originalMetadata = null; // Store original metadata for re-renders
 let selectedModels = new Set();
+// Initialize selected models from localStorage
+try {
+    const saved = localStorage.getItem('llm_compare_cart');
+    if (saved) {
+        JSON.parse(saved).forEach(id => selectedModels.add(id));
+    }
+} catch (e) {
+    console.error('Failed to load comparison cart', e);
+}
+
 let trendingModels = [];
 let trendingExpanded = false;
 let currentView = 'vendor'; // 'vendor' or 'hardware'
@@ -273,13 +283,7 @@ function renderVendorGroups(models) {
 
     // Controls for Expand/Collapse All
     const allExpanded = sortedVendors.every(v => expandedVendors.has(v));
-    const controlsHTML = `
-        <div class="vendor-controls">
-            <button class="btn-text" onclick="toggleAllVendors(!${allExpanded})">
-                ${allExpanded ? 'Collapse All' : 'Expand All'}
-            </button>
-        </div>
-    `;
+
 
     const groupsHTML = sortedVendors.map(vendor => {
         const vendorModels = grouped[vendor];
@@ -307,12 +311,21 @@ function renderVendorGroups(models) {
         return `
             <div class="vendor-group ${isExpanded ? '' : 'collapsed'}" data-vendor="${vendor}">
                 <div class="vendor-header" onclick="${hasMore ? `toggleVendor('${vendor}')` : ''}" style="${!hasMore ? 'cursor: default' : ''}">
-                    <div class="vendor-header-content">
-                        ${hasMore ? `<button class="vendor-toggle">${isExpanded ? '🔽' : '▷'}</button>` : '<span style="display:inline-block; width:1.5em"></span>'}
-                        <h3 class="vendor-title">${vendor} <span class="vendor-count">(${vendorModels.length} models)</span></h3>
-                        
+                    <div class="vendor-header-info">
+                        <div class="vendor-title-row">
+                            <h3 class="vendor-title">${vendor}</h3>
+                            <span class="vendor-count">${vendorModels.length} models</span>
+                        </div>
                         <div class="vendor-param-pills">${paramClassPills}</div>
                     </div>
+                    
+                    ${hasMore ? `
+                    <div class="vendor-toggle-wrapper">
+                        <span class="vendor-toggle-text">${isExpanded ? 'Collapse' : 'Expand'}</span>
+                        <button class="vendor-toggle-btn">
+                            ${isExpanded ? '−' : '+'}
+                        </button>
+                    </div>` : ''}
                 </div>
                 
                 <div class="vendor-preview">
@@ -328,7 +341,7 @@ function renderVendorGroups(models) {
         `;
     }).join('');
 
-    container.innerHTML = controlsHTML + groupsHTML;
+    container.innerHTML = groupsHTML;
 }
 
 /**
@@ -404,6 +417,11 @@ function renderParameterClassHTML(classKey, models) {
                     <span class="stat-pill">📥 ${formatNumber(model.downloads || 0)} / ${formatNumber(model.downloads_all_time || 0)} (30d / All)</span>
                     <span class="stat-pill">♥ ${formatNumber(model.likes || 0)}</span>
                 </div>
+                <button class="compare-add-btn ${selectedModels.has(model.id) ? 'active' : ''}" 
+                    onclick="event.stopPropagation(); toggleComparison('${model.id}')"
+                    title="${selectedModels.has(model.id) ? 'Remove from comparison' : 'Add to comparison'}">
+                    <span class="btn-icon">${selectedModels.has(model.id) ? '✓' : '+'}</span><span class="btn-text">${selectedModels.has(model.id) ? 'Added' : 'Compare'}</span>
+                </button>
                 <div class="model-release-date">
                     <span class="date-pill">📅 ${formatDate(model.created_at)}</span>
                 </div>
@@ -624,11 +642,11 @@ function renderModelCardHTML(model) {
 
     return `
     <div class="model-card-compact ${isTrending ? 'is-trending' : ''}" onclick="openCalculatorDrawer('${model.id}')">
-        <label class="compare-toggle" onclick="event.stopPropagation();">
-            <input type="checkbox" class="compare-checkbox" data-id="${model.id}" 
-                ${selectedModels.has(model.id) ? 'checked' : ''} onchange="toggleComparison('${model.id}')">
-            <span class="compare-label">${t('compareLabel')}</span>
-        </label>
+        <button class="compare-add-btn ${selectedModels.has(model.id) ? 'active' : ''}" 
+            onclick="event.stopPropagation(); toggleComparison('${model.id}')"
+            title="${selectedModels.has(model.id) ? 'Remove from comparison' : 'Add to comparison'}">
+            <span class="btn-icon">${selectedModels.has(model.id) ? '✓' : '+'}</span><span class="btn-text">${selectedModels.has(model.id) ? 'Added' : 'Compare'}</span>
+        </button>
         <div class="card-header-compact">
             <h4 class="model-name-compact">${model.name}</h4>
             <div class="card-badges">
@@ -889,18 +907,25 @@ fetch('data/models.json')
     });
 
 document.getElementById('searchBox')?.addEventListener('input', renderModels);
-document.getElementById('viewVendorBtn')?.addEventListener('click', () => {
-    currentView = 'vendor';
-    document.getElementById('viewVendorBtn').classList.add('active');
-    document.getElementById('viewHardwareBtn').classList.remove('active');
-    renderModels();
+// Compare Mode Logic
+let isCompareMode = false;
+
+// Compare Mode Logic - Now acting as "Shopping Cart" trigger
+document.getElementById('compareModeTrigger')?.addEventListener('click', () => {
+    // If we have selected models, toggle the tray
+    if (selectedModels.size > 0) {
+        toggleCompareTray();
+    } else {
+        // Optional: Show a toast or tooltip saying "Select models to compare first"
+        // For now, just wiggle the button
+        const btn = document.getElementById('compareModeTrigger');
+        btn.classList.add('shake');
+        setTimeout(() => btn.classList.remove('shake'), 500);
+    }
 });
-document.getElementById('viewHardwareBtn')?.addEventListener('click', () => {
-    currentView = 'hardware';
-    document.getElementById('viewHardwareBtn').classList.add('active');
-    document.getElementById('viewVendorBtn').classList.remove('active');
-    renderModels();
-});
+
+// Force default view to vendor, remove switching logic
+currentView = 'vendor';
 
 window.addEventListener('languageChanged', () => {
     renderModels();
@@ -917,7 +942,6 @@ document.querySelectorAll('.filter-tag').forEach(tag => {
         }
     });
 });
-
 // Utility functions
 function formatNumber(num) {
     if (!num && num !== 0) return 'N/A';
@@ -968,51 +992,180 @@ function getProvenanceLabel(source) {
 }
 
 // Comparison Logic
+/**
+ * Comparison Logic
+ */
 window.toggleComparison = function (modelId) {
     if (selectedModels.has(modelId)) {
         selectedModels.delete(modelId);
     } else {
-        if (selectedModels.size >= 4) {
-            alert('You can compare up to 4 models at once.');
-            // Uncheck the checkbox
-            const cb = document.querySelector(`.compare-checkbox[data-id="${modelId}"]`);
-            if (cb) cb.checked = false;
-            return;
-        }
         selectedModels.add(modelId);
     }
+
+    // Save to localStorage
+    localStorage.setItem('llm_compare_cart', JSON.stringify([...selectedModels]));
+
     updateCompareBar();
+
+    // Show tray if we just added the first item or if tray is already open
+    const tray = document.getElementById('compareTray');
+    if (selectedModels.size > 0 && selectedModels.has(modelId)) {
+        // Optional: auto-open tray on first add? 
+        // For now, let's just make sure it re-renders if visible
+        if (tray && tray.classList.contains('visible')) {
+            renderCompareTray();
+        }
+    } else if (selectedModels.size === 0) {
+        if (tray) tray.classList.remove('visible');
+    }
+
+    // Update buttons in UI
+    const btns = document.querySelectorAll(`.compare-add-btn[onclick*="'${modelId}'"]`);
+    btns.forEach(btn => {
+        const isSelected = selectedModels.has(modelId);
+        if (isSelected) {
+            btn.classList.add('active');
+            btn.innerHTML = '<span class="btn-icon">✓</span><span class="btn-text">Added</span>';
+            btn.title = 'Remove from comparison';
+        } else {
+            btn.classList.remove('active');
+            btn.innerHTML = '<span class="btn-icon">+</span><span class="btn-text">Compare</span>';
+            btn.title = 'Add to comparison';
+        }
+    });
+
+    // If modal is open, re-render it
+    const modal = document.getElementById('compareModal');
+    if (modal && modal.style.display === 'block') {
+        renderComparisonTable();
+    }
 };
 
-function updateCompareBar() {
-    const bar = document.getElementById('compareBar');
-    const count = document.getElementById('compareCount');
-    if (!bar || !count) return;
+window.renderCompareTray = function () {
+    const list = document.getElementById('compareTrayList');
+    if (!list) return;
 
-    count.textContent = selectedModels.size;
+    const selected = Array.from(selectedModels)
+        .map(id => modelsData.find(m => m.id === id))
+        .filter(m => m);
 
-    if (selectedModels.size > 0) {
-        bar.classList.add('visible');
+    if (selected.length === 0) {
+        list.innerHTML = '<span style="color: rgba(255,255,255,0.5); font-size: 0.9rem;">No models selected</span>';
+        // Add a "Compare" button that is disabled? Or just leave empty.
+        // Also show a clear button if needed, but usually we hide tray if empty.
     } else {
-        bar.classList.remove('visible');
+        list.innerHTML = selected.map(m => `
+            <div class="tray-item">
+                <span class="tray-item-name">${m.name}</span>
+                <button class="tray-remove-btn" onclick="toggleComparison('${m.id}'); renderCompareTray();">×</button>
+            </div>
+        `).join('') + `
+            <div style="width: 100%; display: flex; gap: 1rem; margin-top: 0.5rem;">
+               <button class="btn btn-secondary btn-sm" style="flex: 1; border: 1px solid rgba(255,255,255,0.2); background: transparent;" onclick="clearComparison()">Clear All</button>
+               <button class="btn btn-primary btn-sm" style="flex: 2; background: linear-gradient(135deg, var(--accent) 0%, #a78bfa 100%); color: #fff; font-weight: 700; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);" onclick="showComparison(); toggleCompareTray(false);">Compare (${selected.length})</button>
+            </div>
+        `;
     }
-}
+};
+
+window.toggleCompareTray = function (forceState) {
+    const tray = document.getElementById('compareTray');
+    if (!tray) return;
+
+    const isVisible = tray.classList.contains('visible');
+    const newState = forceState !== undefined ? forceState : !isVisible;
+
+    if (newState) {
+        renderCompareTray();
+        tray.classList.add('visible');
+    } else {
+        tray.classList.remove('visible');
+    }
+};
 
 window.clearComparison = function () {
     selectedModels.clear();
-    document.querySelectorAll('.compare-checkbox').forEach(cb => cb.checked = false);
+    localStorage.removeItem('llm_compare_cart');
     updateCompareBar();
+    renderModels(); // Redraw to reset buttons
+    hideComparison();
+    toggleCompareTray(false);
 };
 
-window.showComparison = function () {
+
+// Close tray when clicking outside
+document.addEventListener('click', (e) => {
+    const tray = document.getElementById('compareTray');
+    const trigger = document.getElementById('compareModeTrigger');
+
+    // Check if the click is outside the tray AND not on the trigger button
+    if (tray && tray.classList.contains('visible') &&
+        !tray.contains(e.target) &&
+        !trigger.contains(e.target) &&
+        !e.target.closest('.compare-add-btn')) { // Also ignore add buttons to prevent immediate toggle
+        toggleCompareTray(false);
+    }
+});
+
+function updateCompareBar() {
+    const bar = document.getElementById('compareBar'); // Now just the counter badge on FAB
+    const trigger = document.getElementById('compareModeTrigger');
+    const count = selectedModels.size;
+
+    // Update floating button badge
+    if (trigger) {
+        let badge = trigger.querySelector('.compare-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'compare-badge';
+            trigger.appendChild(badge);
+        }
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-flex' : 'none';
+
+        // Pulse animation if count increased
+        if (count > 0) {
+            trigger.classList.add('has-items');
+        } else {
+            trigger.classList.remove('has-items');
+        }
+    }
+
+    // Update legacy bar if it exists (though we plan to rely on FAB)
+    const countEl = document.getElementById('compareCount');
+    if (countEl) countEl.textContent = count;
+}
+
+// Initial update on load
+document.addEventListener('DOMContentLoaded', () => {
+    // Wait for DOM to be ready
+    setTimeout(() => {
+        updateCompareBar();
+    }, 100);
+});
+
+window.renderComparisonTable = function () {
     const container = document.getElementById('compareTableContainer');
-    const selected = Array.from(selectedModels).map(id => modelsData.find(m => m.id === id));
+    if (!container) return;
+
+    // Convert Set to Array and fetch model objects
+    const selected = Array.from(selectedModels)
+        .map(id => modelsData.find(m => m.id === id))
+        .filter(m => m); // Filter out any undefineds (stale IDs)
+
+    if (selected.length === 0) {
+        container.innerHTML = '<p style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6);">No models selected for comparison.</p>';
+        return;
+    }
 
     let html = `<table class="compare-table">
         <thead>
             <tr>
                 <th>${t('compareSpecLabel') || 'Spec'}</th>
-                ${selected.map(m => `<th class="compare-header-cell">${m.name}</th>`).join('')}
+                ${selected.map(m => `<th class="compare-header-cell">
+                    ${m.name}
+                    <button class="remove-col-btn" onclick="toggleComparison('${m.id}')">×</button>
+                </th>`).join('')}
             </tr>
         </thead>
         <tbody>
@@ -1022,7 +1175,7 @@ window.showComparison = function () {
             </tr>
             <tr>
                 <th>${t('compareArchitectureLabel') || 'Architecture'}</th>
-                ${selected.map(m => `<td>${m.architecture.toUpperCase()}</td>`).join('')}
+                ${selected.map(m => `<td>${m.architecture ? m.architecture.toUpperCase() : 'N/A'}</td>`).join('')}
             </tr>
             <tr>
                 <th>${t('compareContextLabel') || 'Context Length'}</th>
@@ -1038,7 +1191,7 @@ window.showComparison = function () {
             </tr>
             <tr>
                 <th>${t('compareLicenseLabel') || 'License'}</th>
-                ${selected.map(m => `<td>${m.license}</td>`).join('')}
+                ${selected.map(m => `<td>${m.license || 'Unknown'}</td>`).join('')}
             </tr>
             <tr>
                 <th>${t('compareReleaseLabel') || 'Release'}</th>
@@ -1060,13 +1213,23 @@ window.showComparison = function () {
     </table>`;
 
     container.innerHTML = html;
-    document.getElementById('compareModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+};
+
+window.showComparison = function () {
+    const modal = document.getElementById('compareModal');
+    if (modal) {
+        modal.style.display = 'block'; // Or 'flex' if styled that way
+        document.body.style.overflow = 'hidden';
+        renderComparisonTable();
+    }
 };
 
 window.hideComparison = function () {
-    document.getElementById('compareModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
+    const modal = document.getElementById('compareModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
 };
 
 window.useInCalculator = function (modelId) {
