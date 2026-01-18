@@ -363,7 +363,12 @@ async function fetchOpenSourceModels() {
   ];
 
   // Process each model
+  let processedCount = 0;
   for (const model of uniqueModels) {
+    processedCount++;
+    if (processedCount % 20 === 0) {
+      process.stdout.write(`\r⏳ Processing model ${processedCount}/${uniqueModels.length}... `);
+    }
     const isMajor = majorModels.includes(model.id);
 
     // Skip if already processed
@@ -430,6 +435,10 @@ async function fetchOpenSourceModels() {
             console.log(`   🔗 Added AA slug for cached model: ${model.id} → ${aaSlug}`);
           }
         }
+        // Always update volatile stats (downloads, likes) even if using cache
+        existing.downloads = model.downloads || 0;
+        existing.likes = model.likes || 0;
+
         models.push(existing);
         seenModels.add(model.id);
         continue;

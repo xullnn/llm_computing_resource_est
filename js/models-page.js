@@ -414,7 +414,7 @@ function renderParameterClassHTML(classKey, models) {
                     </div>
                 </div>
                 <div class="model-stats">
-                    <span class="stat-pill">📥 ${formatNumber(model.downloads || 0)} / ${formatNumber(model.downloads_all_time || 0)} (30d / All)</span>
+                    <span class="stat-pill">📥 ${formatNumber(model.downloads || 0)} / ${formatNumber(model.downloads_all_time)} (30d / All)</span>
                     <span class="stat-pill">♥ ${formatNumber(model.likes || 0)}</span>
                 </div>
                 <button class="compare-add-btn ${selectedModels.has(model.id) ? 'active' : ''}" 
@@ -504,7 +504,8 @@ function renderVariantChipHTML(model, isPrimary) {
                 <div class="variant-type">${variantType.label}${isPrimary ? ' ⭐ Primary' : ''}</div>
                 ${model.downloads || model.likes ? `
                     <div class="variant-stats">
-                        ${model.downloads ? `<span class="stat-pill">📥 ${formatNumber(model.downloads)} / ${formatNumber(model.downloads_all_time || 0)} (30d / All)</span>` : ''}
+                        ${model.downloads ? `<span class="stat-pill">📥 ${formatNumber(model.downloads)} / ${formatNumber(model.downloads_all_time)} (30d / All)</span>` : ''}
+
                         ${model.likes ? `<span class="stat-pill">♥ ${formatNumber(model.likes)}</span>` : ''}
                     </div>
                 ` : ''}
