@@ -87,7 +87,7 @@
     </script>
 
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/models.css">
+    <link rel="stylesheet" href="css/models.css?v=2">
     <link rel="stylesheet" href="css/drawer.css">
     <link rel="stylesheet" href="css/ttft-chart.css">
 </head>
@@ -139,15 +139,32 @@
                         data-i18n="searchPlaceholder">
                 </div>
 
-                <!-- Expansion Controls -->
-                <div class="hero-actions">
-                    <button class="text-link" onclick="toggleAllVendors(true)" data-i18n="expandAll">Expand All 75+
-                        Models</button>
-                    <!-- <button class="text-link" onclick="toggleAllVendors(false)">Collapse</button> -->
+                <!-- Trending Models Bar (Lightweight) -->
+                <div class="trending-bar lightweight" id="trendingBar" style="display: none;">
+                    <div class="trending-bar-content">
+                        <div class="trending-bar-header">
+                            <span class="trending-bar-label" data-i18n="trendingLabel">Trending:</span>
+                        </div>
+                        <div class="trending-bar-tags" id="trendingBarTags">
+                            <!-- Dynamically populated -->
+                        </div>
+                        <button class="trending-expand-btn" id="trendingExpandBtn" style="display: none;">
+                            <span id="trendingExpandText">+<span id="trendingMoreCount">0</span> more</span>
+                        </button>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     </header>
+
+    <!-- Content Actions Bar (Left Aligned) -->
+    <div class="content-actions-bar">
+        <button class="text-link" onclick="toggleAllVendors(true)" data-i18n="expandAll">Expand All 75+ Models</button>
+    </div>
+
+
 
     <!-- Quick Guide Tooltip (for first-time users) -->
     <div id="quickGuide" class="quick-guide" style="display: none;">
@@ -187,43 +204,7 @@
         </div>
     </div>
 
-    <!-- Trending Models Bar -->
-    <div class="trending-bar" id="trendingBar" style="display: none;">
-        <div class="trending-bar-content">
-            <div class="trending-bar-header">
-                <span class="trending-bar-label" data-i18n="trendingLabel">Trending:</span>
-                <button class="trending-info-btn" id="trendingInfoBtn" title="How are trending models calculated?">
-                    <span class="info-icon">ⓘ</span>
-                </button>
-            </div>
-            <div class="trending-bar-tags" id="trendingBarTags">
-                <!-- Dynamically populated -->
-            </div>
-            <button class="trending-expand-btn" id="trendingExpandBtn" style="display: none;">
-                <span id="trendingExpandText">+<span id="trendingMoreCount">0</span> more</span>
-            </button>
-        </div>
-        <div class="trending-criteria" id="trendingCriteria" style="display: none;">
-            <div class="criteria-title" data-i18n="trendingAlgorithm">Trending Algorithm</div>
-            <div class="criteria-grid">
-                <div class="criteria-item">
-                    <div class="criteria-label" data-i18n="trendingTimeWindow">Time Window</div>
-                    <div class="criteria-value" data-i18n="trendingTimeValue">Released in last 90 days</div>
-                </div>
-                <div class="criteria-item">
-                    <div class="criteria-label" data-i18n="trendingMinDownloads">Min. Downloads</div>
-                    <div class="criteria-value" data-i18n="trendingMinDownloadsValue">10,000+ in 3 months</div>
-                </div>
-                <div class="criteria-item">
-                    <div class="criteria-label" data-i18n="trendingMinLikes">Min. Likes</div>
-                    <div class="criteria-value" data-i18n="trendingMinLikesValue">1,000+ in 3 months</div>
-                </div>
-            </div>
-            <div class="criteria-formula" data-i18n="trendingScoreFormula">
-                <strong>Score Formula:</strong> (Recency × 40%) + (Downloads × 40%) + (Engagement × 20%)
-            </div>
-        </div>
-    </div>
+
 
     <!-- Navigation Tabs Removed -->
 
@@ -395,7 +376,7 @@
     <script src="js/gpus.js"></script>
     <script src="js/ttft-chart.js"></script>
     <script src="js/ttft-chart-renderer.js"></script>
-    <script src="js/models-page.js"></script>
+    <script src="js/models-page.js?v=2"></script>
     <script src="js/drawer.js"></script>
 </body>
 

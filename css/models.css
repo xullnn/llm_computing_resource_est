@@ -154,8 +154,63 @@
 /* Trending Bar */
 .trending-bar {
     max-width: 1400px;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 2.5rem;
     padding: 0 1rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* Lightweight Variant (Under Search) */
+.trending-bar.lightweight {
+    margin: 0.5rem auto 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.trending-bar.lightweight .trending-bar-content {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.trending-bar.lightweight .trending-bar-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.5);
+    margin-right: 0.2rem;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.trending-bar.lightweight .trending-bar-tags {
+    flex: unset;
+    /* Prevent full width expansion to allow centering */
+    justify-content: center;
+}
+
+.trending-bar.lightweight .trending-bar-tag {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-size: 0.8rem;
+    padding: 0.25rem 0.85rem;
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.trending-bar.lightweight .trending-bar-tag:hover {
+    background: rgba(124, 58, 237, 0.15);
+    border-color: rgba(124, 58, 237, 0.3);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .trending-bar-content {
@@ -237,25 +292,27 @@
     transform: translateY(-1px);
 }
 
-.trending-bar-tag .fire-emoji {
-    font-size: 0.9rem;
+/* Specific override for lightweight context */
+.trending-bar.lightweight .trending-bar-tag .fire-emoji {
+    font-size: 0.8rem;
 }
 
 .trending-expand-btn {
-    padding: 0.35rem 0.85rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.8rem;
+    padding: 0.15rem 0.65rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 99px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .trending-expand-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .trending-bar-tag.trending-more {
@@ -2616,4 +2673,33 @@ body.compare-mode-active .model-card-compact {
 
 .compare-bar span {
     cursor: pointer;
+}
+
+/* Content Actions Bar */
+.content-actions-bar {
+    max-width: 1400px;
+    margin: 0 auto 4.5rem;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: flex-start;
+    /* Left align */
+}
+
+/* Re-style the text link for this context if needed */
+.content-actions-bar .text-link {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.content-actions-bar .text-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: translateY(-1px);
 }

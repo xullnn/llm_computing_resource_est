@@ -41,10 +41,15 @@ function calculateTrendingScore(model) {
     if (monthsSinceCreated > 3) return 0;
 
     const recencyScore = Math.max(0, (90 - daysSinceCreated) / 90) * 100;
-    const downloadScore = (model.downloads || 0) < 10000 ? 0 : Math.min((model.downloads || 0) / 1000, 100);
-    const likeScore = (model.likes || 0) < 1000 ? 0 : Math.min((model.likes || 0) / 100, 100);
 
-    if (downloadScore === 0 || likeScore === 0) return 0;
+    // Lower thresholds to allow growing models to appear
+    // Old: 10k downloads, 1k likes. New: 1k downloads, 100 likes.
+    const downloadScore = (model.downloads || 0) < 1000 ? 0 : Math.min((model.downloads || 0) / 1000, 100);
+    const likeScore = (model.likes || 0) < 100 ? 0 : Math.min((model.likes || 0) / 100, 100);
+
+    // Remove the strict "AND" condition (if (downloadScore === 0 || likeScore === 0) return 0;)
+    // Now a model can trend if it has EITHER valid downloads OR valid likes
+    if (downloadScore === 0 && likeScore === 0) return 0;
 
     return (recencyScore * 0.4) + (downloadScore * 0.4) + (likeScore * 0.2);
 }
@@ -84,7 +89,7 @@ function renderTrendingBar() {
     const expandBtn = document.getElementById('trendingExpandBtn');
     if (!container) return;
 
-    const displayCount = trendingExpanded ? trendingModels.length : Math.min(3, trendingModels.length);
+    const displayCount = trendingExpanded ? trendingModels.length : Math.min(5, trendingModels.length);
     const visibleModels = trendingModels.slice(0, displayCount);
 
     container.innerHTML = visibleModels.map(model => `
@@ -95,15 +100,15 @@ function renderTrendingBar() {
     `).join('');
 
     if (expandBtn) {
-        if (trendingModels.length > 3) {
+        if (trendingModels.length > 5) {
             expandBtn.style.display = 'block';
             const moreCount = document.getElementById('trendingMoreCount');
             const expandText = document.getElementById('trendingExpandText');
             if (trendingExpanded) {
                 if (expandText) expandText.textContent = 'Show less';
             } else {
-                if (moreCount) moreCount.textContent = trendingModels.length - 3;
-                if (expandText) expandText.innerHTML = `+<span id="trendingMoreCount">${trendingModels.length - 3}</span> more`;
+                if (moreCount) moreCount.textContent = trendingModels.length - 5;
+                if (expandText) expandText.innerHTML = `+<span id="trendingMoreCount">${trendingModels.length - 5}</span> more`;
             }
         } else {
             expandBtn.style.display = 'none';
