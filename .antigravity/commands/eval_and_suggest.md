@@ -1,0 +1,1 @@
+These are all my thoughts and concerns about the design, please think through thoroughly and comprehensively, evaluate my thoughts and answer my questions/concerns one by one. Then give your suggestions/recommendations if you have/find much better design/solution.

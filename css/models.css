@@ -802,6 +802,46 @@
     box-shadow: 0 6px 16px rgba(124, 58, 237, 0.4);
 }
 
+.intelligence-profile-compact {
+    margin: 0.5rem 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.index-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.7rem;
+}
+
+.index-label {
+    width: 65px;
+    color: rgba(255, 255, 255, 0.6);
+    flex-shrink: 0;
+}
+
+.index-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.index-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+.index-val {
+    width: 30px;
+    text-align: right;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
 .model-actions .btn-secondary {
     background: rgba(255, 255, 255, 0.05);
     color: rgba(255, 255, 255, 0.9);
@@ -2702,4 +2742,62 @@ body.compare-mode-active .model-card-compact {
     border-color: rgba(255, 255, 255, 0.2);
     color: #fff;
     transform: translateY(-1px);
+}
+/* Drawer Intelligence Profile */
+.drawer-metric-viz {
+    margin-bottom: 1.5rem;
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.metric-name {
+    color: #fff;
+    font-weight: 600;
+}
+
+.metric-score {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.metric-max {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.8em;
+    font-weight: 400;
+}
+
+.metric-bar-container {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    position: relative;
+    overflow: visible;
+    margin-bottom: 0.5rem;
+}
+
+.metric-bar {
+    height: 100%;
+    border-radius: 4px;
+    position: relative;
+    z-index: 1;
+}
+
+.metric-marker {
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    width: 2px;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 2;
+}
+
+.metric-desc {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
 }

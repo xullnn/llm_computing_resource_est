@@ -422,12 +422,38 @@ function renderParameterClassHTML(classKey, models) {
                     <span class="stat-pill">📥 ${formatNumber(model.downloads || 0)} / ${formatNumber(model.downloads_all_time)} (30d / All)</span>
                     <span class="stat-pill">♥ ${formatNumber(model.likes || 0)}</span>
                 </div>
+                ${model.intelligence_index || model.coding_index || model.math_index ? `
+                <div class="intelligence-profile-compact" style="margin: 0.25rem 0; padding-top: 0.25rem; border-top: 1px solid rgba(255,255,255,0.08);">
+                     ${[
+                    { label: 'Intelligence', val: model.intelligence_index, max: 75, color: '#ec4899' },
+                    { label: 'Coding', val: model.coding_index, max: 65, color: '#3b82f6' },
+                    { label: 'Math', val: model.math_index, max: 100, color: '#eab308' }
+                ].map(m => m.val ? `
+                     <div class="index-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 2px; font-size: 0.65rem;">
+                         <span class="index-label" style="width: 50px; opacity: 0.7; font-weight: 500;">${m.label}</span>
+                         <div class="index-bar-bg" style="flex: 1; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-left: 0.5rem;">
+                             <div class="index-bar-fill" style="width: ${(m.val / m.max) * 100}%; background-color: ${m.color}; height: 100%;"></div>
+                         </div>
+                         <span class="index-val" style="width: 24px; text-align: right; font-weight: 600; opacity: 0.9;">${m.val}</span>
+                     </div>` : '').join('')}
+                </div>
+                ` : `
+                <div class="intelligence-profile-compact" style="margin: 0.25rem 0; padding-top: 0.25rem; border-top: 1px solid rgba(255,255,255,0.03);">
+                     ${[1, 2, 3].map(() => `
+                     <div class="index-row" style="display: flex; align-items: center; gap: 0.4rem; margin-bottom: 2px; font-size: 0.65rem; opacity: 0.3;">
+                         <span class="index-label" style="width: 50px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 2px;"></span>
+                         <div class="index-bar-bg" style="flex: 1; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-left: 0.5rem;"></div>
+                         <span class="index-val" style="width: 24px; background: rgba(255,255,255,0.1); height: 8px; border-radius: 2px;"></span>
+                     </div>`).join('')}
+                </div>
+                `}
+
                 <button class="compare-add-btn ${selectedModels.has(model.id) ? 'active' : ''}" 
                     onclick="event.stopPropagation(); toggleComparison('${model.id}')"
                     title="${selectedModels.has(model.id) ? 'Remove from comparison' : 'Add to comparison'}">
                     <span class="btn-icon">${selectedModels.has(model.id) ? '✓' : '+'}</span><span class="btn-text">${selectedModels.has(model.id) ? 'Added' : 'Compare'}</span>
                 </button>
-                <div class="model-release-date">
+                <div class="model-release-date" style="margin-top: 0.75rem;">
                     <span class="date-pill">📅 ${formatDate(model.created_at)}</span>
                 </div>
             </div>
@@ -675,6 +701,25 @@ function renderModelCardHTML(model) {
                 <span class="metric-value">${tokens4090} tok/s (4090) · ${tokensH100} tok/s (H100)</span>
             </div>
         </div>
+
+        ${model.intelligence_index || model.coding_index || model.math_index ? `
+        <div class="intelligence-profile-compact">
+             <!-- Indices bar chart -->
+             ${[
+                { label: 'Intelligence', val: model.intelligence_index, max: 75, color: '#ec4899' },
+                { label: 'Coding', val: model.coding_index, max: 65, color: '#3b82f6' },
+                { label: 'Math', val: model.math_index, max: 100, color: '#eab308' }
+            ].map(m => m.val ? `
+             <div class="index-row">
+                 <span class="index-label">${m.label}</span>
+                 <div class="index-bar-bg">
+                     <div class="index-bar-fill" style="width: ${(m.val / m.max) * 100}%; background-color: ${m.color};"></div>
+                 </div>
+                 <span class="index-val">${m.val}</span>
+             </div>` : '').join('')}
+        </div>
+        ` : ''}
+
         <div class="model-actions-compact">
             <a href="calculator.html?preset=${encodeURIComponent(model.id)}" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">${t('calculateBtn')}</a>
             <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); openCalculatorDrawer('${model.id}');">${t('detailsBtn')}</button>

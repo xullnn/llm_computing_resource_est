@@ -14,7 +14,9 @@
     "deepseek-ai",
     "nvidia",
     "apple",
-    "XiaomiMiMo"
+    "XiaomiMiMo",
+    "zai-org",
+    "meituan-longcat"
   ],
   "vendorQueryLimits": {
     "Qwen": 200,

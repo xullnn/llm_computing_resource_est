@@ -1,0 +1,1 @@
+Please read today's git commit history, summarize  commit messages as a list of daily working log items in Chinese. Ensure each item is concise and shorter than 30 Chinese chars. Write them as a list and keep the number of items about 4-8 items.

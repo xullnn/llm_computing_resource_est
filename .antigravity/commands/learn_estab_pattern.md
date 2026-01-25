@@ -1,0 +1,1 @@
+But before you start to write code, please learn enough about the established patterns from the existing modules, such as @-----------------------  and  @----------------------   . And only if you are clear about the path, you can start to plan the implementation , otherwise you MUST ask clarification questions first.

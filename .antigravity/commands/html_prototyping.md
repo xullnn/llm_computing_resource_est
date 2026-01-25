@@ -1,0 +1,2 @@
+Self-contained, independently functional single HTML files that embed all styling, scripting, and mock data to create fully interactive prototypes. Each file defines ideal user experiences through  realistic interfaces and serves as visual specifications for backend development, enabling instant stakeholder validation and developer  guidance without requiring servers , build processes, or external dependencies.
+

@@ -4,22 +4,22 @@
  */
 
 // Open calculator drawer with a specific model
-window.openCalculatorDrawer = function(modelId) {
+window.openCalculatorDrawer = function (modelId) {
     const drawer = document.getElementById('calculatorDrawer');
     const backdrop = document.getElementById('drawerBackdrop');
     const drawerModelName = document.getElementById('drawerModelName');
     const drawerContent = document.getElementById('drawerContent');
-    
+
     // Find the model
     const model = modelsData.find(m => m.id === modelId);
     if (!model) {
         console.error('Model not found:', modelId);
         return;
     }
-    
+
     // Update drawer title
     drawerModelName.textContent = model.name;
-    
+
     // Use the real calculator for accurate estimates
     // Scenario 1: INT8, single user, typical workload (8K context)
     const resultsInt8 = calcRequirements({
@@ -38,7 +38,7 @@ window.openCalculatorDrawer = function(modelId) {
         utilCompute: 0.45,
         utilBandwidth: 0.6
     });
-    
+
     // Scenario 2: BF16 (full precision)
     const resultsBf16 = calcRequirements({
         paramsB: model.parameters_billion,
@@ -56,7 +56,7 @@ window.openCalculatorDrawer = function(modelId) {
         utilCompute: 0.45,
         utilBandwidth: 0.6
     });
-    
+
     // Scenario 3: FP8
     const resultsFp8 = calcRequirements({
         paramsB: model.parameters_billion,
@@ -74,11 +74,11 @@ window.openCalculatorDrawer = function(modelId) {
         utilCompute: 0.45,
         utilBandwidth: 0.6
     });
-    
+
     const vramInt8 = resultsInt8.totalVramGb;
     const vramBf16 = resultsBf16.totalVramGb;
     const vramFp8 = resultsFp8.totalVramGb;
-    
+
     // Determine GPU recommendation based on INT8 requirements
     let gpuRecommendation = '';
     if (vramInt8 <= 24) {
@@ -94,7 +94,7 @@ window.openCalculatorDrawer = function(modelId) {
     } else {
         gpuRecommendation = '8+ H100 GPUs or MI300X (192GB)';
     }
-    
+
     // Build drawer content
     drawerContent.innerHTML = `
         <div class="drawer-result-card">
@@ -173,19 +173,38 @@ window.openCalculatorDrawer = function(modelId) {
             </div>
         </div>
         
-        <div class="drawer-section">
-            <h3>${t('drawerResourcesTitle')}</h3>
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                <a href="${model.huggingface_url}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
-                    ${t('drawerHfBtn')}
-                </a>
-                ${model.artificial_analysis_slug ? `
-                <a href="https://artificialanalysis.ai/models/${model.artificial_analysis_slug}" target="_blank" class="btn btn-secondary" style="width: 100%; text-decoration: none; justify-content: center;">
-                    ${t('drawerAaBtn')}
-                </a>
-                ` : ''}
             </div>
         </div>
+
+        ${model.intelligence_index || model.coding_index || model.math_index ? `
+        <div class="drawer-section">
+            <h3>🧠 Intelligence Profile</h3>
+            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 1rem;">
+                Scores relative to current State of the Art (SOTA).
+            </p>
+            ${[
+                { label: 'Intelligence Index', val: model.intelligence_index, SOTA: 72.8, sotaModel: 'Gemini 3 Pro', color: '#ec4899', desc: 'General capability across diverse tasks' },
+                { label: 'Coding Index', val: model.coding_index, SOTA: 62.3, sotaModel: 'Gemini 3 Pro', color: '#3b82f6', desc: 'Code generation and reasoning' },
+                { label: 'Math Index', val: model.math_index, SOTA: 98.7, sotaModel: 'GPT-5.2', color: '#eab308', desc: 'Mathematical problem solving' }
+            ].map(m => m.val ? `
+            <div class="drawer-metric-viz">
+                <div class="metric-header">
+                    <span class="metric-name">${m.label}</span>
+                    <span class="metric-score">
+                        ${m.val} 
+                        <span class="metric-max" title="Highest score achieved by ${m.sotaModel}">
+                            / ${m.SOTA} (SOTA by ${m.sotaModel})
+                        </span>
+                    </span>
+                </div>
+                <div class="metric-bar-container">
+                    <div class="metric-bar" style="width: ${(m.val / m.SOTA) * 100}%; background: ${m.color};"></div>
+                    <div class="metric-marker" style="left: 100%" title="SOTA Ceiling"></div>
+                </div>
+                <div class="metric-desc">${m.desc}</div>
+            </div>` : '').join('')}
+        </div>
+        ` : ''}
         
         <div style="margin-top: 2rem;">
             <a href="calculator.html?preset=${encodeURIComponent(modelId)}" class="btn btn-primary" style="width: 100%; text-decoration: none; justify-content: center; display: flex;">
@@ -196,7 +215,7 @@ window.openCalculatorDrawer = function(modelId) {
             </p>
         </div>
     `;
-    
+
     // Open drawer
     drawer.classList.add('open');
     backdrop.classList.add('visible');
@@ -207,7 +226,7 @@ window.openCalculatorDrawer = function(modelId) {
 function closeDrawer() {
     const drawer = document.getElementById('calculatorDrawer');
     const backdrop = document.getElementById('drawerBackdrop');
-    
+
     drawer.classList.remove('open');
     backdrop.classList.remove('visible');
     document.body.style.overflow = 'auto';

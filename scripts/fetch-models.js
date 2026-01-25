@@ -371,6 +371,8 @@ async function fetchOpenSourceModels() {
     }
     const isMajor = majorModels.includes(model.id);
 
+
+
     // Skip if already processed
     if (seenModels.has(model.id)) {
       if (isMajor) console.log(`⚠️  ${model.id}: DUPLICATE`);
@@ -427,13 +429,22 @@ async function fetchOpenSourceModels() {
           }
         }
 
-        // Try to add/update AA slug
-        if (!existing.artificial_analysis_slug) {
-          const aaSlug = findAASlugFromCache(model.id);
+        // Try to add/update AA slug and indices
+        let aaSlug = existing.artificial_analysis_slug;
+        if (!aaSlug) {
+          aaSlug = findAASlugFromCache(model.id);
           if (aaSlug) {
             existing.artificial_analysis_slug = aaSlug;
             console.log(`   🔗 Added AA slug for cached model: ${model.id} → ${aaSlug}`);
           }
+        }
+
+        // Always update AA Indices if slug is present (to catch new data for existing models)
+        if (aaSlug && AA_CACHE.models && AA_CACHE.models[aaSlug]) {
+          const cachedModel = AA_CACHE.models[aaSlug];
+          existing.intelligence_index = cachedModel.intelligence_index || null;
+          existing.coding_index = cachedModel.coding_index || null;
+          existing.math_index = cachedModel.math_index || null;
         }
         // Always update volatile stats (downloads, likes) even if using cache
         existing.downloads = model.downloads || 0;
@@ -558,7 +569,11 @@ async function fetchOpenSourceModels() {
         last_modified: lastModified ? lastModified.toISOString() : null,
         huggingface_url: `https://huggingface.co/${model.id}`,
         param_source: paramSource,
+        param_source: paramSource,
         artificial_analysis_slug: aaSlug,
+        intelligence_index: aaSlug && AA_CACHE.models[aaSlug] ? (AA_CACHE.models[aaSlug].intelligence_index || null) : null,
+        coding_index: aaSlug && AA_CACHE.models[aaSlug] ? (AA_CACHE.models[aaSlug].coding_index || null) : null,
+        math_index: aaSlug && AA_CACHE.models[aaSlug] ? (AA_CACHE.models[aaSlug].math_index || null) : null,
       };
 
       if (hasOverride) {
