@@ -7,12 +7,16 @@
     /* Slightly wider for better readability */
     width: 600px;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.85);
-    /* High opacity glass */
-    backdrop-filter: blur(25px) saturate(180%);
-    border-left: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.05);
-    /* Softer shadow */
+    /* Use the same warm gradient as the main page */
+    background: linear-gradient(135deg,
+            #ff6b8a 0%,
+            #ff8fa3 15%,
+            #ffb199 35%,
+            #ffc4a3 55%,
+            #ffd7b5 75%,
+            #ffe8c8 100%);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: -10px 0 40px rgba(255, 107, 138, 0.25);
     transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     z-index: 3000;
     overflow-y: auto;
@@ -46,11 +50,11 @@
 
 .drawer-header {
     padding: 24px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.2);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -60,14 +64,16 @@
 .drawer-header h2 {
     margin: 0;
     font-size: 1.5rem;
-    color: var(--text);
+    color: #3D1A24;
+    /* Dark burgundy */
     font-weight: 800;
 }
 
 .drawer-close {
     background: transparent;
     border: none;
-    color: var(--text-secondary);
+    color: rgba(61, 26, 36, 0.6);
+    /* Dark muted */
     font-size: 1.5rem;
     cursor: pointer;
     transition: all 0.2s;
@@ -80,8 +86,9 @@
 }
 
 .drawer-close:hover {
-    background: rgba(0, 0, 0, 0.05);
-    color: var(--text);
+    background: rgba(255, 255, 255, 0.3);
+    color: #3D1A24;
+    /* Dark burgundy */
 }
 
 .drawer-content {
@@ -91,18 +98,19 @@
 
 /* Sections */
 .drawer-section {
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: linear-gradient(135deg, rgba(244, 63, 94, 0.05), rgba(251, 146, 60, 0.08));
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 24px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4px 12px rgba(255, 107, 138, 0.1);
 }
 
 .drawer-section h3 {
     margin: 0 0 16px;
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: rgba(61, 26, 36, 0.7);
+    /* Dark muted */
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 700;
@@ -118,12 +126,14 @@
 .drawer-field label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text);
+    color: #3D1A24;
+    /* Dark burgundy */
 }
 
 .drawer-field small {
     font-size: 0.8rem;
-    color: var(--muted);
+    color: rgba(61, 26, 36, 0.6);
+    /* Dark muted */
 }
 
 .drawer-field select,
@@ -133,7 +143,8 @@
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     background: white;
-    color: var(--text);
+    color: #3D1A24;
+    /* Dark burgundy */
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     transition: all 0.2s;
 }
@@ -177,13 +188,15 @@
 
 .drawer-metric-label {
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: rgba(61, 26, 36, 0.7);
+    /* Dark muted */
 }
 
 .drawer-metric-value {
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text);
+    color: #3D1A24;
+    /* Dark burgundy */
 }
 
 /* Verdict Box */
@@ -210,13 +223,15 @@
 .drawer-verdict-title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--text);
+    color: #3D1A24;
+    /* Dark burgundy */
     margin: 4px 0;
 }
 
 .drawer-verdict-message {
     font-size: 0.85rem;
-    color: var(--text-secondary);
+    color: rgba(61, 26, 36, 0.7);
+    /* Dark muted */
     margin: 4px 0;
 }
 
