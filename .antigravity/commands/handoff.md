@@ -4,9 +4,9 @@
 
 ==============================================================================
 
-Since we are approaching the max context length, based on our original intention, current focus, and the work completed so far, write a situation introduction describing what’s done and what still needs to be done, so the next LLM (or human) can continue seamlessly.
+Since we are approaching the max context length, based on our original intention, current focus, and the work completed so far, write a situation introduction describing what’s done and what still needs to be done, so the next LLM (or human) can continue seamlessly. Write the handoff content by following the template below:
 
-### 🧭 North Star (Original Intention)
+### 🧭 Current mission
 
 <1–2 sentences: the enduring goal and why it matters>
 

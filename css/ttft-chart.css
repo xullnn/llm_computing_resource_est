@@ -1,47 +1,49 @@
-/* TTFT Chart Styling */
+/* Glassmorphism TTFT Chart Styling */
 
-/* Two-section header layout */
+/* Header Sections */
 .param-class-header {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 12px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 
 .header-sections {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 16px;
 }
 
 .header-section {
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .header-section-title {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
     font-size: 0.75rem;
-    font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    font-weight: 700;
+    color: var(--text-secondary);
+    /* Slate 500 */
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
 
 .header-section-content {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.9);
+    gap: 6px;
+    font-size: 0.9rem;
+    color: var(--text);
 }
 
 .header-section-item {
@@ -51,13 +53,13 @@
 }
 
 .header-section-label {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 0.8125rem;
+    color: var(--muted);
+    font-size: 0.85rem;
 }
 
 .header-section-value {
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
+    color: var(--text);
 }
 
 /* TTFT Chart Container in Header */
@@ -65,40 +67,49 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .ttft-chart-container:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+    transform: translateY(-2px);
 }
 
 .ttft-chart-thumbnail {
-    padding: 0.25rem;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: all 0.2s ease;
 }
 
 .ttft-chart-thumbnail:hover {
-    border-color: rgba(96, 165, 250, 0.5);
-    box-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2);
 }
 
 .ttft-chart-thumbnail-svg {
     display: block;
+    /* Ensure lines inside are visible by default, though JS likely sets them. 
+       We might need to override stroke via CSS if they are set to white. */
+}
+
+/* Force dark lines for thumbnail if they were white */
+.ttft-chart-thumbnail-svg path,
+.ttft-chart-thumbnail-svg line {
+    vector-effect: non-scaling-stroke;
 }
 
 .ttft-chart-hint {
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
     text-align: center;
+    font-weight: 500;
 }
 
-/* TTFT Modal */
+/* TTFT Modal - Glass */
 .ttft-chart-modal {
     position: fixed;
     top: 0;
@@ -128,26 +139,29 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.6);
+    /* Light overlay */
+    backdrop-filter: blur(8px);
 }
 
 .ttft-modal-content {
     position: relative;
-    background: #1a1a2e;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    border: 1px solid white;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     max-width: 950px;
     width: 90%;
     max-height: 90vh;
     overflow: hidden;
-    animation: slideUp 0.3s ease;
+    animation: slideUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes slideUp {
     from {
-        transform: translateY(20px);
+        transform: translateY(40px);
         opacity: 0;
     }
 
@@ -161,51 +175,53 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .ttft-modal-header h3 {
     margin: 0;
     font-size: 1.25rem;
-    font-weight: 600;
-    color: #fff;
+    font-weight: 700;
+    color: var(--text);
 }
 
 .ttft-modal-close {
-    background: none;
+    background: transparent;
     border: none;
-    font-size: 1.75rem;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.5rem;
+    color: var(--text-secondary);
     cursor: pointer;
     padding: 0;
-    line-height: 1;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 4px;
+    border-radius: 50%;
     transition: all 0.2s ease;
 }
 
 .ttft-modal-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
 }
 
 .ttft-modal-body {
-    padding: 1.5rem;
+    padding: 24px;
     position: relative;
+    overflow-y: auto;
 }
 
 .ttft-chart-full {
     display: block;
     margin: 0 auto;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    padding: 0.5rem;
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .ttft-curve {
@@ -220,42 +236,44 @@
 .ttft-chart-legend {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 6px;
+    gap: 24px;
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 10px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.8);
+    gap: 8px;
+    font-size: 0.9rem;
+    color: var(--text);
+    font-weight: 500;
 }
 
 .legend-item span {
     display: block;
-    width: 20px;
-    height: 3px;
-    border-radius: 2px;
+    width: 24px;
+    height: 4px;
+    border-radius: 4px;
 }
 
 .ttft-hover-tooltip {
     position: fixed;
-    background: rgba(0, 0, 0, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8125rem;
-    color: #fff;
+    background: rgba(15, 23, 42, 0.9);
+    /* Dark tooltip stands out on light theme too */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    color: white;
     pointer-events: none;
     z-index: 10001;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive adjustments */
+/* Mobile */
 @media (max-width: 768px) {
     .header-sections {
         grid-template-columns: 1fr;

@@ -64,19 +64,19 @@ function renderTTFTChartModal(parametersB, modelName, classKey) {
     // Generate axis labels
     const yAxisLabels = [0, 1, 3, 5, 10, 15].map(ttft => {
         const y = padding.top + chartHeight - (chartHeight * ttft / maxTTFT);
-        return `<text x="${padding.left - 10}" y="${y}" text-anchor="end" alignment-baseline="middle" fill="#9ca3af" font-size="11">${ttft}s</text>`;
+        return `<text x="${padding.left - 10}" y="${y}" text-anchor="end" alignment-baseline="middle" fill="#64748b" font-size="11">${ttft}s</text>`;
     }).join('');
 
     const xAxisLabels = [100, 500, 1000, 1500, 2000].map(flops => {
         const x = padding.left + (chartWidth * (flops - chartData.minFLOPs) / (chartData.maxFLOPs - chartData.minFLOPs));
-        return `<text x="${x}" y="${padding.top + chartHeight + 25}" text-anchor="middle" fill="#9ca3af" font-size="11">${flops}</text>`;
+        return `<text x="${x}" y="${padding.top + chartHeight + 25}" text-anchor="middle" fill="#64748b" font-size="11">${flops}</text>`;
     }).join('');
 
     // Generate vertical hardware class bands
     const hardwareBands = [
-        { min: 20, max: 200, color: '#60a5fa', label: 'Consumer', opacity: 0.08 },
-        { min: 200, max: 500, color: '#fbbf24', label: 'Prosumer', opacity: 0.08 },
-        { min: 500, max: 2000, color: '#4ade80', label: 'Datacenter', opacity: 0.08 }
+        { min: 20, max: 200, color: '#60a5fa', label: 'Consumer', opacity: 0.1 },
+        { min: 200, max: 500, color: '#fbbf24', label: 'Prosumer', opacity: 0.1 },
+        { min: 500, max: 2000, color: '#4ade80', label: 'Datacenter', opacity: 0.1 }
     ].map(band => {
         const x1 = padding.left + (chartWidth * Math.max(0, (band.min - chartData.minFLOPs) / (chartData.maxFLOPs - chartData.minFLOPs)));
         const x2 = padding.left + (chartWidth * Math.min(1, (band.max - chartData.minFLOPs) / (chartData.maxFLOPs - chartData.minFLOPs)));
@@ -88,7 +88,7 @@ function renderTTFTChartModal(parametersB, modelName, classKey) {
                 <rect x="${x1}" y="${padding.top}" width="${bandWidth}" height="${chartHeight}" 
                       fill="${band.color}" opacity="${band.opacity}" class="hardware-band"/>
                 <text x="${x1 + bandWidth / 2}" y="${padding.top + 15}" text-anchor="middle" 
-                      fill="${band.color}" font-size="10" opacity="0.6" font-weight="600">${band.label}</text>
+                      fill="${band.color}" font-size="10" opacity="0.8" font-weight="600">${band.label}</text>
             `;
         }
         return '';
@@ -99,9 +99,9 @@ function renderTTFTChartModal(parametersB, modelName, classKey) {
         const y = padding.top + chartHeight - (chartHeight * threshold.value / maxTTFT);
         return `
             <line x1="${padding.left}" y1="${y}" x2="${padding.left + chartWidth}" y2="${y}" 
-                  stroke="${threshold.color}" stroke-width="1" stroke-dasharray="4 4" opacity="0.3"/>
+                  stroke="${threshold.color}" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
             <text x="${padding.left + chartWidth - 10}" y="${y}" alignment-baseline="middle" text-anchor="end"
-                  fill="${threshold.color}" font-size="10" opacity="0.7">${threshold.label}</text>
+                  fill="${threshold.color}" font-size="10" opacity="0.9">${threshold.label}</text>
         `;
     }).join('');
 
@@ -132,18 +132,18 @@ function renderTTFTChartModal(parametersB, modelName, classKey) {
                     <svg width="${width}" height="${height}" class="ttft-chart-full" id="ttft-chart-${classKey}">
                         <!-- Y-axis -->
                         <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${padding.top + chartHeight}" 
-                              stroke="#4b5563" stroke-width="2"/>
+                              stroke="#cbd5e1" stroke-width="2"/>
                         ${yAxisLabels}
                         <text x="${padding.left / 2}" y="${padding.top + chartHeight / 2}" text-anchor="middle" 
-                              fill="#9ca3af" font-size="12" transform="rotate(-90, ${padding.left / 2}, ${padding.top + chartHeight / 2})">
+                              fill="#64748b" font-size="12" transform="rotate(-90, ${padding.left / 2}, ${padding.top + chartHeight / 2})">
                             TTFT (seconds)
                         </text>
                         
                         <!-- X-axis -->
                         <line x1="${padding.left}" y1="${padding.top + chartHeight}" x2="${padding.left + chartWidth}" y2="${padding.top + chartHeight}" 
-                              stroke="#4b5563" stroke-width="2"/>
+                              stroke="#cbd5e1" stroke-width="2"/>
                         ${xAxisLabels}
-                        <text x="${padding.left + chartWidth / 2}" y="${height - 35}" text-anchor="middle" fill="#9ca3af" font-size="12">
+                        <text x="${padding.left + chartWidth / 2}" y="${height - 35}" text-anchor="middle" fill="#64748b" font-size="12">
                             Compute Capacity (TFLOPs)
                         </text>
                         
@@ -160,8 +160,8 @@ function renderTTFTChartModal(parametersB, modelName, classKey) {
                         <circle id="hover-dot-${classKey}" r="5" fill="#fff" stroke="#000" stroke-width="2" style="display:none; pointer-events:none;"/>
                         
                         <!-- Crosshair lines (initially hidden) -->
-                        <line id="crosshair-v-${classKey}" stroke="#fff" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" style="display:none; pointer-events:none;"/>
-                        <line id="crosshair-h-${classKey}" stroke="#fff" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" style="display:none; pointer-events:none;"/>
+                        <line id="crosshair-v-${classKey}" stroke="#334155" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" style="display:none; pointer-events:none;"/>
+                        <line id="crosshair-h-${classKey}" stroke="#334155" stroke-width="1" stroke-dasharray="4 4" opacity="0.6" style="display:none; pointer-events:none;"/>
                     </svg>
                     
                     <div class="ttft-chart-legend">
